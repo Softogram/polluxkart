@@ -1,0 +1,30 @@
+# End-to-end test plans
+
+Parent: [design/](../README.md) | Index: [docs/](../../README.md)
+
+One file per issue, `issue-<N>-<slug>.md`, with the same naming as `../low-level/`.
+Written alongside that issue's design, by whoever writes the design.
+It is a plan for what real, full-request coverage the feature needs, not the test code itself.
+
+## What goes in a plan
+
+For each request flow the feature exposes:
+
+- **The flow:** method, path, and in one sentence what it is for.
+- **The happy path:** a representative request, the expected status code, and the shape of the response.
+- **The error paths that matter:** the specific refusals the issue's acceptance criteria call out, such as "another user's order", "out of stock", "price changed", "illegal transition". Point each back at its acceptance criterion.
+- **Fixtures or seed state** a test needs first, and how to create it through real interfaces rather than raw SQL.
+- **What the user gets when a dependency fails:** for every dependency the flow touches (database, Razorpay, SES, S3, another service), what happens when it is unreachable, slow, or returns an error.
+- **The reachability check:** for every new database write, the real request that causes it, and that the test reads the table back.
+- **Concurrency and replay,** where money, stock, coupons or invoice numbers are involved.
+- **What is deliberately not covered, and why.**
+
+**A plan containing only happy paths is not finished.**
+
+## Read next
+
+No plans have been written yet (2026-09-13).
+
+## See also (do not follow recursively)
+
+- [../../platform/testing.md](../../platform/testing.md) - the kinds of test and the bar for a pull request
