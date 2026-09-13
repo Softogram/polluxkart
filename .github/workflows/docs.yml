@@ -1,0 +1,34 @@
+name: docs
+
+# Checks the documentation tree on every pull request and on pushes to the
+# two long-lived branches. The rules are described in docs/README.md and
+# enforced by tools/docslint/docslint.py.
+
+on:
+  pull_request:
+  push:
+    branches: [development, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docslint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Test the docs checker
+        run: python3 -m unittest discover -s tools/docslint -v
+
+      - name: Check the docs tree
+        run: python3 tools/docslint/docslint.py
