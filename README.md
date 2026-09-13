@@ -1,149 +1,52 @@
-# PolluxKart - E-Commerce Store
+# PolluxKart
 
 <div align="center">
-  <img src="frontend/public/logo192.svg" alt="PolluxKart Logo" width="80" height="80">
-  
-  **Your one-stop destination for electronics, fashion, home essentials, and more.**
+  <img src="legacy/frontend/public/logo192.svg" alt="PolluxKart logo" width="80" height="80">
+
+  **An online electronics store for a family business in India.**
 </div>
 
----
+## Status: rebuild in progress
 
-## 🚀 Running Locally
+The first version of this store was generated with an AI app builder in early 2026.
+An audit in September 2026 found it was not safe to run with real money and real customers.
+We are rebuilding it properly, in the open.
 
-### Prerequisites
+While the rebuild happens, polluxkart.com shows a maintenance page and takes no orders.
 
-- Node.js 18+
-- Python 3.11+
-- MongoDB 7.0+
-- Yarn
+## What we are building
 
----
+- **Storefront:** electronics catalog with specs, brands, filters and compare; cart; checkout with Razorpay (an Indian payment gateway) and cash on delivery; GST tax invoices; order tracking.
+- **Admin:** products, stock, orders, fulfilment, coupons and reviews.
 
-### 1. Start MongoDB
+The planned stack:
 
-```bash
-mongod
-```
+- **Backend:** Java 25 and Spring Boot 4.1 with PostgreSQL 18.
+  The backend is split into independent services (identity, catalog, inventory, orders, payments, invoices and more) that live in this one repository and run together at launch.
+  Each service talks to the others only through a defined interface, so any one of them can later be moved to its own server.
+- **Frontend:** Next.js with TypeScript, rendered on the server so product pages load fast and show up well in search and link previews.
+- **Hosting:** AWS in Mumbai.
 
----
+## Repository layout
 
-### 2. Run Backend
+| Folder | What it holds |
+|---|---|
+| `legacy/` | The first version, kept only as reference. Not built or deployed. See [`legacy/README.md`](legacy/README.md). |
+| `docs/legacy/` | The audit of the first version and the feature checklist the rebuild must match. |
+| `ops/maintenance/` | The maintenance page shown at polluxkart.com during the rebuild. |
 
-```bash
-# Navigate to backend
-cd backend
+More folders (`api/`, `web/`, `infra/`, `e2e/`) arrive as the rebuild progresses.
 
-# Create virtual environment
-python -m venv venv
+## Read next
 
-# Activate virtual environment
-source venv/bin/activate        # Mac/Linux
-# venv\Scripts\activate         # Windows
+- [`docs/legacy/audit-2026-09.md`](docs/legacy/audit-2026-09.md): what went wrong in the first version, and the rule we follow now for each problem.
+- [`docs/legacy/parity-checklist.md`](docs/legacy/parity-checklist.md): features the rebuild must cover before the old code is deleted.
 
-# Install dependencies
-pip install -r requirements.txt
+## Reporting a security problem
 
-# Create .env file
-cat > .env << EOF
-MONGO_URL=mongodb://localhost:27017
-DB_NAME=polluxkart
-JWT_SECRET=your-secret-key-here
-EOF
+Please do not open a public issue.
+Email the maintainer through the contact address on the GitHub profile of the repository owner instead.
 
-# Seed database (optional - adds sample data)
-python scripts/seed_db.py
+## License
 
-# Start server
-uvicorn server:app --host 0.0.0.0 --port 8001 --reload
-```
-
-Backend will be running at: http://localhost:8001
-
-API Docs: http://localhost:8001/docs
-
----
-
-### 3. Run Frontend
-
-Open a new terminal:
-
-```bash
-# Navigate to frontend
-cd frontend
-
-# Install dependencies
-yarn install
-
-# Create .env file
-echo "REACT_APP_BACKEND_URL=http://localhost:8001" > .env
-
-# Start development server
-yarn start
-```
-
-Frontend will be running at: http://localhost:3000
-
----
-
-### Test Credentials
-
-After running `seed_db.py`:
-
-| Field | Value |
-|-------|-------|
-| Email | `test@polluxkart.com` |
-| Password | `Test@123` |
-
----
-
-## 📁 Project Structure
-
-```
-polluxkart-client/
-├── backend/          # FastAPI backend
-│   ├── routes/       # API endpoints
-│   ├── services/     # Business logic
-│   ├── models/       # Data models
-│   └── server.py     # Entry point
-│
-├── frontend/         # React frontend
-│   ├── src/
-│   │   ├── pages/    # Page components
-│   │   ├── components/
-│   │   ├── services/ # API services
-│   │   └── context/  # State management
-│   └── package.json
-│
-└── README.md
-```
-
----
-
-## 🔧 Troubleshooting
-
-**MongoDB not running:**
-```bash
-# Check status
-ps aux | grep mongod
-
-# Start MongoDB
-mongod --dbpath /usr/local/var/mongodb
-```
-
-**Port already in use:**
-```bash
-# Kill process on port
-lsof -ti:8001 | xargs kill -9   # Backend
-lsof -ti:3000 | xargs kill -9   # Frontend
-```
-
-**Backend health check:**
-```bash
-curl http://localhost:8001/api/health
-```
-
----
-
-## 📄 License
-
-MIT License
+MIT

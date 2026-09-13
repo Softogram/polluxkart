@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="PolluxKart is being rebuilt and will relaunch soon.">
+  <meta name="theme-color" content="#0F766E">
+  <title>PolluxKart | Relaunching soon</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='%230F766E'/%3E%3Crect x='20' y='20' width='24' height='30' rx='3' fill='%23fff'/%3E%3Cpath d='M28 28V42M28 35L36 28M32 35L36 42' stroke='%230F766E' stroke-width='2.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <!--
+    Maintenance page for polluxkart.com while the store is rebuilt.
+    It is deliberately one static file: no JavaScript, no fonts, no third-party requests.
+    Before uploading, replace every placeholder in square brackets. See README.md in this folder.
+  -->
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --brand: #0f766e;
+      --card: #f8fafc;
+      --border: #e2e8f0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1120;
+        --text: #f1f5f9;
+        --muted: #cbd5e1;
+        --brand: #5eead4;
+        --card: #111827;
+        --border: #1f2937;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px 16px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+      line-height: 1.6;
+    }
+    main {
+      width: 100%;
+      max-width: 560px;
+      text-align: center;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .brand span { color: var(--brand); }
+    h1 {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      margin: 32px 0 8px;
+    }
+    p { margin: 0 0 16px; color: var(--muted); }
+    .card {
+      margin-top: 32px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+      text-align: left;
+    }
+    .card h2 { font-size: 1rem; margin: 0 0 12px; color: var(--text); }
+    dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
+    dt { font-weight: 600; color: var(--text); }
+    dd { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
+    a { color: var(--brand); text-underline-offset: 3px; }
+    a:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; border-radius: 4px; }
+    @media (max-width: 420px) {
+      dl { grid-template-columns: 1fr; }
+      dd { margin-bottom: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand" aria-label="PolluxKart">
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none" aria-hidden="true" focusable="false">
+        <rect x="4" y="4" width="56" height="56" rx="14" fill="#0F766E"/>
+        <path d="M22 18C22 14.69 24.69 12 28 12H36C39.31 12 42 14.69 42 18V20H22V18Z" fill="#FFFFFF" fill-opacity="0.9"/>
+        <rect x="20" y="20" width="24" height="30" rx="3" fill="#FFFFFF" fill-opacity="0.95"/>
+        <path d="M26 16V12C26 10.9 26.9 10 28 10H36C37.1 10 38 10.9 38 12V16" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M28 28V42M28 35L36 28M32 35L36 42" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="50" cy="14" r="6" fill="#84CC16"/>
+        <circle cx="26" cy="52" r="3" fill="#FFFFFF" fill-opacity="0.85"/>
+        <circle cx="38" cy="52" r="3" fill="#FFFFFF" fill-opacity="0.85"/>
+      </svg>
+      <div>Pollux<span>Kart</span></div>
+    </div>
+
+    <h1>We are rebuilding our store</h1>
+    <p>PolluxKart is getting a faster, safer shopping experience for electronics.</p>
+    <p>We are not taking orders right now. We will be back soon.</p>
+
+    <section class="card" aria-labelledby="contact-heading">
+      <h2 id="contact-heading">Need help with an earlier order?</h2>
+      <dl>
+        <dt>Business</dt>
+        <dd>[LEGAL BUSINESS NAME]</dd>
+        <dt>Address</dt>
+        <dd>[REGISTERED ADDRESS, CITY, STATE, PINCODE]</dd>
+        <dt>GSTIN</dt>
+        <dd>[GSTIN]</dd>
+        <dt>Email</dt>
+        <dd><a href="mailto:[SUPPORT EMAIL]">[SUPPORT EMAIL]</a></dd>
+        <dt>Phone</dt>
+        <dd><a href="tel:[SUPPORT PHONE, DIGITS ONLY WITH +91]">[SUPPORT PHONE]</a></dd>
+      </dl>
+    </section>
+  </main>
+</body>
+</html>
