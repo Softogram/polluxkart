@@ -5,33 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <meta name="description" content="PolluxKart is being rebuilt and will relaunch soon.">
-  <meta name="theme-color" content="#0F766E">
+  <meta name="theme-color" content="#20B2AA">
   <title>PolluxKart | Relaunching soon</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='%230F766E'/%3E%3Crect x='20' y='20' width='24' height='30' rx='3' fill='%23fff'/%3E%3Cpath d='M28 28V42M28 35L36 28M32 35L36 42' stroke='%230F766E' stroke-width='2.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='%2314B8A6'/%3E%3Crect x='20' y='20' width='24' height='30' rx='3' fill='%23fff'/%3E%3Cpath d='M28 28V42M28 35L36 28M32 35L36 42' stroke='%230D9488' stroke-width='2.5' stroke-linecap='round' fill='none'/%3E%3Ccircle cx='50' cy='14' r='6' fill='%2384CC16'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap">
   <!--
     Maintenance page for polluxkart.com while the store is rebuilt.
-    It is deliberately one static file: no JavaScript, no fonts, no third-party requests.
+    It is deliberately one static file with no JavaScript.
+    Colours and fonts are copied unchanged from the store's existing theme
+    (legacy/frontend/src/index.css), which the owner asked to keep as it is.
     Before uploading, replace every placeholder in square brackets. See README.md in this folder.
   -->
   <style>
     :root {
-      color-scheme: light dark;
-      --bg: #ffffff;
-      --text: #0f172a;
-      --muted: #475569;
-      --brand: #0f766e;
-      --card: #f8fafc;
-      --border: #e2e8f0;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0b1120;
-        --text: #f1f5f9;
-        --muted: #cbd5e1;
-        --brand: #5eead4;
-        --card: #111827;
-        --border: #1f2937;
-      }
+      /* Existing PolluxKart theme tokens, unchanged. */
+      --primary: 174 72% 45%;
+      --primary-dark: 174 72% 35%;
+      --accent: 90 60% 50%;
+      --background: 0 0% 100%;
+      --foreground: 200 20% 15%;
+      --muted: 150 15% 96%;
+      --muted-foreground: 200 10% 45%;
+      --border: 174 20% 88%;
+      --radius: 0.625rem;
+      --shadow-md: 0 4px 6px -1px hsl(174 30% 20% / 0.08), 0 2px 4px -2px hsl(174 30% 20% / 0.06);
+      --gradient-hero: linear-gradient(135deg, hsl(174 72% 45% / 0.08), hsl(90 60% 50% / 0.05));
+      --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(150 15% 98%));
     }
     * { box-sizing: border-box; }
     body {
@@ -40,11 +41,15 @@
       display: grid;
       place-items: center;
       padding: 24px 16px;
-      background: var(--bg);
-      color: var(--text);
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+      background: hsl(var(--background));
+      background-image: var(--gradient-hero);
+      color: hsl(var(--foreground));
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       line-height: 1.6;
     }
+    h1, h2, .brand { font-family: 'Space Grotesk', sans-serif; }
     main {
       width: 100%;
       max-width: 560px;
@@ -54,30 +59,36 @@
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      font-size: 1.75rem;
+      font-size: 1.875rem;
       font-weight: 700;
-      letter-spacing: -0.01em;
     }
-    .brand span { color: var(--brand); }
+    .brand .kart { color: hsl(var(--primary)); }
     h1 {
       font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 700;
       margin: 32px 0 8px;
     }
-    p { margin: 0 0 16px; color: var(--muted); }
+    p { margin: 0 0 16px; color: hsl(var(--muted-foreground)); }
     .card {
       margin-top: 32px;
       padding: 20px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--card);
+      border: 1px solid hsl(var(--border));
+      border-radius: calc(var(--radius) + 4px);
+      background: var(--gradient-card);
+      box-shadow: var(--shadow-md);
       text-align: left;
     }
-    .card h2 { font-size: 1rem; margin: 0 0 12px; color: var(--text); }
+    .card h2 { font-size: 1rem; font-weight: 700; margin: 0 0 12px; }
     dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
-    dt { font-weight: 600; color: var(--text); }
-    dd { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
-    a { color: var(--brand); text-underline-offset: 3px; }
-    a:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; border-radius: 4px; }
+    dt { font-weight: 600; }
+    dd { margin: 0; color: hsl(var(--muted-foreground)); overflow-wrap: anywhere; }
+    a {
+      color: hsl(var(--foreground));
+      text-decoration-color: hsl(var(--primary));
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+    a:focus-visible { outline: 3px solid hsl(var(--primary)); outline-offset: 3px; border-radius: 4px; }
     @media (max-width: 420px) {
       dl { grid-template-columns: 1fr; }
       dd { margin-bottom: 8px; }
@@ -87,17 +98,35 @@
 <body>
   <main>
     <div class="brand" aria-label="PolluxKart">
+      <!-- Logo copied from legacy/frontend/public/favicon.svg, colours unchanged. -->
       <svg width="48" height="48" viewBox="0 0 64 64" fill="none" aria-hidden="true" focusable="false">
-        <rect x="4" y="4" width="56" height="56" rx="14" fill="#0F766E"/>
-        <path d="M22 18C22 14.69 24.69 12 28 12H36C39.31 12 42 14.69 42 18V20H22V18Z" fill="#FFFFFF" fill-opacity="0.9"/>
-        <rect x="20" y="20" width="24" height="30" rx="3" fill="#FFFFFF" fill-opacity="0.95"/>
-        <path d="M26 16V12C26 10.9 26.9 10 28 10H36C37.1 10 38 10.9 38 12V16" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M28 28V42M28 35L36 28M32 35L36 42" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="50" cy="14" r="6" fill="#84CC16"/>
-        <circle cx="26" cy="52" r="3" fill="#FFFFFF" fill-opacity="0.85"/>
-        <circle cx="38" cy="52" r="3" fill="#FFFFFF" fill-opacity="0.85"/>
+        <defs>
+          <linearGradient id="pk-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#14B8A6"/>
+            <stop offset="100%" stop-color="#0D9488"/>
+          </linearGradient>
+          <linearGradient id="pk-bag" x1="20" y1="8" x2="44" y2="48" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="100%" stop-color="#F0FDFA"/>
+          </linearGradient>
+          <linearGradient id="pk-accent" x1="44" y1="8" x2="56" y2="20" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#A3E635"/>
+            <stop offset="100%" stop-color="#84CC16"/>
+          </linearGradient>
+        </defs>
+        <rect x="4" y="4" width="56" height="56" rx="14" fill="url(#pk-bg)"/>
+        <rect x="6" y="6" width="52" height="52" rx="12" fill="none" stroke="white" stroke-opacity="0.2" stroke-width="1"/>
+        <path d="M22 18C22 14.6863 24.6863 12 28 12H36C39.3137 12 42 14.6863 42 18V20H22V18Z" fill="url(#pk-bag)" fill-opacity="0.9"/>
+        <rect x="20" y="20" width="24" height="30" rx="3" fill="url(#pk-bag)" fill-opacity="0.95"/>
+        <path d="M26 16V12C26 10.8954 26.8954 10 28 10H36C37.1046 10 38 10.8954 38 12V16" stroke="url(#pk-bag)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M28 28V42M28 35L36 28M32 35L36 42" stroke="#0D9488" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="50" cy="14" r="6" fill="url(#pk-accent)"/>
+        <path d="M50 10L51 13H54L51.5 15L52.5 18L50 16L47.5 18L48.5 15L46 13H49L50 10Z" fill="white" fill-opacity="0.95"/>
+        <circle cx="26" cy="52" r="3" fill="white" fill-opacity="0.85"/>
+        <circle cx="38" cy="52" r="3" fill="white" fill-opacity="0.85"/>
+        <circle cx="48" cy="26" r="1.5" fill="url(#pk-accent)" fill-opacity="0.8"/>
       </svg>
-      <div>Pollux<span>Kart</span></div>
+      <div>Pollux<span class="kart">Kart</span></div>
     </div>
 
     <h1>We are rebuilding our store</h1>

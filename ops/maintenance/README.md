@@ -3,8 +3,9 @@
 `index.html` in this folder is shown at polluxkart.com while the store is rebuilt.
 It replaces the old app, which still loaded third-party Emergent scripts and could not reach its backend.
 
-The page is one static file.
-It has no JavaScript, no web fonts and no third-party requests, so there is nothing on it to break or leak.
+The page is one static file with no JavaScript, so there is nothing on it to break or leak.
+Its only outside request is Google Fonts, the same fonts the store already uses.
+Its colours, fonts and logo are copied unchanged from the store's existing theme, which stays as it is.
 It tells search engines not to index it (`noindex`), so the relaunch starts with a clean search listing.
 
 ## Why it shows business details
