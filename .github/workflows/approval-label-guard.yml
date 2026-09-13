@@ -1,0 +1,28 @@
+name: approval-label-guard
+
+# Only the owner approves tickets (owner rule, 2026-09-13).
+# If anyone else applies `stage: implementation-ready`, remove it and explain.
+# Rules: docs/platform/development-process.md.
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  issues: write
+
+jobs:
+  guard:
+    if: github.event.label.name == 'stage: implementation-ready' && github.event.sender.login != 'CosmicSaaurabh'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Remove the approval label and explain
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          SENDER: ${{ github.event.sender.login }}
+        run: |
+          gh issue edit "$NUMBER" --repo "$REPOSITORY" --remove-label "stage: implementation-ready"
+          gh issue comment "$NUMBER" --repo "$REPOSITORY" --body "The \`stage: implementation-ready\` label was removed because it was applied by \`$SENDER\`. Only the owner approves a ticket for implementation (owner rule, 2026-09-13). Please set the stage back to \`stage: planning\` or \`stage: awaiting-approval\`, and see docs/platform/development-process.md."

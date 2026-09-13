@@ -2,7 +2,7 @@
 
 Parent: [high-level/](README.md) | Index: [docs/](../../README.md)
 
-**Status: APPROVED design, 2026-09-13. Not built yet.**
+**Status: PROPOSED (2026-09-13).** Written from the plan the owner approved on 2026-09-13. Owner decisions are marked in [decisions.md](../../platform/decisions.md); everything else here is confirmed or changed in its GitHub ticket before anything is built on it. Not built yet.
 
 An order has two separate states:
 - **Order status:** where the goods are in the process.

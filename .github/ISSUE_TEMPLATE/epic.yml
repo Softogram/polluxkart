@@ -1,0 +1,50 @@
+name: Epic
+description: A large piece of work whose tickets are attached as sub-issues.
+title: "Epic EXX: "
+labels: ["epic", "stage: planning"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        An epic groups tickets. Attach each ticket as a GitHub sub-issue.
+        Nothing in an epic is implemented until the owner approves each ticket.
+        Rules: [development process](https://github.com/Softogram/polluxkart/blob/development/docs/platform/development-process.md).
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What is true when every ticket in this epic is done, in plain words.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+    validations:
+      required: true
+  - type: textarea
+    id: design_docs
+    attributes:
+      label: Design documents
+    validations:
+      required: true
+  - type: textarea
+    id: owner_decisions
+    attributes:
+      label: Decided by the owner
+      value: "- Nothing specific to this epic yet."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed in the docs, not yet confirmed by the owner
+  - type: textarea
+    id: questions
+    attributes:
+      label: Open questions for the owner
+      value: "- [ ] "
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope

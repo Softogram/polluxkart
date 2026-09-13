@@ -2,7 +2,7 @@
 
 Parent: [high-level/](README.md) | Index: [docs/](../../README.md)
 
-**Status: APPROVED 2026-09-13 by the owner.**
+**Status: the shape is an owner decision (2026-09-13): independent services in one codebase, run together at launch, replaceable by gRPC later. The rules below are PROPOSED and confirmed in their tickets.**
 
 ## What was already decided before this document
 

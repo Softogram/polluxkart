@@ -2,7 +2,7 @@
 
 Parent: [high-level/](README.md) | Index: [docs/](../../README.md)
 
-**Status: APPROVED 2026-09-13.**
+**Status: the fixed theme is an owner decision (2026-09-13). The contrast pairings are an open question for the owner. The patterns and rules below are PROPOSED and confirmed in their tickets.**
 
 ## The rule that overrides everything else on this page
 

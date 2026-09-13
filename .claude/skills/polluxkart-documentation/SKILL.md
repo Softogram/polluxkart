@@ -19,6 +19,18 @@ Sources of truth this skill summarizes: `docs/README.md` (the only entry point t
 - **docslint:** the script `tools/docslint/docslint.py`, which checks the docs tree's links and style on every pull request.
 - **Generated file:** a file written by a tool, such as the OpenAPI spec, which nobody edits by hand.
 
+## Owner decision or proposed: say which (owner rule, 2026-09-13)
+
+Every entry in `docs/platform/decisions.md` carries a status:
+- **Owner decision:** the owner chose it; say when and how.
+- **Proposed:** written down but not chosen by the owner; confirmed in its ticket before anything is built on it.
+- **Superseded:** replaced by a later dated entry.
+
+Never write a proposal as if it were decided, and never fill a missing decision with your own choice: add it as an open question for the owner.
+The latest dated entry on a topic holds.
+Document status lines follow the same rule: `**Status: PROPOSED (date)**` until the owner approves, then `**Status: APPROVED by the owner (date)**`.
+The full process is in `polluxkart-workflow` and `docs/platform/development-process.md`.
+
 ## Date every decision
 
 **Every decision written anywhere carries the date it was made.**

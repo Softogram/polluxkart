@@ -9,7 +9,8 @@ Parent: [docs/](../README.md)
 
 - [architecture.md](architecture.md) - **the big one.** The services, what each owns, how a page and an order flow through them, the API surface, and how it deploys. Start here for anything structural
 - [stack.md](stack.md) - which technology and which version, and why each was chosen
-- [decisions.md](decisions.md) - the running log of decisions taken and why, dated
+- [development-process.md](development-process.md) - **read before starting any work.** Epics, tickets, the six stages, and the rule that nothing is implemented without the owner's approval
+- [decisions.md](decisions.md) - the running log of decisions, dated, each marked owner decision or proposed
 - [glossary.md](glossary.md) - every term this project uses, defined in plain words
 - [security.md](security.md) - how accounts, money, uploads, secrets and personal data are protected
 - [testing.md](testing.md) - the kinds of test, when each is required, and the bar a pull request has to clear

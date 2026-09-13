@@ -1,0 +1,43 @@
+name: approval-gate
+
+# Enforces the owner rule of 2026-09-13: nothing is implemented without the
+# owner's approval. Rules: docs/platform/development-process.md.
+#
+# pull_request_target runs the workflow and the gate script from the base
+# branch, so a pull request cannot change the check that judges it. The job
+# never checks out or runs code from the pull request; it only reads the
+# GitHub API.
+#
+# If the owner approves a ticket after its pull request was opened, re-run
+# this check (or edit the pull request description) to pick up the approval.
+
+on:
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+concurrency:
+  group: approval-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  approval-gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out the base branch (never the pull request)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+
+      - name: Check the linked ticket was approved by the owner
+        run: python3 tools/approval_gate/gate.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          APPROVER: CosmicSaaurabh

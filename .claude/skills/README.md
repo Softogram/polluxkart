@@ -8,11 +8,17 @@ These skills turn the decisions in `docs/` into rules an agent follows while wri
 Paths under `api/` and `web/` in the skills describe the approved plan.
 When code and a skill disagree, the code wins and the skill is fixed in the same pull request.
 
+## Rule one: nothing is implemented without the owner's approval
+
+**Owner rule, 2026-09-13.** Before any work, load [`polluxkart-workflow`](polluxkart-workflow/SKILL.md).
+Only tickets the owner labelled `stage: implementation-ready` are implemented, agents never apply that label, and no product or design decision is ever assumed.
+It wins over every other skill on process.
+
 ## Which source wins
 
 1. The code, once it exists.
 2. `docs/`, starting at [`docs/README.md`](../../docs/README.md).
-3. A `polluxkart-*` skill.
+3. A `polluxkart-*` skill (`polluxkart-workflow` first, on process).
 4. A vendored third-party skill.
 
 Every vendored skill carries a "PolluxKart override" block at the top listing where it conflicts with PolluxKart's rules.
@@ -21,6 +27,7 @@ Every vendored skill carries a "PolluxKart override" block at the top listing wh
 
 | Skill | Use it when | Ported from |
 |---|---|---|
+| [`polluxkart-workflow`](polluxkart-workflow/SKILL.md) | **Before any work:** checking a ticket's stage, planning, asking and recording owner decisions, opening planning or implementation pull requests | New for PolluxKart (owner rule, 2026-09-13) |
 | [`polluxkart-architecture`](polluxkart-architecture/SKILL.md) | Any backend structure: adding a service or class, one service calling another, events, order placement | ryup architecture skill, rewritten for Spring Boot and independent services in one codebase |
 | [`polluxkart-postgres-jpa`](polluxkart-postgres-jpa/SKILL.md) | Flyway migrations, JPA entities, repositories, queries, transactions, locking | ryup Postgres skill, rewritten for JPA and PostgreSQL 18 |
 | [`polluxkart-http-api`](polluxkart-http-api/SKILL.md) | REST endpoints, filters, sessions, CSRF, pagination, OpenAPI, health checks | ryup HTTP API skill, rewritten for Spring Web MVC |

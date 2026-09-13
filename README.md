@@ -19,7 +19,7 @@ While the rebuild happens, polluxkart.com shows a maintenance page and takes no 
 - **Storefront:** electronics catalog with specs, brands, filters and compare; cart; checkout with Razorpay (an Indian payment gateway) and cash on delivery; GST tax invoices; order tracking.
 - **Admin:** products, stock, orders, fulfilment, coupons and reviews.
 
-The planned stack:
+The planned stack (owner decisions and proposals are marked in [`docs/platform/decisions.md`](docs/platform/decisions.md)):
 
 - **Backend:** Java 25 and Spring Boot 4.1 with PostgreSQL 18.
   The backend is split into independent services (identity, catalog, inventory, orders, payments, invoices and more) that live in this one repository and run together at launch.
@@ -37,6 +37,11 @@ The planned stack:
 | `tools/docslint/` | The checker that keeps the docs tree navigable, run on every pull request. |
 
 More folders (`api/`, `web/`, `infra/`, `e2e/`) arrive as the rebuild progresses.
+
+## How work happens
+
+Every piece of work is a GitHub ticket, and **nothing is implemented without the owner's approval**.
+Read [`docs/platform/development-process.md`](docs/platform/development-process.md) before contributing.
 
 ## Read next
 

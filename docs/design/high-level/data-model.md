@@ -2,7 +2,7 @@
 
 Parent: [high-level/](README.md) | Index: [docs/](../../README.md)
 
-**Status: APPROVED design, 2026-09-13. Tables are created slice by slice as Flyway migrations; none exist yet.**
+**Status: PROPOSED (2026-09-13).** Written from the plan the owner approved on 2026-09-13. Owner decisions are marked in [decisions.md](../../platform/decisions.md); everything else here is confirmed or changed in its GitHub ticket before anything is built on it. Tables are created ticket by ticket as Flyway migrations; none exist yet.
 
 ## Conventions for every table (decided 2026-09-13)
 

@@ -2,8 +2,9 @@
 
 Parent: [design/](../README.md) | Index: [docs/](../../README.md)
 
-One file per issue, `issue-<N>-<slug>.md`, with the same naming as `../low-level/`.
-Written alongside that issue's design, by whoever writes the design.
+One file per ticket, `issue-<N>-<slug>.md`, with the same naming as `../low-level/`.
+Written alongside that ticket's design, by whoever writes the design, as part 2 of the ticket's five parts ([development-process.md](../../platform/development-process.md)).
+The tests it plans are written in the same implementation pull request as the feature, and the ticket is only done after a verified test run.
 It is a plan for what real, full-request coverage the feature needs, not the test code itself.
 
 ## What goes in a plan

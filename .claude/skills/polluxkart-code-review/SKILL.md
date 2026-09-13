@@ -27,6 +27,7 @@ Each section names the skill that covers its topic in depth.
 
 ## How to run a review
 
+0. **Check approval first (owner rule, 2026-09-13).** An implementation pull request must say `Implements #N` for a ticket the owner labelled `stage: implementation-ready`, and the approval-gate check must be green. If not, stop the review and say so: unapproved work is a blocker regardless of quality. Any product or design choice in the diff that is not an "Owner decision" in `docs/platform/decisions.md` is also a blocker. See `polluxkart-workflow`.
 1. Read the issue, its design in `docs/design/low-level/issue-<N>-<slug>.md`, and its test plan in `docs/design/test/`.
 2. If the change needs a table, endpoint or contract the design does not describe, flag it back rather than approving improvised structure.
 3. Read the whole diff, then open the files around it, because the guard you need to compare against usually lives beside the other door, outside the diff.

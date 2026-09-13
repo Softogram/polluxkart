@@ -1,0 +1,11 @@
+# The owner is asked to review any change to the rules that protect the
+# approval process and to the decision log (owner rule, 2026-09-13).
+# See docs/platform/development-process.md.
+
+/.github/                                @CosmicSaaurabh
+/tools/approval_gate/                    @CosmicSaaurabh
+/.claude/                                @CosmicSaaurabh
+/CLAUDE.md                               @CosmicSaaurabh
+/docs/platform/decisions.md              @CosmicSaaurabh
+/docs/platform/development-process.md    @CosmicSaaurabh
+/docs/design/                            @CosmicSaaurabh
