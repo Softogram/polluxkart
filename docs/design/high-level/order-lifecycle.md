@@ -67,12 +67,12 @@ stateDiagram-v2
 
 ## Rules that sit around the table
 
-- **Expiry.** A scheduled job finds `PENDING_PAYMENT` orders past their reservation expiry, asks Razorpay whether a payment was captured, and only then cancels and releases stock.
-- **Late capture.** If a payment is captured after the order was cancelled, payment tries to re-reserve stock and confirm; if stock is gone, it refunds automatically and emails the shopper.
+- **Expiry.** A scheduled job in the order service finds `PENDING_PAYMENT` orders past their payment hold, asks the payment service for the latest status (payment asks Razorpay), and only then confirms, or cancels and releases stock. inventory's own sweeper releases reservations that never got an order, after the hold time plus a grace period.
+- **Late capture.** If payment reports a capture for an order that was already cancelled, order tries to re-reserve the stock and confirm; if the stock is gone, order asks payment to refund automatically and emails the shopper.
 - **Retry payment.** While an order is `PENDING_PAYMENT`, the shopper can retry; each attempt is a new row in `payments` for the same order.
 - **Refunds.** Before creating a refund, payment checks existing refunds for that payment, so a retried request cannot refund twice.
 - **Cash on delivery limits.** Verified email, a maximum order value, a serviceable pincode and a cap on open cash on delivery orders per shopper.
-- **Invoice timing.** The invoice is issued inside the `SHIPPED` transition because GST requires it when goods leave.
+- **Invoice timing.** GST requires the invoice when goods leave. order asks invoice for it just before saving `SHIPPED`; the call returns the same invoice if repeated, so a retry after a failure never creates a second number.
 - **Credit notes.** Anything that reverses an invoiced order produces a credit note; invoices are never edited.
 - **Idempotency.** Every transition request carries an idempotency key, so a double click performs it once.
 

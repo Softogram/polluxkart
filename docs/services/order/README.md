@@ -23,11 +23,15 @@ Schema: `orders` (`order` is a reserved word in SQL).
 
 ## Interface (planned)
 
-`OrderApi`: get an order's payable total and status for the payment service; mark payment captured or failed; get order snapshots for invoice and shipping.
+`OrderApi`: order snapshots for review (who received which product).
+
+order is the orchestrator: it calls inventory, payment, cart, shipping, invoice, promotion, catalog, identity, notification and audit, and listens to payment's events.
+No other service calls order except review, which listens to `OrderDelivered`.
+It runs the payment expiry job: for orders past their payment hold, it asks payment for the latest status, then confirms or cancels.
 
 ## Endpoints (planned)
 
-`POST /api/v1/checkout/quote`; `POST /api/v1/orders`; `GET /api/v1/orders`, `/orders/{number}`; `POST /api/v1/orders/{number}/cancel`, `/return-request`.
+`POST /api/v1/checkout/quote`; `POST /api/v1/orders`; `GET /api/v1/orders`, `/orders/{number}`; `POST /api/v1/orders/{number}/payments`, `/payments/verify`, `/cancellation`, `/return-requests`.
 Admin: list with filters, pack, ship, deliver, record cash collected, cancel, accept or reject returns under `/api/v1/admin/orders/**`.
 
 ## Events

@@ -88,15 +88,26 @@ The logo SVG gets unique gradient ids per render, because the original reused th
 
 ## Open question for the owner (asked 2026-09-13, not yet answered)
 
-White text on the teal primary (`primary-foreground` on `primary`) has a contrast ratio of about 2.2 to 1.
-The accessibility minimum (WCAG AA) for normal text is 4.5 to 1, so small white text on teal buttons is hard to read for many people.
+Contrast ratio measures how easily text stands out from its background.
+The accessibility minimum (WCAG AA) is 4.5 to 1 for normal text and 3 to 1 for large text and focus outlines.
+Every token pair in the theme was measured on 2026-09-13, and these pairs, which the first version used, fall short:
 
-Options that keep the palette unchanged:
-1. **Use the theme's own dark text (`foreground`) on teal buttons**, about 6.9 to 1. Only the text colour on those buttons changes, using a colour already in the theme.
-2. **Keep white text on teal**, as today, and accept the failure.
+| Pair | Ratio | Where it appears |
+|---|---|---|
+| White (`primary-foreground`) on teal (`primary`) | about 2.2 to 1 | Primary buttons |
+| Teal (`primary`) text on white | about 2.2 to 1 | Links, prices, the "Kart" in the wordmark (a logo is exempt) |
+| `muted-foreground` on `muted` | about 4.3 to 1 | Secondary text on soft grey panels |
+| White on `success`, or `success` text on white | about 2.6 to 1 | Success badges and messages |
+| Teal focus ring (`ring`) on white | about 2.2 to 1 | Keyboard focus outline |
 
-**Buttons are not built until the owner chooses.**
-A test measures the contrast of every text and background pair the site uses, and its expectations follow the owner's answer.
+For comparison, the theme's own dark text (`foreground`) on teal is about 6.9 to 1.
+
+Options that keep the palette unchanged, for the owner to choose per pair:
+1. **Swap the pairing within the existing palette**, for example dark `foreground` text on teal buttons, `primary-dark` for small teal text, `foreground` for secondary text on `muted` panels. No new colour is introduced.
+2. **Keep the pairing as it is today** and accept the accessibility failure for that element.
+
+**Buttons, links and badges are not built until the owner chooses.**
+A test measures the contrast of every text and background pair the site uses, and its expectations follow the owner's answers.
 
 ## The four states every list and page shows
 

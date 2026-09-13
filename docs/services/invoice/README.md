@@ -11,7 +11,7 @@ Schema: `invoice`.
 
 ## Promises
 
-- An invoice is issued when an order is shipped, because GST requires it when goods leave.
+- An invoice is issued when an order is shipped, because GST requires it when goods leave. order asks for it just before saving the `SHIPPED` state; the call is safe to repeat and always returns the one invoice for that order.
 - Numbers run without gaps within each financial year (1 April to 31 March, decided in `Asia/Kolkata` time), taken by locking that year's sequence row in the same transaction that writes the invoice.
 - The number format is short enough for GST's 16-character limit, for example `PK/26-27/000123`.
 - Each invoice carries every field GST Rule 46 requires, from snapshots taken at issue time, so later changes to settings, products or addresses never alter an issued invoice.

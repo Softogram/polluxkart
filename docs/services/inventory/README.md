@@ -14,7 +14,7 @@ Schema: `inventory`.
 - **Stock is never sold twice.** A reservation is one conditional database update per SKU that succeeds only if enough unreserved stock exists; database constraints make negative stock impossible.
 - SKUs are always processed in sorted id order, so two reservations can never deadlock.
 - A reservation call carries an idempotency key; repeating it returns the same result.
-- Online-payment reservations expire after 30 minutes; a scheduled job releases expired ones after the payment service confirms no payment arrived.
+- Online-payment reservations hold for 30 minutes. order's expiry job decides what happens to its own orders; inventory's sweeper only releases `ACTIVE` reservations past their hold time plus a grace period, which catches reservations that never got an order.
 - Every change to stock writes a movement row with a reason and actor.
 - Admin receipts and adjustments go only through movements, and cannot push on-hand below reserved.
 - Delivery estimates and cash on delivery availability come from the pincode and zone tables.

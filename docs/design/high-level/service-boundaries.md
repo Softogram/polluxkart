@@ -78,9 +78,10 @@ That test is what proves the gRPC swap will work.
 
 ## Rule 5: side effects travel as events
 
-- A service publishes events such as `OrderPlaced` or `InvoiceIssued` after its transaction commits.
+- A service publishes events such as `OrderPlaced` or `InvoiceIssued` in the same transaction as the change.
 - Spring Modulith's event publication registry stores each event in the database until every listener has handled it, so a restart cannot lose an email or an audit record.
 - Listeners are idempotent, because an event can be delivered more than once.
+- A listener may only live in a service that is allowed to depend on the publisher (Rule 7). Where that direction is not allowed, the publisher reacts to its own event and calls the other service's interface instead.
 - Later, the same events can be forwarded to a message broker such as Amazon SQS or Kafka when a service moves out.
 
 ## Rule 6: REST belongs to the service, and the browser only sees REST
@@ -88,6 +89,41 @@ That test is what proves the gRPC swap will work.
 - Each service owns its REST controllers under `/api/v1/...`.
 - The frontend talks to the backend only over REST; gRPC is only for service-to-service calls after extraction.
 - When a service moves to its own server, Caddy routes that service's paths to it.
+
+## Rule 7: dependencies point one way (decided 2026-09-13)
+
+Maven refuses a loop between modules, so the direction of every dependency is decided up front.
+"Depends on" means the service may call that service's interface or listen to its events.
+
+| Service | May depend on |
+|---|---|
+| shared-kernel | nothing |
+| notification | shared-kernel |
+| audit | shared-kernel |
+| identity | notification, audit |
+| media | audit |
+| catalog | media, audit |
+| inventory | audit |
+| shipping | audit |
+| payment | notification, audit |
+| invoice | notification, audit |
+| promotion | catalog, audit |
+| cart | identity, catalog, inventory |
+| order | identity, catalog, inventory, cart, promotion, payment, shipping, invoice, notification, audit |
+| review | order, catalog, notification, audit |
+| app | every service, for wiring only |
+
+What this means in practice:
+
+- **notification and audit are called, never listeners of other services.** A service that needs an email or an audit record reacts to its own committed event and calls `NotificationApi` or `AuditApi` with an idempotency key. If notification listened to order's events while identity called notification and order called identity, the modules would form a loop.
+- **order orchestrates.** It calls inventory to reserve, commit and release stock; payment to create, verify and refund payments; cart to clear ordered lines; shipping to record shipments; invoice to issue invoices and credit notes.
+- **payment never calls order.** It publishes `PaymentCaptured`, `PaymentFailed` and `RefundProcessed`, and order listens. The amount to charge is passed into payment by order.
+- **Browser endpoints for paying an order belong to order**, which checks ownership and status, then calls payment. Razorpay's webhook belongs to payment.
+- **The payment expiry job lives in order**, because only order knows which orders still await payment. inventory keeps a last-resort sweeper for reservations that never got an order at all, for example after a crash between reserving and saving.
+- **cart learns about sign-in from identity's events**, and order tells cart which lines to clear.
+- **review listens to order's `OrderDelivered`** to know who may review.
+
+Adding a dependency not in this table needs a dated entry in [../../platform/decisions.md](../../platform/decisions.md) and a check that it creates no loop.
 
 ## Placing an order across services
 
@@ -99,20 +135,22 @@ sequenceDiagram
   participant I as inventory
   participant N as notification
   O->>O: recompute quote, check expected total
-  O->>I: reserve(orderId, lines, idempotencyKey, expiresAt)
+  O->>I: reserve(idempotencyKey, lines, holdMinutes)
   I->>I: conditional UPDATE per SKU in one transaction
   I-->>O: reserved, or out of stock
-  O->>O: save order and items in one transaction
+  O->>O: save order, items and OrderPlaced event in one transaction
   alt saving failed
-    O->>I: release(orderId, idempotencyKey)
+    O->>I: release(reservationId, idempotencyKey)
   end
-  O-->>N: OrderPlaced event after commit
+  O->>N: after commit, order's own listener enqueues the email
 ```
 
 - inventory's reservation is one conditional database update per SKU, so stock can never go below zero even with many buyers at once.
+- A cash on delivery order is committed straight after it is saved; an online order is committed when order hears `PaymentCaptured`.
 - If order cannot save after reserving, it releases the reservation.
-- If the release call is lost too, the reservation expires at its `expiresAt` and a scheduled job releases it, after checking no payment arrived.
-- Tests: 50 parallel buyers for the last 5 units produce exactly 5 orders; a crash injected between reserving and saving leaks no stock.
+- If a duplicate idempotency key stops the save, another request already saved this order, and nothing is released.
+- If the process dies between reserving and saving, no order exists to clean up, so inventory's sweeper releases `ACTIVE` reservations once they are past their hold time plus a grace period.
+- Tests: 50 parallel buyers for the last 5 units produce exactly 5 orders; a crash injected between reserving and saving leaks no stock once the sweeper runs.
 
 ## When a service should actually move out
 

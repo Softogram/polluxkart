@@ -152,6 +152,24 @@ Details: [../design/high-level/data-model.md](../design/high-level/data-model.md
 
 ---
 
+## Service dependencies point one way (2026-09-13)
+
+**Decision: a fixed table of which service may depend on which; notification and audit depend on nothing; order orchestrates; payment never calls order.**
+
+While drafting the backend skills, two loops appeared.
+The payment expiry job needed inventory to know order state while order already called inventory.
+And if notification listened to order's events while order called identity and identity called notification, the three modules would depend on each other in a circle, which Maven refuses to build and which would stop any of them moving to its own server.
+
+The fix keeps every service independent:
+- notification and audit are called by others from after-commit listeners, and never listen to other services.
+- order calls inventory, payment, cart, shipping and invoice, and listens to payment's events.
+- Browser endpoints for paying an order belong to order; Razorpay's webhook belongs to payment.
+- The payment expiry job runs in order; inventory keeps a sweeper for reservations that never got an order.
+
+The table lives in [../design/high-level/service-boundaries.md](../design/high-level/service-boundaries.md) as Rule 7.
+
+---
+
 ## Login: email and Google at launch, phone OTP later (2026-09-13)
 
 **Decision: email and password with email verification and secure reset, plus Sign in with Google; phone OTP after launch.**

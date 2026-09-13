@@ -28,7 +28,8 @@ Schema: `cart`.
 
 ## Events
 
-Consumes `UserRegistered` and sign-in to merge carts; consumes `OrderPlaced` to clear ordered lines.
+Listens to identity's sign-in event to merge carts.
+order calls cart to clear the ordered lines.
 
 ## Refuses
 

@@ -78,10 +78,10 @@ SKUs are always processed in sorted id order, so two orders can never lock each 
 
 | Event | `on_hand` | `reserved` | Reservation status |
 |---|---|---|---|
-| Online order placed | unchanged | `+ quantity` | `ACTIVE`, expires in 30 minutes |
-| Payment captured, or cash on delivery order placed | unchanged | unchanged | `COMMITTED` |
+| Any order placed | unchanged | `+ quantity` | `ACTIVE`, with a hold time (30 minutes for online payment) |
+| Cash on delivery order saved, or payment captured | unchanged | unchanged | `COMMITTED` |
 | Order shipped | `- quantity` | `- quantity` | `CONSUMED` |
-| Cancelled before shipping, or reservation expired | unchanged | `- quantity` | `RELEASED` |
+| Cancelled before shipping, expired by order's job, or orphaned and swept by inventory | unchanged | `- quantity` | `RELEASED` |
 | Returned or RTO, after quality check | `+ quantity` | unchanged | stays `CONSUMED`, movement recorded |
 | Admin receipt or adjustment | `+/- quantity` through a movement | unchanged | not applicable |
 

@@ -100,20 +100,21 @@ An **app** module wires every service into the single deployable and holds nothi
 3. order recomputes the quote. If the total changed, it refuses with `price_changed` and the new quote.
 4. order asks inventory to reserve stock. inventory does it with one conditional database update per SKU, in its own transaction, with an expiry time.
 5. order saves the order. If saving fails, order asks inventory to release the reservation; if that call is lost too, the reservation expires on its own.
-6. order publishes `OrderPlaced`; notification sends the email.
+6. The order and its `OrderPlaced` event are saved in one transaction; after commit, order's own listener asks notification to send the email.
 
 ### Paying with Razorpay
 
-1. payment creates a Razorpay order for exactly the order's total and returns its id to the browser.
+1. The browser asks order to pay for an order it owns; order checks the status and passes the exact total to payment, which creates a Razorpay order and returns its id.
 2. The shopper pays in Razorpay's checkout window.
-3. The browser sends Razorpay's signed result; payment checks the signature, then asks Razorpay directly for the payment and confirms amount, currency and capture.
-4. Separately, Razorpay's webhook arrives; payment checks its signature over the raw bytes and records the event id, so a repeat does nothing.
-5. Whichever arrives first, the order ends in the same state: `CONFIRMED`, with the reservation committed.
+3. The browser sends Razorpay's signed result to order, which hands it to payment; payment checks the signature, then asks Razorpay directly for the payment and confirms amount, currency and capture.
+4. Separately, Razorpay's webhook arrives at payment; payment checks its signature over the raw bytes and records the event id, so a repeat does nothing.
+5. Whichever arrives first, payment publishes one `PaymentCaptured`; order hears it, confirms the order and commits the reservation.
+6. payment never calls order; order calls payment and listens to its events. The one-way rules are in [../design/high-level/service-boundaries.md](../design/high-level/service-boundaries.md).
 
 ### Shipping and invoicing
 
 1. An admin marks the order packed, then shipped with courier and tracking number.
-2. order moves the state; shipping records the shipment; inventory turns the reservation into a sale; invoice issues the GST invoice with the next number for the financial year.
+2. order asks invoice for the GST invoice (safe to repeat: one invoice per order), asks shipping to record the shipment, asks inventory to turn the reservation into a sale, then saves the `SHIPPED` state.
 3. notification emails the shopper with the tracking link and the invoice.
 
 The full state machine is in [../design/high-level/order-lifecycle.md](../design/high-level/order-lifecycle.md).
@@ -131,7 +132,7 @@ The OpenAPI document (a machine-readable description of every endpoint) is gener
 | Delivery | `/api/v1/delivery-estimate` | Anyone |
 | Cart and wishlist | `/api/v1/cart`, `/api/v1/wishlist` | Guest cart by cookie; wishlist signed in |
 | Checkout and orders | `/api/v1/checkout/quote`, `/api/v1/orders` | Signed in, own orders only |
-| Payments | `/api/v1/payments/*` | Signed in, own orders only |
+| Paying for an order | `/api/v1/orders/{number}/payments`, `/api/v1/orders/{number}/payments/verify` | Signed in, own orders only |
 | Webhooks | `/api/v1/webhooks/razorpay`, `/api/v1/webhooks/ses` | The vendor, verified by signature |
 | Invoices | `/api/v1/orders/{number}/invoice` | Signed in, own orders only |
 | Reviews | `/api/v1/products/{slug}/reviews` | Anyone reads; verified buyers write |

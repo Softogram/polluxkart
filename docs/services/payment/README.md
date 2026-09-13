@@ -17,7 +17,7 @@ Schema: `payment`.
 - **Verification** checks the HMAC signature of the order and payment ids in constant time, then fetches the payment from Razorpay and confirms amount, currency (INR) and captured status before telling the order service.
 - **Webhooks** check the signature over the exact raw bytes received, store the event with its provider event id (unique), and do nothing on a repeat.
 - Whichever arrives first, the browser's verification or the webhook, the order ends in the same state.
-- A reconciliation job asks Razorpay about attempts stuck for more than 30 minutes.
+- A reconciliation job asks Razorpay about attempts stuck for more than 30 minutes and publishes what it finds.
 - A capture that arrives after the order was cancelled re-reserves stock if possible, otherwise refunds automatically.
 - Before creating a refund, existing refunds for the payment are checked, so a retried request never refunds twice.
 - Missing Razorpay configuration stops the application from starting; checks are never skipped.
@@ -25,11 +25,13 @@ Schema: `payment`.
 
 ## Interface (planned)
 
-`PaymentApi`: create a payment attempt for an order; refund a captured payment for an order with an idempotency key; get payment status for an order.
+`PaymentApi`, called only by order: create a payment attempt for an order and amount; verify a checkout result; fetch the latest status for an order (asking Razorpay when needed); refund with an idempotency key.
+payment never calls order; it publishes events that order listens to.
 
 ## Endpoints (planned)
 
-`POST /api/v1/payments/razorpay/orders` (for an order the caller owns), `POST /api/v1/payments/razorpay/verify`; `POST /api/v1/webhooks/razorpay` (signature-verified, CSRF-exempt).
+`POST /api/v1/webhooks/razorpay` (signature-verified, CSRF-exempt).
+The shopper-facing payment endpoints belong to order, which checks ownership and status before calling payment.
 Admin: payment and refund details under `/api/v1/admin/payments/**`.
 
 ## Events

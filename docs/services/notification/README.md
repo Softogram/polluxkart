@@ -11,7 +11,7 @@ Schema: `notification`.
 
 ## Promises
 
-- Other services never send email directly; they publish events, and notification writes an outbox row with a unique dedupe key, so an event delivered twice sends one email.
+- Other services never send email directly; they call `NotificationApi` after their own change commits, and notification writes an outbox row with a unique dedupe key, so a repeated call sends one email.
 - A scheduled job sends pending emails with retries and backoff, guarded by a lock so it never runs twice at once.
 - Bounces and complaints reported by SES (through a signature-verified notification) add the address to a suppression list, and suppressed addresses are never emailed again.
 - Templates escape every value, so a name or address cannot inject HTML.
@@ -20,7 +20,7 @@ Schema: `notification`.
 
 ## Interface (planned)
 
-`NotificationApi`: enqueue an email from a template with a dedupe key (for security emails that are not event-driven, such as password reset).
+`NotificationApi`: enqueue an email from a template, recipient and data, with a dedupe key.
 
 ## Endpoints (planned)
 
@@ -28,7 +28,8 @@ Schema: `notification`.
 
 ## Events
 
-Consumes `UserRegistered`, `EmailVerified`, `OrderPlaced`, `OrderConfirmed`, `OrderShipped`, `OrderDelivered`, `OrderCancelled`, `RefundProcessed`, `InvoiceIssued`, `ReviewPublished`.
+None consumed. notification depends on no other service, so it cannot listen to their events.
+identity, order, payment, invoice and review call `NotificationApi` from their own after-commit listeners, with a dedupe key.
 
 ## Refuses
 

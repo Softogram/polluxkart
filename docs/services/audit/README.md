@@ -18,7 +18,7 @@ Schema: `audit`.
 
 ## Interface (planned)
 
-`AuditApi`: record an entry (also fed by events).
+`AuditApi`: record an entry with an idempotency key.
 
 ## Endpoints (planned)
 
@@ -26,7 +26,7 @@ Admin: `GET /api/v1/admin/audit` with filters.
 
 ## Events
 
-Consumes the admin and security events published by other services.
+None consumed. audit depends on no other service; the others call `AuditApi` from their own after-commit listeners, so every audit record is as durable as the change it describes.
 
 ## Refuses
 
