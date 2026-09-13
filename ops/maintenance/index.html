@@ -16,7 +16,7 @@
     It is deliberately one static file with no JavaScript.
     Colours and fonts are copied unchanged from the store's existing theme
     (legacy/frontend/src/index.css), which the owner asked to keep as it is.
-    Before uploading, replace every placeholder in square brackets. See README.md in this folder.
+    A business contact card can be added once details are confirmed. See README.md in this folder.
   -->
   <style>
     :root {
@@ -69,6 +69,7 @@
       margin: 32px 0 8px;
     }
     p { margin: 0 0 16px; color: hsl(var(--muted-foreground)); }
+    /* Styles for the optional contact card described in README.md. */
     .card {
       margin-top: 32px;
       padding: 20px;
@@ -132,22 +133,6 @@
     <h1>We are rebuilding our store</h1>
     <p>PolluxKart is getting a faster, safer shopping experience for electronics.</p>
     <p>We are not taking orders right now. We will be back soon.</p>
-
-    <section class="card" aria-labelledby="contact-heading">
-      <h2 id="contact-heading">Need help with an earlier order?</h2>
-      <dl>
-        <dt>Business</dt>
-        <dd>[LEGAL BUSINESS NAME]</dd>
-        <dt>Address</dt>
-        <dd>[REGISTERED ADDRESS, CITY, STATE, PINCODE]</dd>
-        <dt>GSTIN</dt>
-        <dd>[GSTIN]</dd>
-        <dt>Email</dt>
-        <dd><a href="mailto:[SUPPORT EMAIL]">[SUPPORT EMAIL]</a></dd>
-        <dt>Phone</dt>
-        <dd><a href="tel:[SUPPORT PHONE, DIGITS ONLY WITH +91]">[SUPPORT PHONE]</a></dd>
-      </dl>
-    </section>
   </main>
 </body>
 </html>
