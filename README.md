@@ -31,16 +31,18 @@ The planned stack:
 
 | Folder | What it holds |
 |---|---|
+| `docs/` | All documentation, as a tree with one entry point. Start at [`docs/README.md`](docs/README.md). |
 | `legacy/` | The first version, kept only as reference. Not built or deployed. See [`legacy/README.md`](legacy/README.md). |
-| `docs/legacy/` | The audit of the first version and the feature checklist the rebuild must match. |
 | `ops/maintenance/` | The maintenance page shown at polluxkart.com during the rebuild. |
+| `tools/docslint/` | The checker that keeps the docs tree navigable, run on every pull request. |
 
 More folders (`api/`, `web/`, `infra/`, `e2e/`) arrive as the rebuild progresses.
 
 ## Read next
 
+- [`docs/README.md`](docs/README.md): the entry point to every document, with shortcuts to the most common questions.
+- [`docs/design/high-level/road-to-launch.md`](docs/design/high-level/road-to-launch.md): the phased plan and where it stands.
 - [`docs/legacy/audit-2026-09.md`](docs/legacy/audit-2026-09.md): what went wrong in the first version, and the rule we follow now for each problem.
-- [`docs/legacy/parity-checklist.md`](docs/legacy/parity-checklist.md): features the rebuild must cover before the old code is deleted.
 
 ## Reporting a security problem
 
