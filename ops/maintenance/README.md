@@ -35,23 +35,23 @@ The styles for it are already in the page.
 
 ## How it is hosted
 
-The site is served by AWS CloudFront (a content delivery network that caches files close to visitors) from the S3 bucket (AWS file storage) `polluxkart-frontend-ap-south-1`.
+The site is served by AWS CloudFront (a content delivery network that caches files close to visitors) from an S3 bucket (AWS file storage). The bucket and distribution names are in the private operations reference.
 CloudFront sends every missing path to `index.html`, so every old URL shows this page.
 
 ## How to upload
 
 1. Turn on bucket versioning once, so every replaced file stays recoverable:
    ```
-   aws s3api put-bucket-versioning --bucket polluxkart-frontend-ap-south-1 --versioning-configuration Status=Enabled
+   aws s3api put-bucket-versioning --bucket <website-bucket> --versioning-configuration Status=Enabled
    ```
 2. Remove the old app files and upload the page:
    ```
-   aws s3 rm s3://polluxkart-frontend-ap-south-1 --recursive
-   aws s3 cp ops/maintenance/index.html s3://polluxkart-frontend-ap-south-1/index.html --content-type "text/html; charset=utf-8" --cache-control "no-cache"
+   aws s3 rm s3://<website-bucket> --recursive
+   aws s3 cp ops/maintenance/index.html s3://<website-bucket>/index.html --content-type "text/html; charset=utf-8" --cache-control "no-cache"
    ```
 3. Make CloudFront serve the new file right away, instead of its cached copy:
    ```
-   aws cloudfront create-invalidation --distribution-id E236X7BM3NXSSQ --paths "/*"
+   aws cloudfront create-invalidation --distribution-id <distribution-id> --paths "/*"
    ```
 
 ## How to check it worked

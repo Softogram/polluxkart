@@ -103,7 +103,7 @@ Every token pair in the theme was measured on 2026-09-13, and these pairs, which
 For comparison, the theme's own dark text (`foreground`) on teal is about 6.9 to 1.
 
 Options that keep the palette unchanged, for the owner to choose per pair:
-1. **Swap the pairing within the existing palette**, for example dark `foreground` text on teal buttons, `primary-dark` for small teal text, `foreground` for secondary text on `muted` panels. No new colour is introduced.
+1. **Swap the pairing within the existing palette**, for example dark `foreground` text on teal buttons, `primary-dark` for large teal text only (about 3.5 to 1, below the 4.5 to 1 small text needs), `foreground` for secondary text on `muted` panels. No new colour is introduced.
 2. **Keep the pairing as it is today** and accept the accessibility failure for that element.
 
 **Buttons, links and badges are not built until the owner chooses.**
