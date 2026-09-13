@@ -18,7 +18,7 @@ The source of truth is the first version's theme, carried over value for value:
 - `legacy/frontend/tailwind.config.js` (fonts, radius, token names)
 - `legacy/frontend/src/components/brand/Logo.jsx` and `legacy/frontend/public/favicon.svg` (the logo)
 
-When `legacy/` is deleted at launch, these values will already live in `web/src/app/globals.css`, which becomes the source of truth.
+When `legacy/` is deleted at launch, these values will already live in `web/src/styles/globals.css`, which becomes the source of truth.
 
 ## Colour tokens (HSL values, unchanged)
 
