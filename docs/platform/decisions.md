@@ -207,6 +207,24 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 **Status: Owner decision, 2026-09-13:** the owner asked for `development` as the default branch; the owner's standing engineering rules require one worktree per task, explicit staging, and no history rewrites.
 `main` is the release branch and pull requests are squash-merged.
 
+**Revised 2026-09-14:** was "pull requests are squash-merged", now pull requests into `development` are squash-merged and release pull requests into `main` use a merge commit, because squashing releases makes `main` and `development` drift apart until old changes reappear and conflict. See "Branch rules for `development` and `main`".
+
+## Branch rules for `development` and `main` (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering nine questions while planning E00-06 (#36), including the open question of epic E00 (#10).**
+
+- **Who merges:** contributors may merge pull requests into `development` once the checks pass; only the owner may merge into `main`. Also offered: only the owner everywhere, or any contributor everywhere.
+- **Human review:** not required; the required checks must pass. Also offered: one approval from someone other than the author, or that plus code owner review. GitHub never lets an author approve their own pull request, and agents open pull requests under the owner's login.
+- **Bypass:** nobody may bypass the rules, the owner included. In an emergency the owner switches a ruleset off in GitHub settings and back on afterwards. Also offered: the owner through pull requests only, or the owner always.
+- **Merge methods:** squash into `development`, merge commit into `main`, rebase merging off. Also offered: squash everywhere, or all three methods left on.
+- **Up to date:** a pull request must be up to date with its target before merging, on both branches. Also offered: only on `main`, or never.
+- **Into `main`:** only from `development`; urgent fixes go through `development` too. Also offered: `development` and `hotfix/*` branches.
+- **Releases and the approval gate:** a pull request from this repository's `development` into `main` passes the gate without a ticket line. Also offered: a release ticket per release, or not requiring the gate on `main`.
+- **Rules as files:** the rulesets are saved in the repository, applied by a script, and checked for drift. Also offered: a file kept only as a record, or GitHub settings only.
+- **Agents and `main`:** agents may merge a release into `main` when the owner asks in the session. Also offered: blocking agents from merging into `main` with the agent guard hook.
+
+Design: [../design/low-level/issue-36-branch-rulesets.md](../design/low-level/issue-36-branch-rulesets.md).
+
 ## `make ci` and `make doctor` (2026-09-14)
 
 **Status: Owner decision, 2026-09-14, answering five questions while planning E00-04 (#34).**
