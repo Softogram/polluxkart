@@ -207,6 +207,24 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 **Status: Owner decision, 2026-09-13:** the owner asked for `development` as the default branch; the owner's standing engineering rules require one worktree per task, explicit staging, and no history rewrites.
 `main` is the release branch and pull requests are squash-merged.
 
+**Revised 2026-09-14:** was "pull requests are squash-merged", now pull requests into `development` are squash-merged and release pull requests into `main` use a merge commit, because squashing releases makes `main` and `development` drift apart until old changes reappear and conflict. See "Branch rules for `development` and `main`".
+
+## Branch rules for `development` and `main` (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering nine questions while planning E00-06 (#36), including the open question of epic E00 (#10).**
+
+- **Who merges:** contributors may merge pull requests into `development` once the checks pass; only the owner may merge into `main`. Also offered: only the owner everywhere, or any contributor everywhere.
+- **Human review:** not required; the required checks must pass. Also offered: one approval from someone other than the author, or that plus code owner review. GitHub never lets an author approve their own pull request, and agents open pull requests under the owner's login.
+- **Bypass:** nobody may bypass the rules, the owner included. In an emergency the owner switches a ruleset off in GitHub settings and back on afterwards. Also offered: the owner through pull requests only, or the owner always.
+- **Merge methods:** squash into `development`, merge commit into `main`, rebase merging off. Also offered: squash everywhere, or all three methods left on.
+- **Up to date:** a pull request must be up to date with its target before merging, on both branches. Also offered: only on `main`, or never.
+- **Into `main`:** only from `development`; urgent fixes go through `development` too. Also offered: `development` and `hotfix/*` branches.
+- **Releases and the approval gate:** a pull request from this repository's `development` into `main` passes the gate without a ticket line. Also offered: a release ticket per release, or not requiring the gate on `main`.
+- **Rules as files:** the rulesets are saved in the repository, applied by a script, and checked for drift. Also offered: a file kept only as a record, or GitHub settings only.
+- **Agents and `main`:** agents may merge a release into `main` when the owner asks in the session. Also offered: blocking agents from merging into `main` with the agent guard hook.
+
+Design: [../design/low-level/issue-36-branch-rulesets.md](../design/low-level/issue-36-branch-rulesets.md).
+
 ## `make ci` and `make doctor` (2026-09-14)
 
 **Status: Owner decision, 2026-09-14, answering five questions while planning E00-04 (#34).**
@@ -232,6 +250,25 @@ Design: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level
 - **Dependabot security updates are switched on.** Also offered: keep them off and rely on the weekly updates.
 
 Design: [../design/low-level/issue-38-dependabot-codeql.md](../design/low-level/issue-38-dependabot-codeql.md).
+
+## Secret scanning (2026-09-14)
+**Status: Owner decision, 2026-09-14, answering five questions while planning E00-07 (#37).**
+- **The CI secret scan checks every commit in a pull request**, not the whole history each run. GitHub's own secret scanning watches the whole history and alerts the owner privately, so nothing about earlier history is written into this public repository. Also offered: the whole history on every run.
+- **A false alarm is allowed by an entry in one allow-list file (`.gitleaks.toml`)**, added by anyone through a pull request, each entry carrying a dated reason that a check enforces; inline allow comments in code are refused. Also offered: only the owner adds entries, or inline comments allowed.
+- **The person pushing may bypass a GitHub push protection block by giving a reason**; GitHub records an alert and emails the owner. Also offered: only the owner approves bypass requests, which needs GitHub's paid Secret Protection add-on.
+- **Only the owner receives secret scanning alerts.** Also offered: the owner and future maintainers.
+- **When a secret must be rotated:** the same day, once it is in any commit (pushed or not), a pushed branch, a document, a chat, a ticket or a log. A key the pre-commit hook blocked before any commit existed is removed, not rotated. Also offered: rotate even when the hook blocked it.
+Design: [../design/low-level/issue-37-secret-scanning.md](../design/low-level/issue-37-secret-scanning.md).
+
+## Git hooks (2026-09-14)
+**Status: Owner decision, 2026-09-14, answering six questions while planning E00-05 (#35).**
+- **The pre-push hook runs `make ci` only when the branch has an open pull request**, so work-in-progress pushes stay fast. Also offered: on every push.
+- **If `gh` is missing or GitHub cannot be reached, the push goes ahead with a warning.** Also offered: refuse the push.
+- **`SKIP_LOCAL_CI=1 git push` skips `make ci`**, and the hook asks for that to be noted in the pull request. Also offered: the hatch without a reminder, or no hatch.
+- **`make doctor` fails on a laptop where the hooks are not enabled**, and shows it only as information on GitHub's machines. Also offered: remind only, or enable the hooks automatically.
+- **The pre-commit hook runs the docs checker** until the secret scan joins it in #37. Also offered: no pre-commit hook until #37, or all of `make ci` on every commit.
+- **A push that would run `make ci` is refused while the folder has uncommitted or untracked files**, so the checks test exactly what is pushed. Also offered: checking a clean temporary copy of the pushed commit, or checking the folder as it is.
+Design: [../design/low-level/issue-35-git-hooks.md](../design/low-level/issue-35-git-hooks.md).
 
 ---
 

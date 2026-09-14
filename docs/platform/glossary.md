@@ -170,8 +170,14 @@ JavaScript with types, so mistakes about the shape of data show up before runnin
 
 ## Security
 
+**Allow list (secret scanning)**
+The one file, `.gitleaks.toml`, listing text that looks like a secret but is not, each entry with a dated reason.
+
 **CSRF (cross-site request forgery)**
 An attack where another website tricks a signed-in browser into sending a request. Prevented with a CSRF token.
+
+**gitleaks**
+An open-source secret scanner that looks through files and git history for text shaped like passwords, keys and tokens.
 
 **HMAC signature**
 A code computed from a message and a shared secret, used to prove a message was not forged.
@@ -185,8 +191,14 @@ A bug where changing an id in a request shows someone else's data. Prevented by 
 **OAuth / OIDC**
 The standards behind "Sign in with Google".
 
+**Push protection**
+A GitHub feature that refuses a push containing a recognised secret before it reaches the repository.
+
 **Rate limiting**
 Refusing requests from one source above a set speed, to stop guessing attacks.
+
+**Rotate (a secret)**
+Replace a key with a new one and switch the old one off, so any leaked copy stops working.
 
 **TOTP (time-based one-time password)**
 The six-digit codes from an authenticator app, used as admins' second sign-in step.
@@ -231,6 +243,9 @@ A tool that creates cloud infrastructure from text files, so it can be reviewed 
 **actionlint**
 A linter for GitHub Actions workflow files. It uses ShellCheck to check the shell commands inside them.
 
+**Bypass (ruleset)**
+Permission for a named account to ignore the rules of one ruleset. PolluxKart gives one, narrowly: the owner may merge pull requests into `main`.
+
 **CI (continuous integration)**
 Automated checks that run on every pull request. PolluxKart runs them with GitHub Actions and, locally, with `make ci`.
 
@@ -240,8 +255,17 @@ GitHub's code scanner, which reads the code looking for security bugs such as in
 **Dependabot**
 GitHub's bot that opens pull requests to update the libraries the code depends on, and alerts when one has a known vulnerability.
 
+**Drift**
+Live settings that no longer match what the repository says they should be, such as a ruleset edited by hand in GitHub settings.
+
 **Exit code**
 The number a command hands back when it finishes. Zero means success; anything else means failure, and hooks and CI stop on it.
+
+**Force push**
+A push that replaces a branch's history instead of adding to it. It can erase other people's work, so it is blocked on `development` and `main`.
+
+**Git hook**
+A small script git runs automatically before a commit or a push. If it fails, git stops. PolluxKart's hooks live in `.githooks/` and are enabled once per clone with `git config core.hooksPath .githooks`.
 
 **GitHub Actions workflow**
 A YAML file in `.github/workflows/` telling GitHub what to run and when. Each job in it shows up as a named check on a pull request.
@@ -254,6 +278,18 @@ A release that receives security fixes for years rather than months.
 
 **Make / Makefile**
 A command-line program that runs named recipes, called targets, written in a file named `Makefile`. `make ci` runs the target `ci`.
+
+**Merge commit**
+Merging a pull request with its commits kept, joined by a commit that records both branches as parents. Used for releases into `main`.
+
+**Release pull request**
+A pull request from `development` into `main`. Merging it is a release.
+
+**Required check**
+A check that must pass before GitHub lets a pull request merge, matched by its exact name.
+
+**Ruleset**
+A named set of branch rules that GitHub itself enforces, such as "changes arrive only through pull requests".
 
 **ShellCheck**
 A linter for shell commands, used by actionlint.
