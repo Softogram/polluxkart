@@ -24,7 +24,7 @@ For each request flow the feature exposes:
 
 ## Read next
 
-No plans have been written yet (2026-09-13).
+- [issue-34-makefile-ci-doctor.md](issue-34-makefile-ci-doctor.md) - E00-04, `make ci` and `make doctor` (DRAFT, 2026-09-14)
 
 ## See also (do not follow recursively)
 

@@ -207,6 +207,18 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 **Status: Owner decision, 2026-09-13:** the owner asked for `development` as the default branch; the owner's standing engineering rules require one worktree per task, explicit staging, and no history rewrites.
 `main` is the release branch and pull requests are squash-merged.
 
+## `make ci` and `make doctor` (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering five questions while planning E00-04 (#34).**
+
+- **`make doctor` checks the full planned tool list, but only tools needed today can make it fail.** Tools for later work (Java, Node.js, pnpm, Docker) are shown as information. Also offered: check only today's tools, or check the full list and fail on all of it.
+- **When a tool is missing, `make doctor` checks every tool, prints what it found, then fails** if any needed tool is missing or too old. Also offered: stop at the first missing tool, or warn and never fail.
+- **`make ci` runs every check even after one fails**, lists all failures at the end, and fails if any failed. Also offered: stop at the first failure, or stop by default with a flag to run everything.
+- **GitHub Actions workflow files are linted with actionlint.** Also offered: actionlint plus zizmor, a security-focused workflow checker, or no workflow lint yet.
+- **GitHub keeps the separate `docs` and `tooling-tests` workflows**, each running its part of `make ci`, with an automated test proving the two together run everything. Also offered: one `ci` workflow running `make ci`.
+
+Design: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md).
+
 ---
 
 ## Documentation follows the ryup structure (2026-09-13)
