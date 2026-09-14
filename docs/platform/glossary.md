@@ -228,8 +228,29 @@ A tool that creates cloud infrastructure from text files, so it can be reviewed 
 
 ## Working practice
 
+**actionlint**
+A linter for GitHub Actions workflow files. It uses ShellCheck to check the shell commands inside them.
+
+**CI (continuous integration)**
+Automated checks that run on every pull request. PolluxKart runs them with GitHub Actions and, locally, with `make ci`.
+
+**Exit code**
+The number a command hands back when it finishes. Zero means success; anything else means failure, and hooks and CI stop on it.
+
+**GitHub Actions workflow**
+A YAML file in `.github/workflows/` telling GitHub what to run and when. Each job in it shows up as a named check on a pull request.
+
+**Lint (linter)**
+Checking files for mistakes without running them. The linter is the tool that does it.
+
 **LTS (long-term support)**
 A release that receives security fixes for years rather than months.
+
+**Make / Makefile**
+A command-line program that runs named recipes, called targets, written in a file named `Makefile`. `make ci` runs the target `ci`.
+
+**ShellCheck**
+A linter for shell commands, used by actionlint.
 
 **Squash merge**
 Merging a pull request as one commit on the target branch.

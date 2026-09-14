@@ -56,9 +56,12 @@ The bar a pull request has to clear, and the kinds of test that prove it.
 
 Docker must be running for integration and end-to-end tests.
 
-## Today (2026-09-13)
+## Today (2026-09-14)
 
-Only `tools/docslint` exists, with its own unit tests, run by `.github/workflows/docs.yml`.
+Two sets of checks exist, and there is no `make ci` yet.
+`tools/docslint` and its unit tests run in `.github/workflows/docs.yml`.
+The unit tests for the approval gate (`tools/approval_gate`) and for the agent label guard hook (`.claude/hooks`) run in `.github/workflows/tooling-tests.yml`.
+`make ci` and `make doctor` are planned in ticket E00-04 (#34).
 
 ## See also (do not follow recursively)
 

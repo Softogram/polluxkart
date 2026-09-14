@@ -27,8 +27,7 @@ Only a ticket labelled `stage: implementation-ready` by the owner may be impleme
 
 ## Read next
 
-No designs have been written yet (2026-09-13).
-The first ones will cover Phase 2: the backend foundation, the frontend foundation, and the local stack.
+- [issue-34-makefile-ci-doctor.md](issue-34-makefile-ci-doctor.md) - E00-04, `make ci` and `make doctor` (DRAFT, 2026-09-14)
 
 ## See also (do not follow recursively)
 
