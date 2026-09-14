@@ -207,6 +207,24 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 **Status: Owner decision, 2026-09-13:** the owner asked for `development` as the default branch; the owner's standing engineering rules require one worktree per task, explicit staging, and no history rewrites.
 `main` is the release branch and pull requests are squash-merged.
 
+**Revised 2026-09-14:** was "pull requests are squash-merged", now pull requests into `development` are squash-merged and release pull requests into `main` use a merge commit, because squashing releases makes `main` and `development` drift apart until old changes reappear and conflict. See "Branch rules for `development` and `main`".
+
+## Branch rules for `development` and `main` (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering nine questions while planning E00-06 (#36), including the open question of epic E00 (#10).**
+
+- **Who merges:** contributors may merge pull requests into `development` once the checks pass; only the owner may merge into `main`. Also offered: only the owner everywhere, or any contributor everywhere.
+- **Human review:** not required; the required checks must pass. Also offered: one approval from someone other than the author, or that plus code owner review. GitHub never lets an author approve their own pull request, and agents open pull requests under the owner's login.
+- **Bypass:** nobody may bypass the rules, the owner included. In an emergency the owner switches a ruleset off in GitHub settings and back on afterwards. Also offered: the owner through pull requests only, or the owner always.
+- **Merge methods:** squash into `development`, merge commit into `main`, rebase merging off. Also offered: squash everywhere, or all three methods left on.
+- **Up to date:** a pull request must be up to date with its target before merging, on both branches. Also offered: only on `main`, or never.
+- **Into `main`:** only from `development`; urgent fixes go through `development` too. Also offered: `development` and `hotfix/*` branches.
+- **Releases and the approval gate:** a pull request from this repository's `development` into `main` passes the gate without a ticket line. Also offered: a release ticket per release, or not requiring the gate on `main`.
+- **Rules as files:** the rulesets are saved in the repository, applied by a script, and checked for drift. Also offered: a file kept only as a record, or GitHub settings only.
+- **Agents and `main`:** agents may merge a release into `main` when the owner asks in the session. Also offered: blocking agents from merging into `main` with the agent guard hook.
+
+Design: [../design/low-level/issue-36-branch-rulesets.md](../design/low-level/issue-36-branch-rulesets.md).
+
 ## `make ci` and `make doctor` (2026-09-14)
 
 **Status: Owner decision, 2026-09-14, answering five questions while planning E00-04 (#34).**
@@ -227,6 +245,54 @@ Design: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level
 - **CLAUDE.md keeps only everyday commands, and `make help` is the full list**, generated from the Makefile so it cannot drift. Also offered: every command in CLAUDE.md, or the rest in a separate document.
 
 Design: [../design/low-level/issue-39-claude-md-commands.md](../design/low-level/issue-39-claude-md-commands.md).
+
+## Board sync (2026-09-14)
+**Status: Owner decision, 2026-09-14, answering four questions while planning E00-03 (#33).**
+- **The sync uses a GitHub App** installed on the organisation, not a personal access token. Also offered: a fine-grained personal token that expires and must be renewed.
+- **It works one way: stage labels move cards**, and a card moved by hand goes back at the next sync. Also offered: both ways, which would let a board drag try to set the approval label.
+- **A ticket closed as completed gets `stage: done` automatically**, and its card follows; closing as "not planned" changes nothing. Also offered: nothing automatic, the implementer sets it by hand.
+- **After the guard removes an approval label someone else applied, the ticket goes back to its last valid stage label.** Also offered: back to planning, or stay put and fail visibly.
+This changes one line of the proposed process: `stage: done` is no longer set by hand after merge.
+Design: [../design/low-level/issue-33-board-label-sync.md](../design/low-level/issue-33-board-label-sync.md).
+
+## Project board (2026-09-14)
+**Status: Owner decision, 2026-09-14, answering five questions while planning E00-02 (#32).**
+- **The PolluxKart project board is public**, like the repository and its tickets. Also offered: visible only to organisation members.
+- **It keeps the name "PolluxKart".** Also offered: "PolluxKart rebuild".
+- **Epics appear in a separate view with their progress**, not on the ticket board. Also offered: epic cards beside tickets, or epics not on the board.
+- **Ticket cards show the epic, assignees, linked pull requests and the `owner-action` label.**
+- **Only the owner edits the board**; cards move with the stage labels through the sync in #33. Also offered: the owner and contributors.
+Design: [../design/low-level/issue-32-project-board.md](../design/low-level/issue-32-project-board.md).
+
+## Dependabot and CodeQL (2026-09-14)
+**Status: Owner decision, 2026-09-14, answering seven questions while planning E00-08 (#38).**
+- **Only the owner merges Dependabot pull requests.** They still pass the approval gate without a ticket and must pass every required check. Also offered: any contributor once the checks pass.
+- **Updates are grouped:** one weekly pull request per ecosystem for minor and patch updates; security fixes arrive on their own. Also offered: one pull request per library.
+- **Major updates are skipped for Maven, pnpm and Docker** and left to planned tickets; GitHub Actions majors are still proposed. Also offered: skip majors everywhere, or allow all majors.
+- **CodeQL uses advanced setup**, a workflow file reviewed in pull requests, with languages listed explicitly and `legacy/` skipped. Also offered: keep GitHub's default setup.
+- **A new high or critical CodeQL security finding blocks merging**; lower findings are reported only. Also offered: block any security finding, or never block.
+- **Alerts from `legacy/` are dismissed with a dated reason** ("reference code, never deployed"), and future ones are auto-dismissed where GitHub allows. Also offered: remove the dependency files from `legacy/`, or leave the alerts open.
+- **Dependabot security updates are switched on.** Also offered: keep them off and rely on the weekly updates.
+Design: [../design/low-level/issue-38-dependabot-codeql.md](../design/low-level/issue-38-dependabot-codeql.md).
+
+## Secret scanning (2026-09-14)
+**Status: Owner decision, 2026-09-14, answering five questions while planning E00-07 (#37).**
+- **The CI secret scan checks every commit in a pull request**, not the whole history each run. GitHub's own secret scanning watches the whole history and alerts the owner privately, so nothing about earlier history is written into this public repository. Also offered: the whole history on every run.
+- **A false alarm is allowed by an entry in one allow-list file (`.gitleaks.toml`)**, added by anyone through a pull request, each entry carrying a dated reason that a check enforces; inline allow comments in code are refused. Also offered: only the owner adds entries, or inline comments allowed.
+- **The person pushing may bypass a GitHub push protection block by giving a reason**; GitHub records an alert and emails the owner. Also offered: only the owner approves bypass requests, which needs GitHub's paid Secret Protection add-on.
+- **Only the owner receives secret scanning alerts.** Also offered: the owner and future maintainers.
+- **When a secret must be rotated:** the same day, once it is in any commit (pushed or not), a pushed branch, a document, a chat, a ticket or a log. A key the pre-commit hook blocked before any commit existed is removed, not rotated. Also offered: rotate even when the hook blocked it.
+Design: [../design/low-level/issue-37-secret-scanning.md](../design/low-level/issue-37-secret-scanning.md).
+
+## Git hooks (2026-09-14)
+**Status: Owner decision, 2026-09-14, answering six questions while planning E00-05 (#35).**
+- **The pre-push hook runs `make ci` only when the branch has an open pull request**, so work-in-progress pushes stay fast. Also offered: on every push.
+- **If `gh` is missing or GitHub cannot be reached, the push goes ahead with a warning.** Also offered: refuse the push.
+- **`SKIP_LOCAL_CI=1 git push` skips `make ci`**, and the hook asks for that to be noted in the pull request. Also offered: the hatch without a reminder, or no hatch.
+- **`make doctor` fails on a laptop where the hooks are not enabled**, and shows it only as information on GitHub's machines. Also offered: remind only, or enable the hooks automatically.
+- **The pre-commit hook runs the docs checker** until the secret scan joins it in #37. Also offered: no pre-commit hook until #37, or all of `make ci` on every commit.
+- **A push that would run `make ci` is refused while the folder has uncommitted or untracked files**, so the checks test exactly what is pushed. Also offered: checking a clean temporary copy of the pushed commit, or checking the folder as it is.
+Design: [../design/low-level/issue-35-git-hooks.md](../design/low-level/issue-35-git-hooks.md).
 
 ---
 
