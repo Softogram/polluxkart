@@ -237,6 +237,9 @@ Automated checks that run on every pull request. PolluxKart runs them with GitHu
 **Exit code**
 The number a command hands back when it finishes. Zero means success; anything else means failure, and hooks and CI stop on it.
 
+**Git hook**
+A small script git runs automatically before a commit or a push. If it fails, git stops. PolluxKart's hooks live in `.githooks/` and are enabled once per clone with `git config core.hooksPath .githooks`.
+
 **GitHub Actions workflow**
 A YAML file in `.github/workflows/` telling GitHub what to run and when. Each job in it shows up as a named check on a pull request.
 

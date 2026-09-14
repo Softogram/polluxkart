@@ -219,6 +219,19 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 
 Design: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md).
 
+## Git hooks (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering six questions while planning E00-05 (#35).**
+
+- **The pre-push hook runs `make ci` only when the branch has an open pull request**, so work-in-progress pushes stay fast. Also offered: on every push.
+- **If `gh` is missing or GitHub cannot be reached, the push goes ahead with a warning.** Also offered: refuse the push.
+- **`SKIP_LOCAL_CI=1 git push` skips `make ci`**, and the hook asks for that to be noted in the pull request. Also offered: the hatch without a reminder, or no hatch.
+- **`make doctor` fails on a laptop where the hooks are not enabled**, and shows it only as information on GitHub's machines. Also offered: remind only, or enable the hooks automatically.
+- **The pre-commit hook runs the docs checker** until the secret scan joins it in #37. Also offered: no pre-commit hook until #37, or all of `make ci` on every commit.
+- **A push that would run `make ci` is refused while the folder has uncommitted or untracked files**, so the checks test exactly what is pushed. Also offered: checking a clean temporary copy of the pushed commit, or checking the folder as it is.
+
+Design: [../design/low-level/issue-35-git-hooks.md](../design/low-level/issue-35-git-hooks.md).
+
 ---
 
 ## Documentation follows the ryup structure (2026-09-13)
