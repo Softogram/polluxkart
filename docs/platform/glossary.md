@@ -246,6 +246,9 @@ The number a command hands back when it finishes. Zero means success; anything e
 **Force push**
 A push that replaces a branch's history instead of adding to it. It can erase other people's work, so it is blocked on `development` and `main`.
 
+**Git hook**
+A small script git runs automatically before a commit or a push. If it fails, git stops. PolluxKart's hooks live in `.githooks/` and are enabled once per clone with `git config core.hooksPath .githooks`.
+
 **GitHub Actions workflow**
 A YAML file in `.github/workflows/` telling GitHub what to run and when. Each job in it shows up as a named check on a pull request.
 
