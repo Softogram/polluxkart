@@ -28,7 +28,14 @@ Only a ticket labelled `stage: implementation-ready` by the owner may be impleme
 ## Read next
 
 - [issue-33-board-label-sync.md](issue-33-board-label-sync.md) - E00-03, keeping the board in sync with stage labels (DRAFT, 2026-09-14)
+
+- [issue-32-project-board.md](issue-32-project-board.md) - E00-02, the project board with a column per stage (DRAFT, 2026-09-14)
 - [issue-34-makefile-ci-doctor.md](issue-34-makefile-ci-doctor.md) - E00-04, `make ci` and `make doctor` (DRAFT, 2026-09-14)
+- [issue-38-dependabot-codeql.md](issue-38-dependabot-codeql.md) - E00-08, Dependabot updates and CodeQL code scanning (DRAFT, 2026-09-14)
+
+- [issue-35-git-hooks.md](issue-35-git-hooks.md) - E00-05, git hooks that block direct pushes and run `make ci` (DRAFT, 2026-09-14)
+- [issue-36-branch-rulesets.md](issue-36-branch-rulesets.md) - E00-06, branch rulesets on `development` and `main` (DRAFT, 2026-09-14)
+- [issue-37-secret-scanning.md](issue-37-secret-scanning.md) - E00-07, secret scanning in pre-commit, CI and GitHub push protection (DRAFT, 2026-09-14)
 
 ## See also (do not follow recursively)
 
