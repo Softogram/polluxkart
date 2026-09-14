@@ -234,6 +234,12 @@ A linter for GitHub Actions workflow files. It uses ShellCheck to check the shel
 **CI (continuous integration)**
 Automated checks that run on every pull request. PolluxKart runs them with GitHub Actions and, locally, with `make ci`.
 
+**CodeQL**
+GitHub's code scanner, which reads the code looking for security bugs such as injection or unsafe input handling.
+
+**Dependabot**
+GitHub's bot that opens pull requests to update the libraries the code depends on, and alerts when one has a known vulnerability.
+
 **Exit code**
 The number a command hands back when it finishes. Zero means success; anything else means failure, and hooks and CI stop on it.
 

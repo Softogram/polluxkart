@@ -219,6 +219,20 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 
 Design: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md).
 
+## Dependabot and CodeQL (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering seven questions while planning E00-08 (#38).**
+
+- **Only the owner merges Dependabot pull requests.** They still pass the approval gate without a ticket and must pass every required check. Also offered: any contributor once the checks pass.
+- **Updates are grouped:** one weekly pull request per ecosystem for minor and patch updates; security fixes arrive on their own. Also offered: one pull request per library.
+- **Major updates are skipped for Maven, pnpm and Docker** and left to planned tickets; GitHub Actions majors are still proposed. Also offered: skip majors everywhere, or allow all majors.
+- **CodeQL uses advanced setup**, a workflow file reviewed in pull requests, with languages listed explicitly and `legacy/` skipped. Also offered: keep GitHub's default setup.
+- **A new high or critical CodeQL security finding blocks merging**; lower findings are reported only. Also offered: block any security finding, or never block.
+- **Alerts from `legacy/` are dismissed with a dated reason** ("reference code, never deployed"), and future ones are auto-dismissed where GitHub allows. Also offered: remove the dependency files from `legacy/`, or leave the alerts open.
+- **Dependabot security updates are switched on.** Also offered: keep them off and rely on the weekly updates.
+
+Design: [../design/low-level/issue-38-dependabot-codeql.md](../design/low-level/issue-38-dependabot-codeql.md).
+
 ---
 
 ## Documentation follows the ryup structure (2026-09-13)

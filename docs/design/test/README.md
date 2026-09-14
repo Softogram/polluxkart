@@ -25,6 +25,7 @@ For each request flow the feature exposes:
 ## Read next
 
 - [issue-34-makefile-ci-doctor.md](issue-34-makefile-ci-doctor.md) - E00-04, `make ci` and `make doctor` (DRAFT, 2026-09-14)
+- [issue-38-dependabot-codeql.md](issue-38-dependabot-codeql.md) - E00-08, Dependabot updates and CodeQL code scanning (DRAFT, 2026-09-14)
 
 ## See also (do not follow recursively)
 
