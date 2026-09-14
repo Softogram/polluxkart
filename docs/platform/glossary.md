@@ -243,11 +243,23 @@ A tool that creates cloud infrastructure from text files, so it can be reviewed 
 **actionlint**
 A linter for GitHub Actions workflow files. It uses ShellCheck to check the shell commands inside them.
 
+**Bypass (ruleset)**
+Permission for a named account to ignore the rules of one ruleset. PolluxKart gives one, narrowly: the owner may merge pull requests into `main`.
+
 **CI (continuous integration)**
 Automated checks that run on every pull request. PolluxKart runs them with GitHub Actions and, locally, with `make ci`.
 
+**Drift**
+Live settings that no longer match what the repository says they should be, such as a ruleset edited by hand in GitHub settings.
+
 **Exit code**
 The number a command hands back when it finishes. Zero means success; anything else means failure, and hooks and CI stop on it.
+
+**Force push**
+A push that replaces a branch's history instead of adding to it. It can erase other people's work, so it is blocked on `development` and `main`.
+
+**Git hook**
+A small script git runs automatically before a commit or a push. If it fails, git stops. PolluxKart's hooks live in `.githooks/` and are enabled once per clone with `git config core.hooksPath .githooks`.
 
 **GitHub Actions workflow**
 A YAML file in `.github/workflows/` telling GitHub what to run and when. Each job in it shows up as a named check on a pull request.
@@ -260,6 +272,18 @@ A release that receives security fixes for years rather than months.
 
 **Make / Makefile**
 A command-line program that runs named recipes, called targets, written in a file named `Makefile`. `make ci` runs the target `ci`.
+
+**Merge commit**
+Merging a pull request with its commits kept, joined by a commit that records both branches as parents. Used for releases into `main`.
+
+**Release pull request**
+A pull request from `development` into `main`. Merging it is a release.
+
+**Required check**
+A check that must pass before GitHub lets a pull request merge, matched by its exact name.
+
+**Ruleset**
+A named set of branch rules that GitHub itself enforces, such as "changes arrive only through pull requests".
 
 **ShellCheck**
 A linter for shell commands, used by actionlint.
