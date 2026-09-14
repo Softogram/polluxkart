@@ -170,8 +170,14 @@ JavaScript with types, so mistakes about the shape of data show up before runnin
 
 ## Security
 
+**Allow list (secret scanning)**
+The one file, `.gitleaks.toml`, listing text that looks like a secret but is not, each entry with a dated reason.
+
 **CSRF (cross-site request forgery)**
 An attack where another website tricks a signed-in browser into sending a request. Prevented with a CSRF token.
+
+**gitleaks**
+An open-source secret scanner that looks through files and git history for text shaped like passwords, keys and tokens.
 
 **HMAC signature**
 A code computed from a message and a shared secret, used to prove a message was not forged.
@@ -185,8 +191,14 @@ A bug where changing an id in a request shows someone else's data. Prevented by 
 **OAuth / OIDC**
 The standards behind "Sign in with Google".
 
+**Push protection**
+A GitHub feature that refuses a push containing a recognised secret before it reaches the repository.
+
 **Rate limiting**
 Refusing requests from one source above a set speed, to stop guessing attacks.
+
+**Rotate (a secret)**
+Replace a key with a new one and switch the old one off, so any leaked copy stops working.
 
 **TOTP (time-based one-time password)**
 The six-digit codes from an authenticator app, used as admins' second sign-in step.

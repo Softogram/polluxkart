@@ -30,6 +30,7 @@ Only a ticket labelled `stage: implementation-ready` by the owner may be impleme
 - [issue-34-makefile-ci-doctor.md](issue-34-makefile-ci-doctor.md) - E00-04, `make ci` and `make doctor` (DRAFT, 2026-09-14)
 - [issue-35-git-hooks.md](issue-35-git-hooks.md) - E00-05, git hooks that block direct pushes and run `make ci` (DRAFT, 2026-09-14)
 - [issue-36-branch-rulesets.md](issue-36-branch-rulesets.md) - E00-06, branch rulesets on `development` and `main` (DRAFT, 2026-09-14)
+- [issue-37-secret-scanning.md](issue-37-secret-scanning.md) - E00-07, secret scanning in pre-commit, CI and GitHub push protection (DRAFT, 2026-09-14)
 
 ## See also (do not follow recursively)
 

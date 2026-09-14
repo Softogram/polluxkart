@@ -237,17 +237,25 @@ Design: [../design/low-level/issue-36-branch-rulesets.md](../design/low-level/is
 
 Design: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md).
 
+## Secret scanning (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering five questions while planning E00-07 (#37).**
+
+- **The CI secret scan checks every commit in a pull request**, not the whole history each run. GitHub's own secret scanning watches the whole history and alerts the owner privately, so nothing about earlier history is written into this public repository. Also offered: the whole history on every run.
+- **A false alarm is allowed by an entry in one allow-list file (`.gitleaks.toml`)**, added by anyone through a pull request, each entry carrying a dated reason that a check enforces; inline allow comments in code are refused. Also offered: only the owner adds entries, or inline comments allowed.
+- **The person pushing may bypass a GitHub push protection block by giving a reason**; GitHub records an alert and emails the owner. Also offered: only the owner approves bypass requests, which needs GitHub's paid Secret Protection add-on.
+- **Only the owner receives secret scanning alerts.** Also offered: the owner and future maintainers.
+- **When a secret must be rotated:** the same day, once it is in any commit (pushed or not), a pushed branch, a document, a chat, a ticket or a log. A key the pre-commit hook blocked before any commit existed is removed, not rotated. Also offered: rotate even when the hook blocked it.
+
+Design: [../design/low-level/issue-37-secret-scanning.md](../design/low-level/issue-37-secret-scanning.md).
 ## Git hooks (2026-09-14)
-
 **Status: Owner decision, 2026-09-14, answering six questions while planning E00-05 (#35).**
-
 - **The pre-push hook runs `make ci` only when the branch has an open pull request**, so work-in-progress pushes stay fast. Also offered: on every push.
 - **If `gh` is missing or GitHub cannot be reached, the push goes ahead with a warning.** Also offered: refuse the push.
 - **`SKIP_LOCAL_CI=1 git push` skips `make ci`**, and the hook asks for that to be noted in the pull request. Also offered: the hatch without a reminder, or no hatch.
 - **`make doctor` fails on a laptop where the hooks are not enabled**, and shows it only as information on GitHub's machines. Also offered: remind only, or enable the hooks automatically.
 - **The pre-commit hook runs the docs checker** until the secret scan joins it in #37. Also offered: no pre-commit hook until #37, or all of `make ci` on every commit.
 - **A push that would run `make ci` is refused while the folder has uncommitted or untracked files**, so the checks test exactly what is pushed. Also offered: checking a clean temporary copy of the pushed commit, or checking the folder as it is.
-
 Design: [../design/low-level/issue-35-git-hooks.md](../design/low-level/issue-35-git-hooks.md).
 
 ---
