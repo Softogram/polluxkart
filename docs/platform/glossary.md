@@ -270,6 +270,9 @@ A small script git runs automatically before a commit or a push. If it fails, gi
 **GitHub Actions workflow**
 A YAML file in `.github/workflows/` telling GitHub what to run and when. Each job in it shows up as a named check on a pull request.
 
+**GitHub App**
+A bot identity registered to an organisation, with only the permissions it is given and short-lived tokens. The board sync runs as one.
+
 **Lint (linter)**
 Checking files for mistakes without running them. The linter is the tool that does it.
 
