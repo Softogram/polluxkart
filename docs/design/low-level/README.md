@@ -27,6 +27,7 @@ Only a ticket labelled `stage: implementation-ready` by the owner may be impleme
 
 ## Read next
 
+- [issue-32-project-board.md](issue-32-project-board.md) - E00-02, the project board with a column per stage (DRAFT, 2026-09-14)
 - [issue-34-makefile-ci-doctor.md](issue-34-makefile-ci-doctor.md) - E00-04, `make ci` and `make doctor` (DRAFT, 2026-09-14)
 
 ## See also (do not follow recursively)

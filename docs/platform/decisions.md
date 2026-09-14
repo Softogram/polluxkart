@@ -219,6 +219,18 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 
 Design: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md).
 
+## Project board (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering five questions while planning E00-02 (#32).**
+
+- **The PolluxKart project board is public**, like the repository and its tickets. Also offered: visible only to organisation members.
+- **It keeps the name "PolluxKart".** Also offered: "PolluxKart rebuild".
+- **Epics appear in a separate view with their progress**, not on the ticket board. Also offered: epic cards beside tickets, or epics not on the board.
+- **Ticket cards show the epic, assignees, linked pull requests and the `owner-action` label.**
+- **Only the owner edits the board**; cards move with the stage labels through the sync in #33. Also offered: the owner and contributors.
+
+Design: [../design/low-level/issue-32-project-board.md](../design/low-level/issue-32-project-board.md).
+
 ---
 
 ## Documentation follows the ryup structure (2026-09-13)
