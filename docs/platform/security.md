@@ -2,7 +2,7 @@
 
 Parent: [platform/](README.md) | Index: [docs/](../README.md)
 
-**Status: APPROVED design, 2026-09-13. No code exists yet.**
+**Status: PROPOSED (2026-09-13).** Written from the plan the owner approved on 2026-09-13. Owner decisions are marked in [decisions.md](decisions.md); everything else here is confirmed or changed in its GitHub ticket before anything is built on it. No code exists yet.
 Every rule here answers a real failure found in the first version, listed in [../legacy/audit-2026-09.md](../legacy/audit-2026-09.md).
 
 ## The rules, in one table

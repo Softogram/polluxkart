@@ -5,7 +5,7 @@ One folder per backend service, each holding what that service owns, promises an
 
 Parent: [docs/](../README.md)
 
-**Status: PLANNED, approved 2026-09-13. No service code exists yet.**
+**Status: PROPOSED (2026-09-13). No service code exists yet. Each service's details are confirmed in its tickets.**
 Every service follows [../design/high-level/service-boundaries.md](../design/high-level/service-boundaries.md): its own Maven module, its own interface, its own database schema, no access to any other service's internals.
 
 ## Read next

@@ -1,0 +1,84 @@
+name: Ticket
+description: One feature or piece of work, from planning through a verified test run.
+title: "EXX-NN "
+labels: ["stage: planning"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every ticket starts in `stage: planning`. **Nothing is implemented until the owner applies `stage: implementation-ready`.**
+        Do not assume any product or design decision: list it as an open question instead.
+        Rules: [development process](https://github.com/Softogram/polluxkart/blob/development/docs/platform/development-process.md).
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: In plain words, what this delivers and why. Explain any technical term.
+    validations:
+      required: true
+  - type: input
+    id: epic
+    attributes:
+      label: Part of epic
+      description: The epic issue number, for example "#10". Also attach this ticket to the epic as a sub-issue.
+    validations:
+      required: true
+  - type: textarea
+    id: design_docs
+    attributes:
+      label: Design documents
+      description: Links to the documents this ticket depends on, and the design and test plan files it will add.
+      value: |
+        - Read first:
+        - Written in this ticket's planning pull request: `docs/design/low-level/issue-<N>-<slug>.md` and `docs/design/test/issue-<N>-<slug>.md`
+    validations:
+      required: true
+  - type: textarea
+    id: owner_decisions
+    attributes:
+      label: Decided by the owner
+      description: Only decisions recorded as "Owner decision" in docs/platform/decisions.md, each with its date and a link.
+      value: "- Nothing specific to this ticket yet."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed in the docs, not yet confirmed by the owner
+      description: Anything the docs propose that the owner has not explicitly chosen.
+  - type: textarea
+    id: questions
+    attributes:
+      label: Open questions for the owner
+      description: One checkbox per question, with every technical term explained.
+      value: "- [ ] "
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope (proposed)
+      value: |
+        **In:**
+        **Out:**
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria (proposed, confirmed at approval)
+      value: "- [ ] "
+  - type: textarea
+    id: depends
+    attributes:
+      label: Depends on
+      value: "- None"
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Ticket checklist
+      value: |
+        - [ ] Feature planning: design document merged with the owner's approval (planning pull request: )
+        - [ ] Test planning: test plan merged (planning pull request: )
+        - [ ] Every product and design decision answered by the owner and recorded with its date in docs/platform/decisions.md
+        - [ ] Owner approval: `stage: implementation-ready` applied by the owner
+        - [ ] Feature implementation and test implementation in one pull request (`Implements #N`)
+        - [ ] Verified test run: `make ci` output and the CI run linked in that pull request
+    validations:
+      required: true

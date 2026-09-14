@@ -2,9 +2,8 @@
 
 Parent: [product/](README.md) | Index: [docs/](../README.md)
 
-**Status: APPROVED 2026-09-13.**
-This is the scope contract for the first release.
-A feature not listed under "In scope" is not part of launch, even if it seems small.
+**Status: PROPOSED (2026-09-13).** Written from the plan the owner approved on 2026-09-13. Owner decisions are marked in [decisions.md](../platform/decisions.md); everything else here is confirmed or changed in its GitHub ticket before anything is built on it.
+The table below lists the owner's decisions; the in-scope and cut lists are proposals confirmed ticket by ticket.
 
 ## Decisions this scope rests on (all 2026-09-13)
 
@@ -13,10 +12,12 @@ A feature not listed under "In scope" is not part of launch, even if it seems sm
 | Existing data | Nothing is carried over from the first version. Clean database, fresh catalog entered through admin. |
 | Catalog | Mainly electronics: specifications, brands, compare, light variants such as storage and colour. |
 | Login | Email and password, and Sign in with Google. Phone OTP (a one-time code by SMS) comes after launch. |
-| Payments | Razorpay (an Indian payment gateway) and cash on delivery. |
+| Payments | Razorpay (an Indian payment gateway). Cash on delivery is proposed, not yet confirmed by the owner. |
 | Shipping | Manual at launch: the shop books the courier and enters the tracking number. |
 | GST | The shop has a GSTIN (GST registration number), so every order gets a GST tax invoice. |
 | Brand | Colours, fonts, logo and theme stay exactly as they are. |
+| Hosting | AWS, Mumbai region. |
+| Backend and frontend | Java with Spring Boot; Next.js with TypeScript; independent services in one codebase. |
 
 ## In scope
 

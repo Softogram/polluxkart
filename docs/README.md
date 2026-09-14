@@ -47,8 +47,9 @@ Each is one hop.
 
 | Question | Answer lives in |
 |---|---|
+| Can I start working on this ticket? | [platform/development-process.md](platform/development-process.md) - only if the owner labelled it `stage: implementation-ready` |
 | What are we building, and in what order? | [design/high-level/road-to-launch.md](design/high-level/road-to-launch.md) |
-| Why was this decided this way? | [platform/decisions.md](platform/decisions.md) |
+| Why was this decided this way, and did the owner decide it? | [platform/decisions.md](platform/decisions.md) - each entry is marked owner decision or proposed |
 | How do the services talk to each other, and how can one move to its own server later? | [design/high-level/service-boundaries.md](design/high-level/service-boundaries.md) |
 | What tables exist, and what rules does the database enforce? | [design/high-level/data-model.md](design/high-level/data-model.md) |
 | What states can an order be in? | [design/high-level/order-lifecycle.md](design/high-level/order-lifecycle.md) |
@@ -58,7 +59,11 @@ Each is one hop.
 | Which legal pages and rules does an Indian store need? | [product/compliance.md](product/compliance.md) |
 | What went wrong in the first version? | [legacy/audit-2026-09.md](legacy/audit-2026-09.md) |
 
-## Three things to know before you rely on any of this
+## Four things to know before you rely on any of this
+
+**Nothing is implemented without the owner's approval (owner rule, 2026-09-13).**
+Every piece of work is a GitHub ticket, and only tickets the owner labelled `stage: implementation-ready` may be built.
+Read [platform/development-process.md](platform/development-process.md) before starting any work.
 
 **No application code exists yet (as of 2026-09-13).**
 The first version lives in `legacy/` as reference only.

@@ -2,9 +2,9 @@
 
 Parent: [platform/](README.md) | Index: [docs/](../README.md)
 
-**Status: APPROVED 2026-09-13.**
+**Status: PROPOSED (2026-09-13).** Written from the plan the owner approved on 2026-09-13. Owner decisions are marked in [decisions.md](decisions.md); everything else here is confirmed or changed in its GitHub ticket before anything is built on it.
 Versions were checked against official release information on 2026-09-13.
-The owner asked for the latest versions; where "latest" and "long-term supported" differ, this page says which was picked and why.
+The owner decided on Spring Boot, Next.js with TypeScript, AWS Mumbai and the latest versions; the database and the exact versions below are proposals.
 
 ## Backend
 

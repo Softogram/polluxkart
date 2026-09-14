@@ -2,7 +2,7 @@
 
 Parent: [high-level/](README.md) | Index: [docs/](../../README.md)
 
-**Status: APPROVED 2026-09-13.**
+**Status: the plan's direction was approved by the owner on 2026-09-13.** Its phases are now GitHub epics and tickets; every ticket's details are confirmed by the owner before implementation ([development-process.md](../../platform/development-process.md)).
 Progress is recorded in the "Status" column of each phase, dated.
 
 ## Where things stand (2026-09-13)

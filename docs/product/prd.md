@@ -2,8 +2,7 @@
 
 Parent: [product/](README.md) | Index: [docs/](../README.md)
 
-**Status: APPROVED 2026-09-13.**
-Written from the owner's decisions of that day.
+**Status: PROPOSED (2026-09-13).** Written from the plan the owner approved on 2026-09-13. Owner decisions are marked in [decisions.md](../platform/decisions.md); everything else here is confirmed or changed in its GitHub ticket before anything is built on it.
 Supersedes the Emergent-era PRD kept at [../legacy/emergent-prd.md](../legacy/emergent-prd.md) for the record.
 
 ## The store

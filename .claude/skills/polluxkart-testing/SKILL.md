@@ -26,6 +26,12 @@ Money, tax and order rules the tests check: the `polluxkart-commerce` skill.
 - **Idempotent:** safe to repeat; doing it twice has the same effect as doing it once.
 - **Paise:** one hundredth of a rupee; all money is a whole number of paise.
 
+## Tests belong to the ticket (owner rule, 2026-09-13)
+
+A ticket owns its test plan, its test implementation and a verified test run (`polluxkart-workflow`).
+The test plan is approved by the owner with the design; the tests ship in the same implementation pull request as the feature, and the approval gate fails a pull request that changes backend or frontend code without tests.
+The verified test run is `make ci` passing locally plus a green CI run, pasted and linked in that pull request.
+
 ## The six rules
 
 1. **A test must prove the expected thing happens**, not that code ran without crashing.

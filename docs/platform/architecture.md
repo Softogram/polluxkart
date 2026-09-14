@@ -2,9 +2,8 @@
 
 Parent: [platform/](README.md) | Index: [docs/](../README.md)
 
-**Status: PLANNED, approved 2026-09-13. No code exists yet.**
-This document describes the approved design.
-When code lands and differs, the code wins and this document is fixed the same day.
+**Status: PROPOSED (2026-09-13).** Written from the plan the owner approved on 2026-09-13. Owner decisions are marked in [decisions.md](decisions.md); everything else here is confirmed or changed in its GitHub ticket before anything is built on it.
+No code exists yet. When code lands and differs, the code wins and this document is fixed the same day.
 
 ## Glossary for this page
 

@@ -2,7 +2,7 @@
 
 Parent: [services/](../README.md) | Index: [docs/](../../README.md)
 
-**Status: PLANNED, approved 2026-09-13. Built in slices S3 and S5.**
+**Status: PROPOSED (2026-09-13), confirmed ticket by ticket. Built in slices S3 and S5.**
 
 ## Owns
 

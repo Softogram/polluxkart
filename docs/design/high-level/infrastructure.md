@@ -2,7 +2,7 @@
 
 Parent: [high-level/](README.md) | Index: [docs/](../../README.md)
 
-**Status: APPROVED design, 2026-09-13. Built in Phase 3 (staging) and Phase 6 (production).**
+**Status: PROPOSED (2026-09-13).** Written from the plan the owner approved on 2026-09-13. Owner decisions are marked in [decisions.md](../../platform/decisions.md); everything else here is confirmed or changed in its GitHub ticket before anything is built on it. AWS Mumbai is an owner decision; the components below are proposals.
 Account ids, resource ids and live DNS records are deliberately absent; they belong in the private operations reference described in [../../platform/runbook.md](../../platform/runbook.md).
 
 ## Environments
