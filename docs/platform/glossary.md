@@ -249,6 +249,12 @@ Permission for a named account to ignore the rules of one ruleset. PolluxKart gi
 **CI (continuous integration)**
 Automated checks that run on every pull request. PolluxKart runs them with GitHub Actions and, locally, with `make ci`.
 
+**CodeQL**
+GitHub's code scanner, which reads the code looking for security bugs such as injection or unsafe input handling.
+
+**Dependabot**
+GitHub's bot that opens pull requests to update the libraries the code depends on, and alerts when one has a known vulnerability.
+
 **Drift**
 Live settings that no longer match what the repository says they should be, such as a ruleset edited by hand in GitHub settings.
 

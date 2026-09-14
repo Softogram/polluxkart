@@ -237,17 +237,29 @@ Design: [../design/low-level/issue-36-branch-rulesets.md](../design/low-level/is
 
 Design: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md).
 
+## Dependabot and CodeQL (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering seven questions while planning E00-08 (#38).**
+
+- **Only the owner merges Dependabot pull requests.** They still pass the approval gate without a ticket and must pass every required check. Also offered: any contributor once the checks pass.
+- **Updates are grouped:** one weekly pull request per ecosystem for minor and patch updates; security fixes arrive on their own. Also offered: one pull request per library.
+- **Major updates are skipped for Maven, pnpm and Docker** and left to planned tickets; GitHub Actions majors are still proposed. Also offered: skip majors everywhere, or allow all majors.
+- **CodeQL uses advanced setup**, a workflow file reviewed in pull requests, with languages listed explicitly and `legacy/` skipped. Also offered: keep GitHub's default setup.
+- **A new high or critical CodeQL security finding blocks merging**; lower findings are reported only. Also offered: block any security finding, or never block.
+- **Alerts from `legacy/` are dismissed with a dated reason** ("reference code, never deployed"), and future ones are auto-dismissed where GitHub allows. Also offered: remove the dependency files from `legacy/`, or leave the alerts open.
+- **Dependabot security updates are switched on.** Also offered: keep them off and rely on the weekly updates.
+
+Design: [../design/low-level/issue-38-dependabot-codeql.md](../design/low-level/issue-38-dependabot-codeql.md).
+
 ## Secret scanning (2026-09-14)
-
 **Status: Owner decision, 2026-09-14, answering five questions while planning E00-07 (#37).**
-
 - **The CI secret scan checks every commit in a pull request**, not the whole history each run. GitHub's own secret scanning watches the whole history and alerts the owner privately, so nothing about earlier history is written into this public repository. Also offered: the whole history on every run.
 - **A false alarm is allowed by an entry in one allow-list file (`.gitleaks.toml`)**, added by anyone through a pull request, each entry carrying a dated reason that a check enforces; inline allow comments in code are refused. Also offered: only the owner adds entries, or inline comments allowed.
 - **The person pushing may bypass a GitHub push protection block by giving a reason**; GitHub records an alert and emails the owner. Also offered: only the owner approves bypass requests, which needs GitHub's paid Secret Protection add-on.
 - **Only the owner receives secret scanning alerts.** Also offered: the owner and future maintainers.
 - **When a secret must be rotated:** the same day, once it is in any commit (pushed or not), a pushed branch, a document, a chat, a ticket or a log. A key the pre-commit hook blocked before any commit existed is removed, not rotated. Also offered: rotate even when the hook blocked it.
-
 Design: [../design/low-level/issue-37-secret-scanning.md](../design/low-level/issue-37-secret-scanning.md).
+
 ## Git hooks (2026-09-14)
 **Status: Owner decision, 2026-09-14, answering six questions while planning E00-05 (#35).**
 - **The pre-push hook runs `make ci` only when the branch has an open pull request**, so work-in-progress pushes stay fast. Also offered: on every push.
