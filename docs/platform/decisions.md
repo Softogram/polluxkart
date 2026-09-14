@@ -219,6 +219,19 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 
 Design: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md).
 
+## Board sync (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering four questions while planning E00-03 (#33).**
+
+- **The sync uses a GitHub App** installed on the organisation, not a personal access token. Also offered: a fine-grained personal token that expires and must be renewed.
+- **It works one way: stage labels move cards**, and a card moved by hand goes back at the next sync. Also offered: both ways, which would let a board drag try to set the approval label.
+- **A ticket closed as completed gets `stage: done` automatically**, and its card follows; closing as "not planned" changes nothing. Also offered: nothing automatic, the implementer sets it by hand.
+- **After the guard removes an approval label someone else applied, the ticket goes back to its last valid stage label.** Also offered: back to planning, or stay put and fail visibly.
+
+This changes one line of the proposed process: `stage: done` is no longer set by hand after merge.
+
+Design: [../design/low-level/issue-33-board-label-sync.md](../design/low-level/issue-33-board-label-sync.md).
+
 ---
 
 ## Documentation follows the ryup structure (2026-09-13)

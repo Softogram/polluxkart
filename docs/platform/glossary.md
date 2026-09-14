@@ -237,6 +237,9 @@ Automated checks that run on every pull request. PolluxKart runs them with GitHu
 **Exit code**
 The number a command hands back when it finishes. Zero means success; anything else means failure, and hooks and CI stop on it.
 
+**GitHub App**
+A bot identity registered to an organisation, with only the permissions it is given and short-lived tokens. The board sync runs as one.
+
 **GitHub Actions workflow**
 A YAML file in `.github/workflows/` telling GitHub what to run and when. Each job in it shows up as a named check on a pull request.
 
