@@ -219,6 +219,15 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 
 Design: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md).
 
+## Commands in CLAUDE.md (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering two questions while planning E00-09 (#39).**
+
+- **CLAUDE.md lists only commands that exist today**; each ticket that adds a command adds it to CLAUDE.md in the same pull request, and a check fails on a `make` target that does not exist. Also offered: also listing planned commands, marked as planned.
+- **CLAUDE.md keeps only everyday commands, and `make help` is the full list**, generated from the Makefile so it cannot drift. Also offered: every command in CLAUDE.md, or the rest in a separate document.
+
+Design: [../design/low-level/issue-39-claude-md-commands.md](../design/low-level/issue-39-claude-md-commands.md).
+
 ---
 
 ## Documentation follows the ryup structure (2026-09-13)

@@ -28,6 +28,7 @@ Only a ticket labelled `stage: implementation-ready` by the owner may be impleme
 ## Read next
 
 - [issue-34-makefile-ci-doctor.md](issue-34-makefile-ci-doctor.md) - E00-04, `make ci` and `make doctor` (DRAFT, 2026-09-14)
+- [issue-39-claude-md-commands.md](issue-39-claude-md-commands.md) - E00-09, everyday commands in CLAUDE.md and a generated make help (DRAFT, 2026-09-14)
 
 ## See also (do not follow recursively)
 
