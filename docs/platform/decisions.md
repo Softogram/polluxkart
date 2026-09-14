@@ -219,6 +219,18 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 
 Design: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md).
 
+## Secret scanning (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering five questions while planning E00-07 (#37).**
+
+- **The CI secret scan checks every commit in a pull request**, not the whole history each run. GitHub's own secret scanning watches the whole history and alerts the owner privately, so nothing about earlier history is written into this public repository. Also offered: the whole history on every run.
+- **A false alarm is allowed by an entry in one allow-list file (`.gitleaks.toml`)**, added by anyone through a pull request, each entry carrying a dated reason that a check enforces; inline allow comments in code are refused. Also offered: only the owner adds entries, or inline comments allowed.
+- **The person pushing may bypass a GitHub push protection block by giving a reason**; GitHub records an alert and emails the owner. Also offered: only the owner approves bypass requests, which needs GitHub's paid Secret Protection add-on.
+- **Only the owner receives secret scanning alerts.** Also offered: the owner and future maintainers.
+- **When a secret must be rotated:** the same day, once it is in any commit (pushed or not), a pushed branch, a document, a chat, a ticket or a log. A key the pre-commit hook blocked before any commit existed is removed, not rotated. Also offered: rotate even when the hook blocked it.
+
+Design: [../design/low-level/issue-37-secret-scanning.md](../design/low-level/issue-37-secret-scanning.md).
+
 ---
 
 ## Documentation follows the ryup structure (2026-09-13)
