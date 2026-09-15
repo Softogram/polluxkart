@@ -316,6 +316,23 @@ Design: [../design/low-level/issue-35-git-hooks.md](../design/low-level/issue-35
 
 **Status: Proposed.** A static page in the existing theme, without business contact details until they are provided. Source: `ops/maintenance/`.
 
+**Superseded 2026-09-14** by "Retiring the first version", where the owner confirmed the wording and the missing contact card.
+
+## Retiring the first version (2026-09-14)
+
+**Status: Owner decision, 2026-09-14, answering eight questions while planning E01-01, E01-02 and E01-07 (#40, #41, #46), including both open questions of epic E01 (#11).**
+
+- **E01 tickets follow the ticket process:** a short plan in a planning pull request, the owner's `stage: implementation-ready` label, then the action, with the result recorded on the ticket. Also offered: the owner's go-ahead in the session instead of a planning pull request.
+- **The owner runs every step that needs AWS rights**, in the Claude Code session so the output is visible; Claude prepares the steps and verifies the results with read-only checks. Also offered: a short-lived administrator session in which Claude runs the steps while the owner watches.
+- **Order:** the whole prepared script runs at once, retiring the server and publishing the maintenance page; the contact card follows when the business details (#45) exist. Also offered: retire the server now and publish the page later, or wait and do both later.
+- **The old server is terminated, with nothing copied out first.** Also offered: copy something first, or not yet.
+- **The maintenance page keeps its wording**, "We are not taking orders right now. We will be back soon.", with no date. Also offered: adding an expected month.
+- **No contact details on the page until #45**, then the full contact card at once. Also offered: one support email address now.
+- **The old server's disk snapshot is kept 30 days, until 2026-10-13**, then deleted. Also offered: 90 days, or deleting it straight after termination.
+- **A Google Calendar reminder** is set for the deletion date. Also offered: the ticket alone.
+
+Design: [../design/low-level/issue-40-41-46-legacy-teardown.md](../design/low-level/issue-40-41-46-legacy-teardown.md).
+
 ---
 
 ## The first version's open issues are closed (2026-09-13)
