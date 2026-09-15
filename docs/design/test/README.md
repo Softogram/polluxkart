@@ -32,6 +32,7 @@ For each request flow the feature exposes:
 - [issue-37-secret-scanning.md](issue-37-secret-scanning.md) - E00-07, secret scanning in pre-commit, CI and GitHub push protection (DRAFT, 2026-09-14)
 - [issue-38-dependabot-codeql.md](issue-38-dependabot-codeql.md) - E00-08, Dependabot updates and CodeQL code scanning (DRAFT, 2026-09-14)
 - [issue-39-claude-md-commands.md](issue-39-claude-md-commands.md) - E00-09, everyday commands in CLAUDE.md and a generated make help (DRAFT, 2026-09-14)
+- [issue-40-41-46-legacy-teardown.md](issue-40-41-46-legacy-teardown.md) - E01-01, E01-02, E01-07, retiring the old server and publishing the maintenance page (DRAFT, 2026-09-14)
 
 ## See also (do not follow recursively)
 
