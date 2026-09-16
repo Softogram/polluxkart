@@ -26,10 +26,10 @@ Depends on: #34 (`make ci`), because this ticket adds a check and two targets to
 
 - **`development` is the default branch and `main` the release branch; one worktree per task; no history rewrites** (owner decision, 2026-09-13, [decisions.md](../../platform/decisions.md), "Git workflow").
 - **Nothing is implemented without the owner's approval, enforced by an automated gate plus the written rule** (owner decision, 2026-09-13, "Nothing is implemented without the owner's approval").
-- **The `docs` and `tooling-tests` workflows keep their names** and each runs its part of `make ci` (owner decision, 2026-09-14, "`make ci` and `make doctor`").
+- **The `docs` and `tooling-tests` workflows keep their names** and each runs its part of `make ci` at release, not on every pull request (owner decisions, 2026-09-14, "`make ci` and `make doctor`", and 2026-09-16, "Local `make ci` is the pull-request gate").
 - **The branch rules themselves** (owner decision, 2026-09-14, "Branch rules for `development` and `main`", answered while planning this ticket):
   - contributors may merge into `development`; only the owner may merge into `main`;
-  - no required human review; the checks must pass;
+  - no required human review; the approval-gate check must pass;
   - no bypass for anyone;
   - squash merges into `development`, merge commits into `main`, rebase merging off;
   - a pull request must be up to date with its target before merging, on both branches;
@@ -62,8 +62,8 @@ That is how "only the owner merges into `main`" and "no bypass for anyone" both 
 
 | Ruleset name | Branch | Rules | Bypass |
 |---|---|---|---|
-| `development` | `development` | Pull request required, 0 approvals, squash merge only; required checks `approval-gate`, `docslint`, `tooling-tests`, from GitHub Actions only, branch must be up to date; no force push; no deletion | None |
-| `main` | `main` | Pull request required, 0 approvals, merge commit only; the same three required checks, from GitHub Actions only, branch must be up to date; no force push; no deletion | None |
+| `development` | `development` | Pull request required, 0 approvals, squash merge only; required check `approval-gate` from GitHub Actions only, branch must be up to date; no force push; no deletion | None |
+| `main` | `main` | Pull request required, 0 approvals, merge commit only; required check `approval-gate` from GitHub Actions only, branch must be up to date; no force push; no deletion | None |
 | `main-owner-merge` | `main` | Restrict updates: only accounts with bypass may change `main` | The owner's account, for pull requests only (never a direct push) |
 
 Notes on the rule settings:
@@ -122,9 +122,7 @@ A shortened example, `development.json`:
         "strict_required_status_checks_policy": true,
         "do_not_enforce_on_create": false,
         "required_status_checks": [
-          { "context": "approval-gate", "app": "github-actions" },
-          { "context": "docslint", "app": "github-actions" },
-          { "context": "tooling-tests", "app": "github-actions" } ] } }
+          { "context": "approval-gate", "app": "github-actions" } ] } }
   ]
 }
 ```
@@ -147,6 +145,7 @@ It talks to GitHub through `gh api`, so it uses whoever is logged in to the GitH
 1. Each file is valid JSON of the expected shape, and ruleset names are unique.
 2. Every required check name is the name of a job in a workflow that runs for pull requests into that branch, with no path filter that could stop it running.
    This catches a renamed job, which would otherwise leave its required check waiting forever and block every merge.
+   `docslint` and `tooling-tests` must not appear as required checks, because those workflows do not run on pull requests (owner decision, 2026-09-16).
 3. Only `main-owner-merge` has a bypass, the bypass is in "pull requests only" mode, and its only rule is "restrict updates".
 4. `development` allows only squash merges and `main` only merge commits, both require up-to-date branches, and neither requires approvals. These are the owner's 2026-09-14 answers, so changing them fails the build until the decision log is changed too.
 
@@ -249,3 +248,4 @@ None of these name account numbers, ruleset numbers or who holds which role; the
 
 None open.
 All nine questions this ticket raised, including the epic's question about who may merge, were answered on 2026-09-14 and are recorded in [decisions.md](../../platform/decisions.md), "Branch rules for `development` and `main`".
+Which GitHub checks are required was revised on 2026-09-16 ("Local `make ci` is the pull-request gate"): only `approval-gate`.

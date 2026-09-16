@@ -34,7 +34,7 @@ The planned stack (owner decisions and proposals are marked in [`docs/platform/d
 | `docs/` | All documentation, as a tree with one entry point. Start at [`docs/README.md`](docs/README.md). |
 | `legacy/` | The first version, kept only as reference. Not built or deployed. See [`legacy/README.md`](legacy/README.md). |
 | `ops/maintenance/` | The maintenance page shown at polluxkart.com during the rebuild. |
-| `tools/docslint/` | The checker that keeps the docs tree navigable, run on every pull request. |
+| `tools/docslint/` | The checker that keeps the docs tree navigable, run locally before every pull request. |
 
 More folders (`api/`, `web/`, `infra/`, `e2e/`) arrive as the rebuild progresses.
 

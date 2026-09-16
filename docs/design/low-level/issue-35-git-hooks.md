@@ -33,7 +33,7 @@ Depends on: #34 (`make ci` and `make doctor`), which these hooks run and extend.
 
 ## The problem
 
-`make ci` only helps if people run it, and the first failure is otherwise found minutes later on GitHub.
+`make ci` only helps if people run it. The first failure used to be found minutes later on GitHub; GitHub no longer re-runs those checks on every pull request (owner decision, 2026-09-16).
 A direct push to `development` or `main` is refused by GitHub once #36 is live, but only after the push is attempted, with a less helpful message.
 And `make ci` checks the files on disk, while a push sends commits: if the two differ, the local result means nothing.
 
@@ -111,7 +111,7 @@ The hook handles the whole push in this order:
    `SKIP_LOCAL_CI` does not change this.
 2. **Ignore tags and deleted branches**, which need no checks.
 3. **For each remaining branch, ask GitHub whether it has an open pull request:** `gh pr list --head <branch> --state open --json number`, allowing at most 15 seconds.
-   - `gh` not installed, not logged in, an error, or no answer within 15 seconds: print "Could not check for an open pull request (reason). Pushing without running make ci; GitHub's checks still run on the pull request." and let the push go ahead.
+   - `gh` not installed, not logged in, an error, or no answer within 15 seconds: print "Could not check for an open pull request (reason). Pushing without running make ci; run the local checks yourself. The approval-gate still runs on the pull request." and let the push go ahead.
    - No open pull request: let the push go ahead without running `make ci`, printing one line saying so.
 4. **If any branch in the push has an open pull request:**
    1. If `SKIP_LOCAL_CI` is exactly `1`: print "SKIP_LOCAL_CI=1: make ci was not run. Say so in pull request #12." and let the push go ahead.

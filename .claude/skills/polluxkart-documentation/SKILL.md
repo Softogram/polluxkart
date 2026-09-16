@@ -16,7 +16,7 @@ Sources of truth this skill summarizes: `docs/README.md` (the only entry point t
 - **Low-level design:** a per-issue document concrete enough to build from.
 - **Test plan:** a per-issue document saying which tests will prove the feature works.
 - **Supersede:** mark an old decision as replaced, and keep it, instead of deleting it.
-- **docslint:** the script `tools/docslint/docslint.py`, which checks the docs tree's links and style on every pull request.
+- **docslint:** the script `tools/docslint/docslint.py`, which checks the docs tree's links and style locally before every pull request.
 - **Generated file:** a file written by a tool, such as the OpenAPI spec, which nobody edits by hand.
 
 ## Owner decision or proposed: say which (owner rule, 2026-09-13)
@@ -104,7 +104,7 @@ A document they cannot follow is a document that cannot be approved.
 - A new document is added to its folder README's "Read next" list in the same change that creates it.
 
 **These rules are enforced, not just written down.**
-`tools/docslint/docslint.py` runs in CI on every pull request and fails on a broken link, a "Read next" link pointing sideways or upward, a loop, an unreachable document, or an em dash.
+`tools/docslint/docslint.py` runs locally before every pull request and fails on a broken link, a "Read next" link pointing sideways or upward, a loop, an unreachable document, or an em dash. GitHub Actions runs it at release, not on every pull request.
 Run `python3 tools/docslint/docslint.py` and `python3 -m unittest discover -s tools/docslint` locally before committing any docs change.
 
 ## Where a document belongs

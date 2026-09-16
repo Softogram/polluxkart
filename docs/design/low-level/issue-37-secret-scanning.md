@@ -44,7 +44,7 @@ There is no check on the contributor's machine and none in `make ci`.
 | Layer | Where | Scans | Stops |
 |---|---|---|---|
 | 1. Pre-commit | `.githooks/pre-commit` (#35) | The staged changes | The commit, before the secret enters any commit |
-| 2. `make ci` and GitHub CI | The `secrets` check in the `tooling` group | The commits on the branch, plus every tracked file as it is now | The push (through the pre-push hook) and the merge (through the `tooling-tests` required check) |
+| 2. `make ci` | The `secrets` check in the `tooling` group | The commits on the branch, plus every tracked file as it is now | The push (through the pre-push hook). GitHub Actions does not re-run this on the pull request (owner decision, 2026-09-16) |
 | 3. GitHub | Repository settings | Every push, and the whole history | The push, unless the pusher bypasses with a reason; alerts the owner either way |
 
 Every gitleaks run uses `--redact`, so no terminal output, log or CI summary ever prints a matched value.

@@ -225,6 +225,8 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 
 Design: [../design/low-level/issue-36-branch-rulesets.md](../design/low-level/issue-36-branch-rulesets.md).
 
+**Revised 2026-09-16:** the required GitHub check on pull requests is only `approval-gate`. See "Local `make ci` is the pull-request gate".
+
 ## `make ci` and `make doctor` (2026-09-14)
 
 **Status: Owner decision, 2026-09-14, answering five questions while planning E00-04 (#34).**
@@ -234,6 +236,8 @@ Design: [../design/low-level/issue-36-branch-rulesets.md](../design/low-level/is
 - **`make ci` runs every check even after one fails**, lists all failures at the end, and fails if any failed. Also offered: stop at the first failure, or stop by default with a flag to run everything.
 - **GitHub Actions workflow files are linted with actionlint.** Also offered: actionlint plus zizmor, a security-focused workflow checker, or no workflow lint yet.
 - **GitHub keeps the separate `docs` and `tooling-tests` workflows**, each running its part of `make ci`, with an automated test proving the two together run everything. Also offered: one `ci` workflow running `make ci`.
+
+**Revised 2026-09-16** by "Local `make ci` is the pull-request gate": the two workflows still exist and still each run one group, but they do not run on every pull request.
 
 Design: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md).
 
@@ -275,6 +279,8 @@ Design: [../design/low-level/issue-32-project-board.md](../design/low-level/issu
 - **Dependabot security updates are switched on.** Also offered: keep them off and rely on the weekly updates.
 Design: [../design/low-level/issue-38-dependabot-codeql.md](../design/low-level/issue-38-dependabot-codeql.md).
 
+**Revised 2026-09-16:** CodeQL does not run on every pull request, so it cannot block merges. Findings from weekly and `main` runs stay in the Security tab. See "Local `make ci` is the pull-request gate".
+
 ## Secret scanning (2026-09-14)
 **Status: Owner decision, 2026-09-14, answering five questions while planning E00-07 (#37).**
 - **The CI secret scan checks every commit in a pull request**, not the whole history each run. GitHub's own secret scanning watches the whole history and alerts the owner privately, so nothing about earlier history is written into this public repository. Also offered: the whole history on every run.
@@ -283,6 +289,8 @@ Design: [../design/low-level/issue-38-dependabot-codeql.md](../design/low-level/
 - **Only the owner receives secret scanning alerts.** Also offered: the owner and future maintainers.
 - **When a secret must be rotated:** the same day, once it is in any commit (pushed or not), a pushed branch, a document, a chat, a ticket or a log. A key the pre-commit hook blocked before any commit existed is removed, not rotated. Also offered: rotate even when the hook blocked it.
 Design: [../design/low-level/issue-37-secret-scanning.md](../design/low-level/issue-37-secret-scanning.md).
+
+**Revised 2026-09-16:** that scan is `make ci` on the laptop (and the pre-push hook), not a GitHub Actions job on the pull request. See "Local `make ci` is the pull-request gate".
 
 ## Git hooks (2026-09-14)
 **Status: Owner decision, 2026-09-14, answering six questions while planning E00-05 (#35).**
@@ -347,6 +355,23 @@ The owner runs every step that needs AWS rights, as already decided on 2026-09-1
 Claude prepares the steps and verifies the results with read-only checks.
 
 Design: [../design/low-level/issue-42-aws-security-review.md](../design/low-level/issue-42-aws-security-review.md).
+
+## Local `make ci` is the pull-request gate; GitHub Actions CI runs at release (2026-09-16)
+
+**Status: Owner decision, 2026-09-16.** The owner asked for the same rule already used on Ryup and SpiceCraft (founder rule, 2026-09-04, global across Softogram repos).
+
+- **Every pull request into `development` is gated by local checks**, today's four commands in `CLAUDE.md`, and `make ci` once ticket #34 exists. GitHub Actions does not run those checks on every pull request.
+- **GitHub Actions CI (`docs`, `tooling-tests`, and later `make ci` jobs) runs on a push to `main` (a release) and when someone starts the workflow by hand.** Ryup's backend still runs CI on pull requests into `main`; PolluxKart follows SpiceCraft's form (push to `main` plus hand dispatch).
+- **The approval-gate workflow still runs on every pull request.** That is the owner-approval rule, not CI.
+- **The approval-label-guard workflow still runs when a ticket is labelled.** That is the owner-approval rule, not CI. Its `if:` must be a quoted GitHub expression, because an unquoted `stage: implementation-ready` is invalid YAML (colon then space) and was failing every push with no jobs.
+- **CodeQL does not run on every pull request.** It runs on a push to `main`, on a weekly schedule, and by hand, once advanced setup lands in #38. This revises the 2026-09-14 "Dependabot and CodeQL" point that a high or critical finding blocks merging, because that needed a CodeQL run on the pull request.
+- **Branch rulesets (#36) require only `approval-gate` on pull requests into `development`.** They do not require `docslint` or `tooling-tests`, which would wait forever if those workflows no longer run on pull requests.
+
+**Why.** GitHub Actions minutes are metered, and this organisation's budget has run out more than once. A lapsed budget fails a job in two seconds with no steps, which looks like a broken build. The local gate already runs the same checks.
+
+This revises "`make ci` and `make doctor`" (2026-09-14), "Branch rules for `development` and `main`" (2026-09-14), and "Dependabot and CodeQL" (2026-09-14).
+
+Design updates: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md), [../design/low-level/issue-35-git-hooks.md](../design/low-level/issue-35-git-hooks.md), [../design/low-level/issue-36-branch-rulesets.md](../design/low-level/issue-36-branch-rulesets.md), [../design/low-level/issue-37-secret-scanning.md](../design/low-level/issue-37-secret-scanning.md), [../design/low-level/issue-38-dependabot-codeql.md](../design/low-level/issue-38-dependabot-codeql.md).
 
 ---
 

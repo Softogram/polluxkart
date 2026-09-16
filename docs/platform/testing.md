@@ -7,7 +7,7 @@ The bar a pull request has to clear, and the kinds of test that prove it.
 
 ## The rules
 
-1. **`make ci` passes locally before a pull request is opened.** GitHub Actions runs the same checks on every pull request.
+1. **`make ci` passes locally before a pull request is opened.** GitHub Actions runs the same checks at release (a push to `main`) and when someone starts the workflow by hand, not on every pull request.
 2. **A bug fix starts with a failing end-to-end reproduction**, as close as possible to what a shopper or admin actually does. Then the fix makes it pass.
 3. **Flaky tests get fixed, not retried.** End-to-end tests run with zero retries in CI, and traces are kept for every failure.
 4. **A test that skips itself when its data is missing is a failing test.** The first version's suite passed while testing nothing.

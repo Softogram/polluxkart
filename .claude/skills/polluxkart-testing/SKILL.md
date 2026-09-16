@@ -30,7 +30,7 @@ Money, tax and order rules the tests check: the `polluxkart-commerce` skill.
 
 A ticket owns its test plan, its test implementation and a verified test run (`polluxkart-workflow`).
 The test plan is approved by the owner with the design; the tests ship in the same implementation pull request as the feature, and the approval gate fails a pull request that changes backend or frontend code without tests.
-The verified test run is `make ci` passing locally plus a green CI run, pasted and linked in that pull request.
+The verified test run is `make ci` passing locally, pasted in that pull request. GitHub Actions does not re-run the checks on every pull request.
 
 ## The six rules
 

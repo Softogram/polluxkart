@@ -133,7 +133,7 @@ The real download from GitHub is proved by the implementation pull request's own
 | AC1: from a clean clone, `make ci` runs every check listed in CLAUDE.md and exits non-zero if any fails | E1.1, E1.3 to E1.8 |
 | AC2: breaking one docs link makes `make ci` fail; fixing it makes it pass | E1.2 |
 | AC3: `make doctor` lists each tool as found or missing with its version, and handles a missing tool as the owner chose | D3.1, D3.2, D3.3 |
-| AC4: the GitHub workflows run the same checks through `make` | C2.1, and the implementation pull request's CI runs |
+| AC4: the GitHub workflows run the same checks through `make` | C2.1, and a hand-dispatched `docs` / `tooling-tests` run on the implementation branch |
 | AC5: CLAUDE.md names `make ci` as the one command before a pull request | Reviewed in the implementation pull request; a document, not behaviour |
 | AC6: `make ci` keeps going after a failure and lists every failure | E1.2, E1.9, U1.2 |
 | AC7: later tools are shown as information and never fail `make doctor` | D3.1, D3.7, D3.8, D3.9 |
@@ -166,7 +166,7 @@ Running `make ci` twice in a row gives the same result; E1.2 re-runs it in the s
 ## Verified test run, recorded in the implementation pull request
 
 - Local `make doctor` and `make ci` output on macOS, with GNU Make 3.81, pasted into the pull request.
-- Links to the green `docs` and `tooling-tests` runs on GitHub (Ubuntu, a newer GNU Make), showing `make ci-docs`, the linter install, `make doctor` and `make ci-tooling`.
+- A hand-dispatched `docs` and `tooling-tests` run on GitHub (Ubuntu), showing `make ci-docs`, the linter install, `make doctor` and `make ci-tooling`.
 
 ## What is deliberately not covered, and why
 

@@ -44,6 +44,8 @@ Start every piece of work by reading `docs/README.md`.
 
 ## Checks before a pull request
 
+These are the gate. GitHub Actions does not re-run them on pull requests into `development` (owner decision, 2026-09-16). It runs them at release (push to `main`) and when someone starts the workflow by hand.
+
 - `python3 tools/docslint/docslint.py`
 - `python3 -m unittest discover -s tools/docslint`
 - `python3 -m unittest discover -s tools/approval_gate`

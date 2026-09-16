@@ -61,7 +61,7 @@ Every ticket is responsible, from start to finish, for:
 2. **Test planning:** a test plan in `docs/design/test/issue-<N>-<slug>.md`.
 3. **Feature implementation.**
 4. **Test implementation.**
-5. **A verified test run:** `make ci` passing locally and the CI run green, with the output or link recorded in the pull request.
+5. **A verified test run:** `make ci` passing locally, with the output recorded in the pull request. GitHub Actions CI runs at release and on demand, not on every pull request.
 
 Parts 1 and 2 may be one or more **planning pull requests**.
 Parts 3 and 4 are **one implementation pull request**: the feature and its tests always arrive together.

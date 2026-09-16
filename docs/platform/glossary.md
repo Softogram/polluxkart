@@ -247,7 +247,7 @@ A linter for GitHub Actions workflow files. It uses ShellCheck to check the shel
 Permission for a named account to ignore the rules of one ruleset. PolluxKart gives one, narrowly: the owner may merge pull requests into `main`.
 
 **CI (continuous integration)**
-Automated checks that run on every pull request. PolluxKart runs them with GitHub Actions and, locally, with `make ci`.
+The same automated checks a contributor runs locally with `make ci`. GitHub Actions runs them at release (a push to `main`) and when someone starts the workflow by hand, not on every pull request.
 
 **CodeQL**
 GitHub's code scanner, which reads the code looking for security bugs such as injection or unsafe input handling.
