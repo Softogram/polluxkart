@@ -1,13 +1,19 @@
 name: docs
 
-# Checks the documentation tree on every pull request and on pushes to the
-# two long-lived branches. The rules are described in docs/README.md and
-# enforced by tools/docslint/docslint.py.
+# Checks the documentation tree at release, and on request. Never per PR
+# into development.
+#
+# Owner decision, 2026-09-16, matching the Softogram-wide rule on Ryup and
+# SpiceCraft: every pull request into development is gated by local checks.
+# GitHub Actions CI runs on a push to main (a release) and when someone
+# starts the workflow by hand. The approval-gate workflow is separate: that
+# is the owner-approval rule, not CI.
+# The rules are described in docs/README.md and enforced by
+# tools/docslint/docslint.py.
 
 on:
-  pull_request:
   push:
-    branches: [development, main]
+    branches: [main]
   workflow_dispatch:
 
 permissions:

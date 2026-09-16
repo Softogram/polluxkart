@@ -33,7 +33,7 @@ Depends on: #34 (`make ci`) and #36 (the ruleset and settings files, and the scr
   - updates are grouped, one weekly pull request per ecosystem for minor and patch updates;
   - major updates are skipped for Maven, pnpm and Docker and left to planned tickets, but still proposed for GitHub Actions;
   - CodeQL moves to advanced setup, a workflow file in the repository;
-  - a new high or critical CodeQL security finding blocks merging;
+  - a new high or critical CodeQL security finding is reported in the Security tab from the weekly and release runs; it does not block pull-request merges, because CodeQL does not run on every pull request (revised 2026-09-16);
   - the alerts from `legacy/` are dismissed with a dated reason, and `legacy/` is not scanned;
   - Dependabot security updates are switched on.
 
@@ -55,7 +55,7 @@ Depends on: #34 (`make ci`) and #36 (the ruleset and settings files, and the scr
 tools/checks/workflow_pins.py              new: checks every uses: line is pinned
 tools/checks/test_workflow_pins.py         new
 tools/checks/checks.py                     changed: adds the workflow-pins check to the tooling group
-.github/rulesets/development.json          changed: adds the code scanning rule
+.github/rulesets/development.json          not given a code scanning merge rule (owner decision, 2026-09-16)
 .github/rulesets/repository.json           changed: security updates on, CodeQL default setup off
 tools/rulesets/rulesets.py                 changed: applies and checks the CodeQL default setup state
 ```
@@ -125,9 +125,8 @@ GitHub's branch rules cannot single out Dependabot pull requests, so this is a w
 name: codeql
 
 on:
-  pull_request:
   push:
-    branches: [development, main]
+    branches: [main]
   schedule:
     - cron: "30 3 * * 1"   # weekly, so new CodeQL rules reach unchanged code
   workflow_dispatch:
@@ -170,25 +169,17 @@ paths-ignore:
 
 - **Languages now:** `actions` (the workflow files) and `python` (the repository tooling).
   E03-02 adds `java-kotlin` and E04-01 adds `javascript-typescript`, both with `build-mode: none`, which analyses the source without building it.
-- **No path filters on the triggers**, because the code scanning merge rule waits for results on every pull request.
+- **No path filters on the triggers.** CodeQL does not run on pull requests (owner decision, 2026-09-16), so there is no merge rule waiting for pull-request results.
 - The `<commit>` values are the newest release commits at implementation time.
 - **Default setup is switched off** before the workflow first uploads, because GitHub refuses results from advanced setup while default setup is on.
   `repository.json` records "default setup: off", and `rulesets.py apply` and `check` handle it (admin login only, like the other security settings).
 
 ### Blocking merges on findings
 
-`development.json` gains one rule:
-
-```json
-{ "type": "code_scanning", "parameters": { "code_scanning_tools": [
-    { "tool": "CodeQL", "security_alerts_threshold": "high_or_higher", "alerts_threshold": "none" } ] } }
-```
-
-- A pull request that **introduces** a high or critical CodeQL security alert cannot merge until it is fixed or dismissed with a reason.
-- Medium and low security alerts, and non-security code quality notes, are reported but never block.
-- Existing alerts on `development` do not block unrelated pull requests; the rule looks at what the pull request adds.
-- `main` does not get the rule: every change reaches `main` through `development`, where it already passed.
-- #36's `validate` learns the rule: the tool must be CodeQL and the threshold `high_or_higher`, matching the owner's answer.
+Not used. A high or critical finding cannot block a pull request if CodeQL does not run on that pull request (owner decision, 2026-09-16).
+Findings from the weekly and `main` runs stay in the Security tab for the owner to fix or dismiss.
+`development.json` does not gain a `code_scanning` rule.
+#36's `validate` does not require one.
 
 ### The alerts from `legacy/`
 
@@ -230,8 +221,8 @@ Dependabot keeps the pins current and updates the version comments with them.
 | A grouped weekly pull request breaks a check | It cannot merge; the owner closes it or asks for it to be split, and Dependabot's commands on the pull request can ignore the one bad dependency |
 | A security update needs a new major version | Dependabot still opens it; it gets the same checks and the owner decides |
 | Dependabot updates a workflow action | `workflow-pins` checks the new pin; actionlint checks the file; the approval gate passes it as Dependabot's |
-| A pull request adds a high CodeQL finding | Merge refused until fixed, or dismissed with a reason by someone allowed to dismiss alerts (today only the owner) |
-| CodeQL fails to run or times out | No results, so the code scanning rule keeps the pull request from merging; re-run it |
+| A pull request adds a high CodeQL finding | The pull request can merge; the weekly or `main` run reports it in the Security tab |
+| CodeQL fails to run or times out | The weekly or `main` run is red; pull requests are not held waiting |
 | A CodeQL run on a Dependabot pull request | The workflow grants `security-events: write` for the job; the first Dependabot pull request proves results arrive (test plan) |
 | A later ticket adds `api/` without the Maven Dependabot entry | Nothing fails automatically for a missing entry; the Maven skeleton ticket's design lists it, and the test fails if an entry exists without the ignore rule and group |
 | Default setup switched back on in settings | The advanced workflow's uploads are refused and the owner's `make rulesets-check` reports the setting |
@@ -250,3 +241,4 @@ Dependabot keeps the pins current and updates the version comments with them.
 
 None open.
 All seven questions this ticket raised were answered on 2026-09-14 and are recorded in [decisions.md](../../platform/decisions.md), "Dependabot and CodeQL".
+When CodeQL runs, and that it does not block pull-request merges, was revised on 2026-09-16 ("Local `make ci` is the pull-request gate").

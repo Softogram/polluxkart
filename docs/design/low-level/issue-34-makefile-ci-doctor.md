@@ -11,19 +11,19 @@ Test plan: [../test/issue-34-makefile-ci-doctor.md](../test/issue-34-makefile-ci
 - **Make and Makefile:** `make` is a long-standing command-line program that runs named recipes written in a file called `Makefile`. Typing `make ci` runs the recipe named `ci`.
 - **Target:** one named recipe in a Makefile, such as `ci` or `doctor`.
 - **Check:** in this document, one command inside `make ci` that either passes or fails, such as the docs checker.
-- **Group:** a named set of checks. Each group has its own `make ci-<group>` target and runs in exactly one GitHub workflow.
-- **Exit code:** the number a command hands back when it finishes. Zero means success; anything else means failure. Git hooks and GitHub read this number to decide whether to stop.
+- **Group:** a named set of checks. Each group has its own `make ci-<group>` target and is run by exactly one GitHub workflow at release.
+- **Exit code:** the number a command hands back when it finishes. Zero means success; anything else means failure. Git hooks read this number to decide whether to stop.
 - **Lint and linter:** checking files for mistakes without running them; a linter is the tool that does it.
 - **actionlint:** a linter for GitHub Actions workflow files. It catches typos, broken expressions and wrong references.
 - **ShellCheck:** a linter for shell commands. actionlint uses it to check the `run:` commands inside workflow files.
-- **CI (continuous integration):** automated checks that run on every pull request. Here, GitHub Actions.
-- **Workflow and job:** a workflow is a YAML file in `.github/workflows/` telling GitHub Actions what to run; a job is one named unit of work inside it. The job name is what appears as a check on a pull request.
+- **CI (continuous integration):** the same automated checks a contributor runs locally with `make ci`. GitHub Actions runs them at release (a push to `main`) and when someone starts the workflow by hand, not on every pull request (owner decision, 2026-09-16).
+- **Workflow and job:** a workflow is a YAML file in `.github/workflows/` telling GitHub Actions what to run; a job is one named unit of work inside it.
 - **PATH:** the list of folders your terminal searches when you type a program's name. A program not in any of those folders counts as "not installed".
 - **Checksum (SHA-256):** a fingerprint computed from a file's bytes. If even one byte changes, the fingerprint changes, so comparing it proves a download is the exact file expected.
 
 ## What was already decided before this document
 
-- **Nothing is implemented without the owner's approval, and every ticket ends with a verified test run:** `make ci` passing locally plus a green CI run (owner decision, 2026-09-13, [decisions.md](../../platform/decisions.md), "Nothing is implemented without the owner's approval").
+- **Nothing is implemented without the owner's approval, and every ticket ends with a verified test run:** `make ci` passing locally (owner decision, 2026-09-13, [decisions.md](../../platform/decisions.md), "Nothing is implemented without the owner's approval"; the GitHub Actions half is revised 2026-09-16, "Local `make ci` is the pull-request gate").
 - **`development` is the base of every pull request; no history rewrites** (owner decision, 2026-09-13, "Git workflow").
 - **Backend in Java with Spring Boot, frontend in Next.js with TypeScript, both in one repository** (owner decisions, 2026-09-13).
 - **How `make ci` and `make doctor` behave** (owner decision, 2026-09-14, "`make ci` and `make doctor`", answered while planning this ticket):
@@ -32,6 +32,7 @@ Test plan: [../test/issue-34-makefile-ci-doctor.md](../test/issue-34-makefile-ci
   - `make ci` runs every check even after one fails, lists all failures at the end, and fails if any failed.
   - Workflow files are linted with actionlint.
   - GitHub keeps the `docs` and `tooling-tests` workflows, each running its part of `make ci`, with an automated test proving the two together run everything.
+  - Those workflows run on a push to `main` and on hand dispatch, not on every pull request (owner decision, 2026-09-16, "Local `make ci` is the pull-request gate").
 
 ## Proposed in the docs and used here, confirmed when the owner approves this design
 
@@ -41,10 +42,11 @@ Test plan: [../test/issue-34-makefile-ci-doctor.md](../test/issue-34-makefile-ci
 
 ## The problem
 
-Today the checks a pull request must pass are four commands.
+Today the checks a pull request must pass are four commands, run on the contributor's machine.
 They are written out in `CLAUDE.md` and copied again, by hand, into two workflow files.
-Nothing stops those copies drifting apart, so "it passed on my machine" and "it passed on GitHub" can mean different things.
+Nothing stops those copies drifting apart.
 The first version of the store had four overlapping CI workflows and no single way to run the checks ([audit](../../legacy/audit-2026-09.md), section 5).
+GitHub Actions minutes are metered; running those same checks on every pull request is what ran the organisation's budget out on Ryup and SpiceCraft.
 
 ## The change
 
@@ -179,9 +181,9 @@ make ci summary
 - `main(argv)`: reads `--group`, checks the Python version, and returns the exit code.
 
 **How later tickets add checks.**
-A ticket adds its `Check` entries with a new group name, a `ci-<group>` target in the Makefile, and one workflow job that runs `make ci-<group>`.
+A ticket adds its `Check` entries with a new group name, a `ci-<group>` target in the Makefile, and one workflow job that runs `make ci-<group>` at release.
 The coverage test below fails until all three exist.
-For example, the backend CI ticket (E05-05) would add group `api`, target `ci-api` and a job running `make ci-api`.
+For example, the backend CI ticket (E05-05) would add group `api`, target `ci-api` and a job running `make ci-api` on push to `main`.
 
 ### `make doctor` (`tools/checks/doctor.py`)
 
@@ -260,7 +262,9 @@ So the tooling workflow installs a fixed version of both.
 
 ### The workflows
 
-Both keep their names and job names (`docslint`, `tooling-tests`), because branch rulesets (#36) will require those checks by name.
+Both keep their names and job names (`docslint`, `tooling-tests`).
+They do not run on pull requests into `development` (owner decision, 2026-09-16).
+Each workflow's `on:` is a push to `main` and `workflow_dispatch` only.
 Both keep read-only permissions, `actions/checkout` pinned to a full commit, and their five-minute limit.
 
 `.github/workflows/docs.yml`, job `docslint`:
@@ -343,7 +347,7 @@ It runs inside `checks-tests`, so it runs in `make ci` locally and in the `tooli
 - **The pre-push git hook** that runs `make ci`: ticket #35.
 - **`ci-api`, `ci-web`, `ci-e2e` and the local stack targets** (`up`, `down`, `gen-api`): tickets E05-04 and E05-05, once `api/` and `web/` exist.
 - **Dockerfile lint:** E06-04, once a Dockerfile exists.
-- **Making `docslint` and `tooling-tests` required before merging:** branch rulesets, #36.
+- **Making `docslint` and `tooling-tests` required before merging:** not done. Branch rulesets (#36) require only `approval-gate` on pull requests, because those two jobs no longer run on pull requests (owner decision, 2026-09-16).
 - **A check that fails on skipped tests** (the searches in the `polluxkart-testing` skill): there is no application test code to search until `api/` and `web/` exist; it belongs with those scaffold tickets.
 - **Running checks in parallel:** they run one after another so the output stays readable, and today the whole run takes seconds. Worth revisiting when the slow end-to-end checks arrive.
 - **Native Windows:** the Makefile and scripts assume a Unix-like system (macOS or Linux). A Windows contributor would use WSL, Windows' built-in Linux environment.
@@ -352,3 +356,4 @@ It runs inside `checks-tests`, so it runs in `make ci` locally and in the `tooli
 
 None open.
 All five questions this ticket raised were answered on 2026-09-14 and are recorded in [decisions.md](../../platform/decisions.md), "`make ci` and `make doctor`".
+When GitHub runs those workflows was revised on 2026-09-16 ("Local `make ci` is the pull-request gate").

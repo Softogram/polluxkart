@@ -13,7 +13,9 @@ permissions:
 
 jobs:
   guard:
-    if: github.event.label.name == 'stage: implementation-ready' && github.event.sender.login != 'CosmicSaaurabh'
+    # Quoted on purpose: an unquoted `stage: implementation-ready` is invalid YAML
+    # (colon then space) and GitHub fails every push with no jobs.
+    if: "${{ github.event.label.name == 'stage: implementation-ready' && github.event.sender.login != 'CosmicSaaurabh' }}"
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

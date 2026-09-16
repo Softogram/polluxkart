@@ -51,9 +51,10 @@ The functions take the rule files and workflow texts as inputs, so failing cases
 | Id | Case | Expected |
 |---|---|---|
 | V2.1 | The real `.github/rulesets/*.json` and `.github/workflows/*.yml` | Passes |
-| V2.2 | A required check `docslint` while the job is renamed `docs-lint` | Fails, naming `docslint` and the branch. Partner: V2.1 |
-| V2.3 | The `docs` workflow gains `paths: ['docs/**']` under `pull_request` | Fails: a required check could be skipped |
+| V2.2 | A required check `approval-gate` while the job is renamed `gate` | Fails, naming `approval-gate` and the branch. Partner: V2.1 |
+| V2.3 | The `approval-gate` workflow gains `paths: ['docs/**']` under `pull_request_target` | Fails: a required check could be skipped |
 | V2.4 | The `approval-gate` workflow's `pull_request_target` types lose `synchronize` | Fails: the check would not re-run on new commits, so an up-to-date branch could never pass |
+| V2.5 | `development.json` lists `docslint` as required | Fails: that job does not run on pull requests |
 | V2.5 | `development.json` gains a bypass | Fails: only `main-owner-merge` may have one |
 | V2.6 | `main-owner-merge.json` bypass mode changed to `always` | Fails: pull requests only |
 | V2.7 | `main-owner-merge.json` gains a second rule | Fails: its only rule is restrict updates |
@@ -69,7 +70,7 @@ The functions take the rule files and workflow texts as inputs, so failing cases
 | Id | Live state returned by the fake `gh` | Expected |
 |---|---|---|
 | K3.1 | Exactly the files, with bypass lists visible | Exit 0, "GitHub matches the rule files" |
-| K3.2 | `docslint` missing from `development`'s required checks | Exit 1, the difference names the ruleset, the rule and the check. Partner: K3.1 |
+| K3.2 | `approval-gate` missing from `development`'s required checks | Exit 1, the difference names the ruleset, the rule and the check. Partner: K3.1 |
 | K3.3 | `main` ruleset absent | Exit 1, "ruleset main is missing on GitHub" |
 | K3.4 | An extra ruleset `temp` on GitHub | Exit 1, "ruleset temp is on GitHub but not in the files" |
 | K3.5 | `main` enforcement set to `disabled` | Exit 1, naming it |
@@ -103,7 +104,7 @@ Throwaway pull requests are opened from short-lived branches, say `Plans #36` wh
 | R5.1 | `git push` a new commit straight to `ruleset-rehearsal-dev` | Refused, naming the pull request rule | A direct push is refused |
 | R5.2 | Force push an older commit to `ruleset-rehearsal-dev` | Refused, naming the force push rule | A force push is refused |
 | R5.3 | Delete `ruleset-rehearsal-dev` | Refused | Deletion is blocked |
-| R5.4 | Pull request whose change breaks a docs link; wait for `docslint` to fail; `gh pr merge --squash` | Refused: required check failing | A failing docs check cannot merge |
+| R5.4 | Pull request whose change breaks a docs link; `gh pr merge --squash` | Merges if `approval-gate` is green. Docs checks are local (`make ci`), not a required GitHub check | A docs failure does not block merge on GitHub |
 | R5.5 | Pull request with no ticket line; wait for `approval-gate` to fail; `gh pr merge --squash` | Refused: required check failing | A failing gate cannot merge |
 | R5.6 | Pull request with every check passing; `gh pr merge --merge` | Refused: merge method not allowed | Squash only into development |
 | R5.7 | Two passing pull requests; squash-merge the first; try the second | Refused as out of date; after "Update branch" and green checks, it merges | Up to date is required |
@@ -123,7 +124,7 @@ The rehearsal cannot test the gate's `main` rule, because that rule looks for th
 |---|---|---|
 | L5.1 | After step 3: read back the rules for `development` | Exactly the `development` ruleset's rules |
 | L5.2 | After step 3: `make rulesets-check` with the owner's login | Exit 0 for `development` and the settings; `main` rulesets reported missing, which is expected until step 5 |
-| L5.3 | Step 4: the first release pull request | `approval-gate` does not run (not yet on `main`), `docslint` and `tooling-tests` pass; merged with a merge commit |
+| L5.3 | Step 4: the first release pull request | `approval-gate` does not run (not yet on `main`); merged with a merge commit |
 | L5.4 | After step 5: read back the rules for `main`; `make rulesets-check` with the owner's login | Both rulesets present with their rules; exit 0 with bypass lists compared |
 | L5.5 | After L5.4 confirms the rules: open a pull request from a throwaway feature branch into `main`; wait for `approval-gate`; `gh pr merge --merge` | The gate fails with the "must come from development" message; the merge is refused. Close the pull request |
 | L5.6 | Run the `rulesets-drift` workflow by hand | Green, with the "bypass lists not visible" line |
@@ -142,7 +143,7 @@ The ticket moves to `stage: done` only when L5.1 to L5.6 are recorded on #36.
 | Only the owner may merge into `main` | R5.10, R5.12, L5.4 (see "not covered" for a second account) |
 | A branch must be up to date before merging | R5.7, V2.10 |
 | Only `development` may open pull requests into `main`, and releases pass the gate | G1.1 to G1.5, L5.5 |
-| Required check names match workflow job names | V2.2 to V2.4 |
+| Required check names match workflow job names | V2.2 to V2.5 |
 | The rules are saved as files, applied by a script, and drift is caught | V2.1, A4.1 to A4.7, K3.1 to K3.10, L5.6 |
 
 ## What the owner gets when a dependency fails
@@ -158,7 +159,7 @@ The ticket moves to `stage: done` only when L5.1 to L5.6 are recorded on #36.
 
 This ticket writes no database rows.
 The equivalent risk is a rule written in a file but never applied, or a check required but never run.
-L5.2 and L5.4 prove the files reached GitHub; V2.2 to V2.4 prove every required check is produced by a workflow that runs.
+L5.2 and L5.4 prove the files reached GitHub; V2.2 to V2.5 prove every required check is produced by a workflow that runs on pull requests.
 
 ## Concurrency and replay
 

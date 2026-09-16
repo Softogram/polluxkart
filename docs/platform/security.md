@@ -29,7 +29,7 @@ Every rule here answers a real failure found in the first version, listed in [..
 
 ## Secrets
 
-- Secrets never enter git. `.env` files are git-ignored, and `gitleaks` scans staged changes in a pre-commit hook and every pull request in CI.
+- Secrets never enter git. `.env` files are git-ignored, and `gitleaks` scans staged changes in a pre-commit hook and the commits on the branch in `make ci`.
 - Development uses test-mode keys in a local `.env`.
 - Production secrets live in AWS SSM Parameter Store as encrypted values and reach the server at deploy time.
 - CI deploys through short-lived AWS credentials (GitHub OIDC), never stored access keys.

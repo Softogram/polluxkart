@@ -20,7 +20,7 @@ python3 -m unittest discover -s tools/docslint
 ```
 
 It needs only Python 3.10 or newer, with no packages to install.
-It runs on every pull request through `.github/workflows/docs.yml`, and will become part of `make ci`.
+Run it locally before every pull request. GitHub Actions runs it at release through `.github/workflows/docs.yml`, and it will become part of `make ci`.
 
 ## When it fails
 

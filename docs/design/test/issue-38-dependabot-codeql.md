@@ -69,16 +69,14 @@ Terms such as Dependabot, ecosystem, CodeQL, advanced setup and pinned are expla
 | Id | Action | Expected | Acceptance criterion |
 |---|---|---|---|
 | L4.1 | After merge, the repository's Dependabot page | No configuration errors; the `github-actions` update job ran or is scheduled | AC1 |
-| L4.2 | `make rulesets-apply` then `make rulesets-check` with the owner's login | Default setup off, security updates on, the code scanning rule present; exit 0 | AC3, merge rule |
-| L4.3 | The `codeql` workflow on the implementation pull request and on the push to `development` | Both languages complete; results appear in the Security tab under the `codeql` workflow's categories | AC3 |
+| L4.2 | `make rulesets-apply` then `make rulesets-check` with the owner's login | Default setup off, security updates on; exit 0 | AC3 |
+| L4.3 | Dispatch the `codeql` workflow by hand, then the first push to `main` after it exists | Both languages complete; results appear in the Security tab under the `codeql` workflow's categories | AC3 |
 | L4.4 | The Security tab after L4.3 | No open CodeQL alert has a path under `legacy/` from the new workflow | `legacy/` is skipped |
 | L4.5 | The one-time dismissal step | The open Dependabot and CodeQL alert counts under `legacy/` drop to zero; each dismissed alert shows reason and dated comment. Record the before and after counts only | Legacy alerts dismissed |
 | L4.6 | Whether a Dependabot auto-triage rule can match `legacy/` | Recorded yes or no on #38; if yes, the rule exists; if no, the runbook step exists | Future legacy alerts |
-| L4.7 | The first Dependabot `github-actions` group pull request | Passes the approval gate as Dependabot's without a ticket, runs every required check including `codeql`, and is merged by the owner | AC2, merge rule |
-| L4.8 | Rehearsal of the merge rule, on a throwaway branch with a copy of the `development` ruleset (as in #36): a pull request adding Python that CodeQL rates high, such as building a shell command from user input | The pull request cannot merge while the finding is open; after removing the code and re-running, it can. Close it and delete the rehearsal ruleset and branch | Blocking on high findings |
-| L4.9 | Rehearsal partner: a pull request adding a medium-rated finding | GitHub shows it as ready to merge, with no code scanning block; close it without merging | Medium does not block |
+| L4.7 | The first Dependabot `github-actions` group pull request | Passes the approval gate as Dependabot's without a ticket, is not held for a CodeQL job, and is merged by the owner | AC2 |
 
-L4.8 and L4.9 use deliberately unsafe sample code on a throwaway branch only, never merged into `development`.
+L4.3 is a hand dispatch and a release push, because CodeQL does not run on pull requests.
 
 ## Acceptance criteria and the tests that prove them
 
@@ -86,11 +84,11 @@ L4.8 and L4.9 use deliberately unsafe sample code on a throwaway branch only, ne
 |---|---|
 | AC1: GitHub reports no Dependabot configuration errors | D2.1, D2.7, L4.1 |
 | AC2: a Dependabot pull request for a GitHub Action passes the gate without a ticket and runs every required check | L4.7 |
-| AC3: CodeQL runs on pull requests and on `development` for every language present, with results in the Security tab | Q3.1, Q3.4, Q3.5, L4.3 |
+| AC3: CodeQL runs on `main`, weekly, and by hand for every language present, with results in the Security tab | Q3.1, Q3.4, Q3.5, L4.3 |
 | AC4: every `uses:` line is pinned to a full commit | P1.1 to P1.12 |
 | AC5: only the owner merges Dependabot pull requests | Written rule reviewed in the implementation pull request; L4.7 merged by the owner; D2.8 |
 | Grouped weekly updates; majors skipped except Actions | D2.1 to D2.6 |
-| High or critical findings block merging | Q3.6, Q3.7, L4.8, L4.9 |
+| High or critical findings are reported in the Security tab; they do not block pull-request merges | L4.3 |
 | `legacy/` is not scanned and its alerts are dismissed with a dated reason | Q3.3, L4.4, L4.5, L4.6 |
 | Security updates are on | Q3.8, L4.2 |
 
@@ -98,14 +96,14 @@ L4.8 and L4.9 use deliberately unsafe sample code on a throwaway branch only, ne
 
 | Dependency | Failure | What happens | Test |
 |---|---|---|---|
-| CodeQL | Fails or times out on a pull request | No results, so the merge rule keeps the pull request waiting; re-run the workflow | Q3.2 covers the skipped case; stated in the design |
+| CodeQL | Fails or times out | The weekly or `main` run is red; pull requests are not held waiting | Q3.2 covers the skipped case; stated in the design |
 | Dependabot | Configuration error | Shown on the Dependabot page; D2.7 prevents the known cause | L4.1 |
 | GitHub default setup | Switched back on | Advanced uploads refused; the owner's `make rulesets-check` reports it | Q3.8, L4.2 |
 
 ## Reachability check
 
 No database rows are written.
-The equivalent risk is configuration that exists but never takes effect: L4.1, L4.3 and L4.7 prove GitHub actually ran Dependabot and CodeQL from these files, and L4.8 proves the merge rule really blocks.
+The equivalent risk is configuration that exists but never takes effect: L4.1, L4.3 and L4.7 prove GitHub actually ran Dependabot and CodeQL from these files.
 
 ## What is deliberately not covered, and why
 

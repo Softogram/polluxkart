@@ -23,7 +23,7 @@ Closes #N
 
 ## Verified test run (implementation pull requests)
 
-<!-- Paste the end of `make ci` output and link the green CI run. -->
+<!-- Paste the end of `make ci` output (or today's four commands in CLAUDE.md until `make ci` exists). GitHub Actions does not re-run these on the pull request. -->
 
 ## Checklist
 

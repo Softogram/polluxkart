@@ -53,7 +53,7 @@ flowchart TB
 
 ## Deploy pipeline
 
-1. A pull request runs `make ci` checks in GitHub Actions.
+1. The contributor runs `make ci` locally before the pull request. GitHub Actions runs those same checks at release (a push to `main`) and when someone starts the workflow by hand.
 2. A merge into `development` builds the `api` and `web` images for ARM, tags them with the commit id, and pushes them to ECR.
 3. GitHub signs in to AWS through OIDC (short-lived credentials; no stored keys) and asks Systems Manager to run `ops/deploy.sh` on the staging server.
 4. The script writes the environment file from SSM, pulls the exact images, runs Flyway migrations as a one-shot container with the migration role, starts the new containers, waits for readiness, and runs a smoke test.

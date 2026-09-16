@@ -62,7 +62,7 @@ The confirmed versions get recorded here and in [decisions.md](decisions.md).
 | Sign-in | Google OAuth client | Sign in with Google without Firebase. |
 | Error monitoring | Sentry (free tier), personal data sending off | Errors with context, without shopper data. |
 | Analytics | Google Search Console at launch; Plausible optional | No cookie banner needed; business numbers come from our own database. |
-| CI | GitHub Actions on every pull request (public repository), plus `make ci` locally | The same checks locally and in CI. |
+| CI | `make ci` locally before every pull request; GitHub Actions at release (push to `main`) and on hand dispatch | The same checks locally and on GitHub. GitHub does not re-run them on every pull request. |
 
 ## Upgrade policy
 
