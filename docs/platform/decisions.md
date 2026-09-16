@@ -373,6 +373,20 @@ This revises "`make ci` and `make doctor`" (2026-09-14), "Branch rules for `deve
 
 Design updates: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md), [../design/low-level/issue-35-git-hooks.md](../design/low-level/issue-35-git-hooks.md), [../design/low-level/issue-36-branch-rulesets.md](../design/low-level/issue-36-branch-rulesets.md), [../design/low-level/issue-37-secret-scanning.md](../design/low-level/issue-37-secret-scanning.md), [../design/low-level/issue-38-dependabot-codeql.md](../design/low-level/issue-38-dependabot-codeql.md).
 
+## AWS monthly budget alert (2026-09-16)
+
+**Status: Owner decision, 2026-09-16, answering four questions while planning E01-04 (#43).**
+
+- **The monthly limit now is $10.** Also offered: about $20, about $50, or another amount.
+- **The limit is raised when staging is built (#85, E06-03) and again when production is built (#175, E18-01)**, using the estimates in cost.md as a guide. The exact new amounts are chosen in those tickets. Also offered: leave today's amount until production, or never raise it.
+- **Emails go out at 80% actual spend, 100% actual spend, and 100% forecasted spend.** A forecast is AWS predicting the rest of the month from use so far. Also offered: 100% actual only, or 80% and 100% actual with no forecast.
+- **The recipient is the same email already chosen for GuardDuty**, recorded only in the private operations reference. Also offered: a different address given in chat.
+
+The owner runs every step that needs AWS rights, as already decided on 2026-09-14 while planning #40, #41 and #46.
+Claude prepares the steps and verifies the results with read-only checks.
+
+Design: [../design/low-level/issue-43-aws-budget-alert.md](../design/low-level/issue-43-aws-budget-alert.md).
+
 ---
 
 ## The first version's open issues are closed (2026-09-13)
