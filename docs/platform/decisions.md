@@ -333,6 +333,21 @@ Design: [../design/low-level/issue-35-git-hooks.md](../design/low-level/issue-35
 
 Design: [../design/low-level/issue-40-41-46-legacy-teardown.md](../design/low-level/issue-40-41-46-legacy-teardown.md).
 
+## AWS account security review (2026-09-15)
+
+**Status: Owner decision, 2026-09-15, answering five questions while planning E01-03 (#42).**
+
+- **The root account is protected with an authenticator app.** Also offered: a hardware security key now, or an authenticator app now plus a hardware key as a backup in the same review.
+- **Nobody besides the owner has an AWS console sign-in.** Family uses the shop admin, not AWS. Also offered: one family member with read-only rights, or another named person.
+- **GuardDuty is switched on now,** during this review. Also offered: wait until staging (E06).
+- **CloudTrail stays at the free 90-day Event history** until staging is built. Also offered: an S3 trail now.
+- **GuardDuty alerts go to the email already used for this AWS account.** The address is recorded only in the private operations reference, never in this repository. Also offered: a different address given in chat.
+
+The owner runs every step that needs AWS rights, as already decided on 2026-09-14 while planning #40, #41 and #46.
+Claude prepares the steps and verifies the results with read-only checks.
+
+Design: [../design/low-level/issue-42-aws-security-review.md](../design/low-level/issue-42-aws-security-review.md).
+
 ---
 
 ## The first version's open issues are closed (2026-09-13)
