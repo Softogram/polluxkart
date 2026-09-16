@@ -200,6 +200,8 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 
 **Status: Proposed.** Sign in with Google can work without Firebase. The owner said they will create a new Firebase project, so whether the store should use it is an **open question for the owner**.
 
+**Superseded 2026-09-16** by "Retiring the first version's credentials": the first version's Firebase project is deleted, and the store does not use Firebase.
+
 ---
 
 ## Git workflow (2026-09-13)
@@ -386,6 +388,20 @@ The owner runs every step that needs AWS rights, as already decided on 2026-09-1
 Claude prepares the steps and verifies the results with read-only checks.
 
 Design: [../design/low-level/issue-43-aws-budget-alert.md](../design/low-level/issue-43-aws-budget-alert.md).
+
+## Retiring the first version's credentials (2026-09-16)
+
+**Status: Owner decision, 2026-09-16, answering four questions while planning E01-05 (#44).**
+
+- **The first version's payment-gateway keys are disabled, and that merchant account is kept for records.** The new relaunch account is separate. Also offered: disable the keys and close the account.
+- **The first version's Firebase project is deleted. The store does not use Firebase.** Sign in with Google does not need it. Also offered: delete the old project and allow a new one later for something else, or keep the old project.
+- **Unused outside accounts are closed.** An account the owner still needs has its keys replaced and is kept. Also offered: keep every account and only replace keys, or close all of them.
+- **The owner's own check that each credential is retired is enough.** Also offered: a second named person also confirms.
+
+The owner runs every step that needs account access, as already decided on 2026-09-14 while planning #40, #41 and #46.
+Claude prepares the steps and verifies with read-only checks. No secret value, key id or live-or-dead status is written in this repository.
+
+Design: [../design/low-level/issue-44-retire-first-version-credentials.md](../design/low-level/issue-44-retire-first-version-credentials.md).
 
 ---
 

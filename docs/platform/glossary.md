@@ -197,6 +197,9 @@ A GitHub feature that refuses a push containing a recognised secret before it re
 **Rate limiting**
 Refusing requests from one source above a set speed, to stop guessing attacks.
 
+**Revoke (a credential)**
+Tell the provider that key must no longer work, without necessarily closing the account.
+
 **Rotate (a secret)**
 Replace a key with a new one and switch the old one off, so any leaked copy stops working.
 
@@ -263,6 +266,9 @@ GitHub's bot that opens pull requests to update the libraries the code depends o
 
 **Drift**
 Live settings that no longer match what the repository says they should be, such as a ruleset edited by hand in GitHub settings.
+
+**Firebase**
+Google's hosted backend product. PolluxKart's store does not use it; Sign in with Google works without it.
 
 **Forecasted spend**
 AWS's prediction of this month's total bill, from use so far. A budget can email when that prediction reaches the limit, before the bill actually does.
