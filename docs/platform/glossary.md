@@ -208,6 +208,12 @@ An attack where a malicious script is saved on a site and runs in visitors' brow
 
 ## Infrastructure
 
+**Actual spend**
+What AWS has already billed this month, as opposed to a forecast of the rest of the month.
+
+**AWS Budget**
+A monthly amount AWS compares the account's bill against. It emails when spend crosses a chosen percentage. It does not stop spending.
+
 **CloudFront**
 AWS's content delivery network, which caches files close to visitors.
 
@@ -257,6 +263,9 @@ GitHub's bot that opens pull requests to update the libraries the code depends o
 
 **Drift**
 Live settings that no longer match what the repository says they should be, such as a ruleset edited by hand in GitHub settings.
+
+**Forecasted spend**
+AWS's prediction of this month's total bill, from use so far. A budget can email when that prediction reaches the limit, before the bill actually does.
 
 **Exit code**
 The number a command hands back when it finishes. Zero means success; anything else means failure, and hooks and CI stop on it.

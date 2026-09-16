@@ -42,7 +42,7 @@ They will be replaced with figures from the AWS Pricing Calculator for the Mumba
 - Stop the staging server and database when nobody is testing.
 - Keep log retention at 30 days.
 - Expire old container images and old versions of static files.
-- An AWS Budgets alert warns the owner before the month's spend passes the expected total.
+- An AWS Budgets alert emails the owner at 80% actual, 100% actual and 100% forecasted of a $10 monthly limit for now (owner decision, 2026-09-16, "AWS monthly budget alert"). The limit is raised in #85 when staging is built and in #175 when production is built.
 
 ## See also (do not follow recursively)
 
