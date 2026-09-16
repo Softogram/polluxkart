@@ -198,7 +198,7 @@ Several existing colour pairs fail accessibility contrast; which in-palette pair
 
 ## Firebase is not used by the store (2026-09-13)
 
-**Status: Proposed.** Sign in with Google can work without Firebase. The owner said they will create a new Firebase project, so whether the store should use it is an **open question for the owner**.
+**Status: Superseded, 2026-09-16.** Sign in with Google can work without Firebase. The owner said they will create a new Firebase project, so whether the store should use it was an open question.
 
 **Superseded 2026-09-16** by "Retiring the first version's credentials": the first version's Firebase project is deleted, and the store does not use Firebase.
 
