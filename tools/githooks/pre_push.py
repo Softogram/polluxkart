@@ -182,7 +182,10 @@ def main(argv=None, stdin=None, env=None, run=subprocess.run, which=shutil.which
                 stream,
             )
             return 1
-    completed = run(["make", "ci"], cwd=cwd)
+    ci_env = dict(env)
+    for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_PREFIX"):
+        ci_env.pop(key, None)
+    completed = run(["make", "ci"], cwd=cwd, env=ci_env)
     if completed.returncode != 0:
         _warn(
             "make ci failed, so the push was stopped. Fix the failures, or in a real emergency push with SKIP_LOCAL_CI=1 and say so in the pull request.",
