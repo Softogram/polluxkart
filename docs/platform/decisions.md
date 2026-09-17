@@ -403,6 +403,24 @@ Claude prepares the steps and verifies with read-only checks. No secret value, k
 
 Design: [../design/low-level/issue-44-retire-first-version-credentials.md](../design/low-level/issue-44-retire-first-version-credentials.md).
 
+## Business details for the site, invoices and legal pages (2026-09-17)
+
+**Status: Owner decision, 2026-09-17, answering the questions while planning E01-06 (#45).**
+
+- **Shoppers see the GST-registered legal name.** There is no separate trading name. Also offered: a different trading name for shoppers.
+- **The business is registered in Uttar Pradesh.** Deliveries inside Uttar Pradesh charge CGST and SGST; deliveries to another state charge IGST. Also offered: another Indian state as on the GST certificate.
+- **Shoppers see a support email and phone, not opening hours.** Also offered: email, phone and hours, or email only.
+- **Until the site tickets copy them, the values stay in the private operations reference.** Also offered: somewhere else the owner named.
+- **The owner is the grievance officer and the named DPDP contact.** The printed name and designation are taken from the GST certificate's authorized signatory. Also offered: a different named person for complaints, or a different person for data requests.
+- **GST invoices carry a signature image.** The image file is supplied when store tax settings (#154) are implemented. Also offered: a digital (cryptographic) signature, or a printed name only.
+
+Legal name, address, GSTIN, email, phone and the person's name are not written in this repository.
+They are compared with the GST registration certificate when this ticket is implemented.
+
+Waiting tickets that read these details: #41, #154, #169, #171, #172.
+
+Design: [../design/low-level/issue-45-business-details.md](../design/low-level/issue-45-business-details.md).
+
 ---
 
 ## The first version's open issues are closed (2026-09-13)

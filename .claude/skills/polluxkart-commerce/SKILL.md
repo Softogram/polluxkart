@@ -320,7 +320,7 @@ An RTO on a COD order has nothing to refund, and stock returns after the check.
 ## Open questions (not decided)
 
 - CA: GST on delivery and COD fees for mixed-rate orders; which rate applies if a rate changes between order and invoice; HSN digits; credit note series; GSTR-1 thresholds.
-- Owner: shop state, maximum COD value, open-COD cap, COD fee, delivery fee, return window, and whether a cancelled order gives a coupon use back.
+- Owner: maximum COD value, open-COD cap, COD fee, delivery fee, return window, and whether a cancelled order gives a coupon use back. Shop state is Uttar Pradesh (2026-09-17, decisions.md: "Business details for the site, invoices and legal pages").
 
 ## Checklist before you open a pull request
 
