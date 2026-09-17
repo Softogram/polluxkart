@@ -24,6 +24,7 @@ CHECKS = (
     ("agent-hook-tests", "tooling", ["-m", "unittest", "discover", "-s", ".claude/hooks"], ()),
     ("board-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/board"], ()),
     ("githooks-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/githooks"], ("git", "make")),
+    ("rulesets-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/rulesets"], ()),
     ("checks-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/checks"], ("make", "actionlint", "shellcheck")),
     ("actionlint", "tooling", None, ("actionlint", "shellcheck")),
 )

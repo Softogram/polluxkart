@@ -90,7 +90,8 @@ Exceptions:
 
 ## How the rule is enforced
 
-- **Approval gate** (`.github/workflows/approval-gate.yml` running `tools/approval_gate/gate.py`): a required check on every pull request. It reads the linked ticket, its current stage label, and the ticket's label history, and fails unless the approval label was applied by the owner. It runs from the base branch definition, so a pull request cannot change the check that judges it.
+- **Approval gate** (`.github/workflows/approval-gate.yml` running `tools/approval_gate/gate.py`): a required check on every pull request. It reads the linked ticket, its current stage label, and the ticket's label history, and fails unless the approval label was applied by the owner. It runs from the base branch definition, so a pull request cannot change the check that judges it. A pull request into `main` passes only when it comes from this repository's `development` branch.
+- **Branch rulesets** (`.github/rulesets/`, applied with `make rulesets-apply`): GitHub itself refuses a direct push to `development` or `main`, a force push, or a deletion. Squash merges into `development`; merge commits into `main`. Only the owner can merge into `main`. There is no bypass on the check rules.
 - **Label guard** (`.github/workflows/approval-label-guard.yml`): if anyone other than the owner applies `stage: implementation-ready`, the label is removed at once and a comment explains why.
 - **Agent guard** (`.claude/settings.json` with `.claude/hooks/guard_approval_label.py`): Claude Code refuses any command that would apply, create, rename or delete the approval label, so an agent cannot approve a ticket even when it runs with the owner's GitHub login.
 - **Branch rulesets** on `development` and `main` make the approval gate and the docs check required before merging (set up after this process lands).

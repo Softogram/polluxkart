@@ -93,6 +93,7 @@ Keep exactly one stage label on a ticket.
 - An implementation pull request for a ticket not approved by the owner, or approved then moved back to planning.
 - Backend code under `api/**/src/main/` without a test change under `api/**/src/test/`, or `web/src/` code without a test file or `e2e/` change.
 - Implementing more than one ticket, or closing a ticket other than its own.
+- A pull request into `main` that does not come from this repository's `development` branch.
 
 ## Checklist before you open a pull request
 

@@ -148,5 +148,50 @@ class ImplementationTest(unittest.TestCase):
         self.assertFalse(run("Implements #42", ["docs/platform/runbook.md"], {42: unapproved}).ok)
 
 
+class ReleasePullRequestTest(unittest.TestCase):
+    def test_development_into_main_passes(self) -> None:
+        result = evaluate(
+            author=CONTRIBUTOR,
+            body="Release",
+            files=["Makefile"],
+            tickets={},
+            approver=OWNER,
+            base_ref="main",
+            head_ref="development",
+            head_repository="Softogram/polluxkart",
+            repository="Softogram/polluxkart",
+        )
+        self.assertTrue(result.ok)
+        self.assertIn("Release pull request from development into main", result.messages)
+
+    def test_feature_into_main_fails(self) -> None:
+        result = evaluate(
+            author=CONTRIBUTOR,
+            body="Implements #42",
+            files=["Makefile"],
+            tickets={42: approved_ticket()},
+            approver=OWNER,
+            base_ref="main",
+            head_ref="feature/x",
+            head_repository="Softogram/polluxkart",
+            repository="Softogram/polluxkart",
+        )
+        self.assertFalse(result.ok)
+
+    def test_fork_development_into_main_fails(self) -> None:
+        result = evaluate(
+            author=CONTRIBUTOR,
+            body="Release",
+            files=["Makefile"],
+            tickets={},
+            approver=OWNER,
+            base_ref="main",
+            head_ref="development",
+            head_repository="other/polluxkart",
+            repository="Softogram/polluxkart",
+        )
+        self.assertFalse(result.ok)
+
+
 if __name__ == "__main__":
     unittest.main()

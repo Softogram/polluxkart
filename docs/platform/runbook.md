@@ -47,6 +47,18 @@ Create a new private key on the App, put it in `BOARD_SYNC_PRIVATE_KEY`, then de
 
 Open the failed run. If the token step failed, the App is missing, uninstalled, or the key is wrong. If the script step failed, it names the ticket and the problem (no stage label, two stage labels, or "re-apply the approval by hand"). Fix that ticket's labels; the next event or the nightly run will retry. Installation tokens expire within an hour and are not stored.
 
+## Branch rulesets
+
+The files in `.github/rulesets/` are the source of truth.
+
+To change a rule: open a pull request, merge it, then from a clone with an admin GitHub login run `make rulesets-apply` and `make rulesets-check`.
+
+A red `rulesets-drift` workflow means GitHub no longer matches the files. Either someone edited a ruleset in the website, or a merged change has not been applied yet. Run `make rulesets-check` to list the differences, then `make rulesets-apply` if the files are right.
+
+In a genuine emergency the owner can switch a ruleset's enforcement off in GitHub settings, merge, and switch it on again. The next drift run will show the gap if it is left off.
+
+GitHub pauses scheduled workflows on a public repository after 60 days without activity in it.
+
 ## Handling secrets
 
 - Development keys go only in a local `.env`, which git ignores.

@@ -1,0 +1,32 @@
+name: rulesets-drift
+
+# Compare live GitHub rulesets with the files in .github/rulesets/.
+# A red run means the owner should run make rulesets-apply, or someone
+# changed a ruleset in the GitHub website.
+# GitHub pauses scheduled workflows on a public repository after 60 days
+# without activity.
+
+on:
+  schedule:
+    - cron: "15 20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rulesets-drift-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rulesets-drift:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check live rulesets against the files
+        run: python3 tools/rulesets/rulesets.py check
