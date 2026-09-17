@@ -1,0 +1,22 @@
+{
+  "name": "main-owner-merge",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "include": ["refs/heads/main"],
+      "exclude": []
+    }
+  },
+  "bypass": [
+    { "user": "CosmicSaaurabh", "mode": "pull_request" }
+  ],
+  "rules": [
+    {
+      "type": "update",
+      "parameters": {
+        "update_allows_fetch_and_merge": false
+      }
+    }
+  ]
+}

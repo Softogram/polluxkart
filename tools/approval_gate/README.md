@@ -9,7 +9,8 @@ The rules in plain words are in `docs/platform/development-process.md`.
 - A planning pull request changes only Markdown files and does not close its ticket.
 - An implementation pull request implements exactly one open ticket whose current stage is implementation-ready, in-progress or in-review, and whose latest approval-related stage label was `stage: implementation-ready` applied by the owner.
 - An implementation pull request includes tests when it changes backend or frontend code, and closes no other ticket.
-- Pull requests by Dependabot are exempt.
+- Pull requests by Dependabot are exempt, except a Dependabot pull request into `main`.
+- A pull request into `main` passes only when it comes from this repository's `development` branch (a release). Ticket lines on a release are ignored.
 
 ## How it runs
 

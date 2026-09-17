@@ -23,6 +23,7 @@ What this check enforces on every pull request:
    `api/**/src/main/` needs a change under `api/**/src/test/`, and code under
    `web/src/` needs a changed test file in `web/` or a change under `e2e/`.
 5. An implementation pull request closes no ticket other than its own.
+6. A pull request into `main` passes only when it comes from this repository's `development` branch.
 
 It runs from the base branch (pull_request_target), reads only GitHub's API,
 and never executes code from the pull request.
@@ -120,7 +121,12 @@ def approval_state(ticket: Ticket, approver: str) -> tuple[bool, str]:
     return True, f"#{ticket.number} was approved by `{approver}`."
 
 
-def evaluate(*, author: str, body: str, files: list[str], tickets: dict[int, Ticket], approver: str) -> Result:
+def evaluate(*, author: str, body: str, files: list[str], tickets: dict[int, Ticket], approver: str, base_ref: str = "development", head_ref: str = "", head_repository: str = "", repository: str = "") -> Result:
+    if base_ref == "main":
+        same_repo = bool(repository) and head_repository == repository
+        if head_ref == "development" and same_repo:
+            return Result(True, ["Release pull request from development into main"])
+        return Result(False, ["Pull requests into main must come from this repository's development branch"])
     if author in EXEMPT_AUTHORS:
         return Result(True, [f"Pull request by `{author}` is exempt (automated dependency update)."])
 
@@ -268,6 +274,24 @@ class GitHub:
         )
 
 
+def pull_context(pull: dict) -> dict:
+    """Read base/head refs and the head repository from a GitHub pull request.
+
+    A missing head repository, which happens when a fork is deleted, is "none".
+    """
+    head = pull.get("head") or {}
+    repo = head.get("repo")
+    if repo is None:
+        head_repository = "none"
+    else:
+        head_repository = repo.get("full_name") or "none"
+    return {
+        "base_ref": (pull.get("base") or {}).get("ref") or "",
+        "head_ref": head.get("ref") or "",
+        "head_repository": head_repository,
+    }
+
+
 def main() -> int:
     token = os.environ.get("GITHUB_TOKEN", "")
     repository = os.environ.get("GITHUB_REPOSITORY", "")
@@ -284,6 +308,7 @@ def main() -> int:
         return 1
     files = [f["filename"] for f in github.paged(f"pulls/{number}/files")]
     body = pull.get("body") or ""
+    context = pull_context(pull)
     wanted = set(references(IMPLEMENTS_RE, body)) | set(references(PLANS_RE, body))
     tickets = {n: github.ticket(n) for n in wanted}
 
@@ -293,6 +318,10 @@ def main() -> int:
         files=files,
         tickets=tickets,
         approver=approver,
+        base_ref=context["base_ref"],
+        head_ref=context["head_ref"],
+        head_repository=context["head_repository"],
+        repository=repository,
     )
     heading = "approval-gate: PASS" if result.ok else "approval-gate: FAIL"
     print(heading)

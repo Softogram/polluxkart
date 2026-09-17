@@ -33,6 +33,7 @@ The [PolluxKart project board](https://github.com/orgs/Softogram/projects/2) has
 ## Git
 
 - `development` is the default branch and the base of every pull request; `main` is the release branch.
+- Pull requests into `development` squash. Releases are merge commits of `development` into `main`. Only this repository's `development` branch may open a pull request into `main`.
 - One git worktree per task, created from a freshly fetched `origin/development`, removed after merge.
 - Enable the committed hooks once per clone: `git config core.hooksPath .githooks`. The pre-commit hook checks staged docs. The pre-push hook refuses a direct push to `development` or `main`, and runs `make ci` when the branch has an open pull request.
 - `SKIP_LOCAL_CI=1 git push` skips `make ci` in an emergency; say so in the pull request. It never allows a direct push to `development` or `main`.
