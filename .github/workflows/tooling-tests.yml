@@ -1,7 +1,7 @@
 name: tooling-tests
 
-# Unit tests for the repository's own tooling: the approval gate and the
-# Claude Code approval-label guard hook. Standard library Python only.
+# Unit tests for the repository's own tooling: the approval gate, the
+# Claude Code approval-label guard hook, and the board sync. Standard library Python only.
 #
 # Owner decision, 2026-09-16: never per PR into development. Runs on a push
 # to main (a release) and when someone starts the workflow by hand.
@@ -33,3 +33,6 @@ jobs:
 
       - name: Test the approval label guard hook
         run: python3 -m unittest discover -s .claude/hooks -v
+
+      - name: Test the board sync
+        run: python3 -m unittest discover -s tools/board -v

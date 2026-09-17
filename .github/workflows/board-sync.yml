@@ -1,0 +1,39 @@
+name: board-sync
+
+# Moves PolluxKart project cards to match each ticket's stage label.
+# Uses a GitHub App because the workflow token cannot change an organisation project.
+# Rules: docs/design/low-level/issue-33-board-label-sync.md
+
+on:
+  issues:
+    types: [opened, edited, labeled, unlabeled, closed, reopened]
+  schedule:
+    - cron: "15 21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: board-sync-${{ github.event.issue.number || 'reconcile' }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
+        id: app
+        with:
+          app-id: ${{ vars.BOARD_SYNC_APP_ID }}
+          private-key: ${{ secrets.BOARD_SYNC_PRIVATE_KEY }}
+          owner: Softogram
+      - run: python3 tools/board/sync.py
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          APPROVER: CosmicSaaurabh

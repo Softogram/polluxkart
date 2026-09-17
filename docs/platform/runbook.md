@@ -26,6 +26,27 @@ Never copy its contents into this repository.
 
 Follow `ops/maintenance/README.md` in the repository.
 
+## Board sync GitHub App
+
+The `board-sync` workflow moves cards on the PolluxKart project board to match each ticket's stage label.
+GitHub's built-in workflow token cannot change an organisation project, so this uses a GitHub App.
+
+### Create the App (once)
+
+1. In the Softogram organisation, create a GitHub App named `polluxkart-board-sync`.
+2. Permissions: repository Issues read and write, Metadata read; organisation Projects read and write. Webhooks off.
+3. Install it only on `Softogram/polluxkart`.
+4. Store the App's id as the Actions variable `BOARD_SYNC_APP_ID`, and its private key as the Actions secret `BOARD_SYNC_PRIVATE_KEY`.
+5. Record the App id and the date the key was created in the private operations reference, never in this repository.
+
+### Rotate the key
+
+Create a new private key on the App, put it in `BOARD_SYNC_PRIVATE_KEY`, then delete the old key on the same day. Record the rotation privately.
+
+### A red `board-sync` run
+
+Open the failed run. If the token step failed, the App is missing, uninstalled, or the key is wrong. If the script step failed, it names the ticket and the problem (no stage label, two stage labels, or "re-apply the approval by hand"). Fix that ticket's labels; the next event or the nightly run will retry. Installation tokens expire within an hour and are not stored.
+
 ## Handling secrets
 
 - Development keys go only in a local `.env`, which git ignores.
