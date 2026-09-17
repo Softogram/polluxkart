@@ -274,6 +274,24 @@ class GitHub:
         )
 
 
+def pull_context(pull: dict) -> dict:
+    """Read base/head refs and the head repository from a GitHub pull request.
+
+    A missing head repository, which happens when a fork is deleted, is "none".
+    """
+    head = pull.get("head") or {}
+    repo = head.get("repo")
+    if repo is None:
+        head_repository = "none"
+    else:
+        head_repository = repo.get("full_name") or "none"
+    return {
+        "base_ref": (pull.get("base") or {}).get("ref") or "",
+        "head_ref": head.get("ref") or "",
+        "head_repository": head_repository,
+    }
+
+
 def main() -> int:
     token = os.environ.get("GITHUB_TOKEN", "")
     repository = os.environ.get("GITHUB_REPOSITORY", "")
@@ -290,8 +308,7 @@ def main() -> int:
         return 1
     files = [f["filename"] for f in github.paged(f"pulls/{number}/files")]
     body = pull.get("body") or ""
-    head = pull.get("head") or {}
-    head_repo = ((head.get("repo") or {}) or {}).get("full_name") or ""
+    context = pull_context(pull)
     wanted = set(references(IMPLEMENTS_RE, body)) | set(references(PLANS_RE, body))
     tickets = {n: github.ticket(n) for n in wanted}
 
@@ -301,9 +318,9 @@ def main() -> int:
         files=files,
         tickets=tickets,
         approver=approver,
-        base_ref=(pull.get("base") or {}).get("ref") or "",
-        head_ref=head.get("ref") or "",
-        head_repository=head_repo,
+        base_ref=context["base_ref"],
+        head_ref=context["head_ref"],
+        head_repository=context["head_repository"],
         repository=repository,
     )
     heading = "approval-gate: PASS" if result.ok else "approval-gate: FAIL"

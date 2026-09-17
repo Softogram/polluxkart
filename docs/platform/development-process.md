@@ -83,9 +83,11 @@ Part 5 is evidence in that same implementation pull request.
 | Ticket stage required | Any open ticket | `stage: implementation-ready`, `stage: in-progress` or `stage: in-review`, with the approval label applied by the owner |
 | Tests | Not applicable | Required: if it changes `api/**/src/main`, it also changes `api/**/src/test`; if it changes `web/src`, it also changes a test in `web/` or `e2e/` |
 | May use closing words (`closes`, `fixes`, `resolves`) | **No**, because planning must not close the ticket | Yes, for its one ticket |
+| Into `main` | Not used | Only this repository's `development` branch may open a pull request into `main`. That release passes the gate without a ticket line |
 
 Exceptions:
-- Pull requests opened by Dependabot (automated dependency updates) pass the gate without a ticket.
+- Pull requests opened by Dependabot (automated dependency updates) pass the gate without a ticket, except a Dependabot pull request into `main`.
+- Only this repository's `development` branch may open a pull request into `main`, and that release passes the gate without a ticket line.
 - The pull request that introduces this process (ticket E00-01) cannot be checked by a gate that does not exist yet; it waits for the owner's approval label and is merged at the owner's request.
 
 ## How the rule is enforced
@@ -94,7 +96,6 @@ Exceptions:
 - **Branch rulesets** (`.github/rulesets/`, applied with `make rulesets-apply`): GitHub itself refuses a direct push to `development` or `main`, a force push, or a deletion. Squash merges into `development`; merge commits into `main`. Only the owner can merge into `main`. There is no bypass on the check rules.
 - **Label guard** (`.github/workflows/approval-label-guard.yml`): if anyone other than the owner applies `stage: implementation-ready`, the label is removed at once and a comment explains why.
 - **Agent guard** (`.claude/settings.json` with `.claude/hooks/guard_approval_label.py`): Claude Code refuses any command that would apply, create, rename or delete the approval label, so an agent cannot approve a ticket even when it runs with the owner's GitHub login.
-- **Branch rulesets** on `development` and `main` make the approval gate and the docs check required before merging (set up after this process lands).
 - **Written rules:** this page, the repository `CLAUDE.md`, the `polluxkart-workflow` skill, the pull request template and the issue templates.
 
 **A known limit, stated plainly:** GitHub cannot tell the owner apart from an agent using the owner's own login. The agent guard closes that gap for Claude Code sessions in this repository; the owner should still apply the approval label by hand in the GitHub website, never through an agent.

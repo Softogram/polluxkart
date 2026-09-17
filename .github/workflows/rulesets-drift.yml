@@ -3,6 +3,9 @@ name: rulesets-drift
 # Compare live GitHub rulesets with the files in .github/rulesets/.
 # A red run means the owner should run make rulesets-apply, or someone
 # changed a ruleset in the GitHub website.
+# This job uses the workflow token, so bypass lists stay hidden.
+# It never claims to compare hidden bypass actors; that needs an admin
+# login and make rulesets-check.
 # GitHub pauses scheduled workflows on a public repository after 60 days
 # without activity.
 
@@ -30,3 +33,6 @@ jobs:
 
       - name: Check live rulesets against the files
         run: python3 tools/rulesets/rulesets.py check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

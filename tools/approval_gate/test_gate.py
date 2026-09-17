@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import unittest
 
-from gate import APPROVAL_LABEL, LabelEvent, Ticket, evaluate
+from gate import APPROVAL_LABEL, LabelEvent, Ticket, evaluate, pull_context
 
 OWNER = "CosmicSaaurabh"
 CONTRIBUTOR = "someone-else"
@@ -191,6 +191,81 @@ class ReleasePullRequestTest(unittest.TestCase):
             repository="Softogram/polluxkart",
         )
         self.assertFalse(result.ok)
+
+    def test_missing_head_repository_into_main_fails(self) -> None:
+        result = evaluate(
+            author=CONTRIBUTOR,
+            body="Release",
+            files=["Makefile"],
+            tickets={},
+            approver=OWNER,
+            base_ref="main",
+            head_ref="development",
+            head_repository="none",
+            repository="Softogram/polluxkart",
+        )
+        self.assertFalse(result.ok)
+        self.assertTrue(
+            any("must come from this repository's development branch" in message for message in result.messages)
+        )
+
+    def test_dependabot_into_main_fails(self) -> None:
+        result = evaluate(
+            author="dependabot[bot]",
+            body="Bumps a dependency",
+            files=["web/package.json"],
+            tickets={},
+            approver=OWNER,
+            base_ref="main",
+            head_ref="dependabot/npm_and_yarn/left-pad-1.0.0",
+            head_repository="Softogram/polluxkart",
+            repository="Softogram/polluxkart",
+        )
+        self.assertFalse(result.ok)
+        self.assertTrue(
+            any("must come from this repository's development branch" in message for message in result.messages)
+        )
+
+    def test_release_ignores_ticket_lines(self) -> None:
+        result = evaluate(
+            author=CONTRIBUTOR,
+            body="Implements #999\nCloses #999",
+            files=["Makefile"],
+            tickets={},
+            approver=OWNER,
+            base_ref="main",
+            head_ref="development",
+            head_repository="Softogram/polluxkart",
+            repository="Softogram/polluxkart",
+        )
+        self.assertTrue(result.ok, result.messages)
+        self.assertIn("Release pull request from development into main", result.messages)
+
+    def test_into_development_still_requires_ticket_line(self) -> None:
+        result = evaluate(
+            author=CONTRIBUTOR,
+            body="Adds things",
+            files=["Makefile"],
+            tickets={},
+            approver=OWNER,
+            base_ref="development",
+            head_ref="feature/x",
+            head_repository="Softogram/polluxkart",
+            repository="Softogram/polluxkart",
+        )
+        self.assertFalse(result.ok)
+        self.assertIn("Link this pull request", result.messages[0])
+
+    def test_pull_context_null_head_repo(self) -> None:
+        context = pull_context(
+            {
+                "base": {"ref": "main"},
+                "head": {"ref": "development", "repo": None},
+            }
+        )
+        self.assertEqual(context["head_repository"], "none")
+        self.assertEqual(context["base_ref"], "main")
+        self.assertEqual(context["head_ref"], "development")
 
 
 if __name__ == "__main__":
