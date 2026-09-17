@@ -31,10 +31,20 @@ DOCS_CHECKS = CHECK_ORDER[:2]
 TOOLING_CHECKS = CHECK_ORDER[2:]
 
 
+def _host_env() -> dict:
+    env = os.environ.copy()
+    for key in list(env):
+        if key.startswith("GIT_"):
+            del env[key]
+    return env
+
+
 def _copy_repo(dest: Path) -> None:
+    host = _host_env()
     listed = subprocess.check_output(
         ["git", "ls-files", "--cached", "--others", "--exclude-standard"],
         cwd=str(ROOT),
+        env=host,
         text=True,
     ).splitlines()
     for rel in listed:
@@ -46,13 +56,17 @@ def _copy_repo(dest: Path) -> None:
         target = dest / rel
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, target)
-    subprocess.check_call(["git", "init", "-q"], cwd=str(dest))
+    subprocess.check_call(["git", "init", "-q"], cwd=str(dest), env=host)
+    subprocess.check_call(["git", "add", "-A"], cwd=str(dest), env=host)
 
 
 def _run_make(dest: Path, *args: str, env=None, timeout=180):
-    merged = os.environ.copy()
+    merged = _host_env()
     if env:
         merged.update(env)
+        for key in list(merged):
+            if key.startswith("GIT_"):
+                del merged[key]
     return subprocess.run(
         ["make", *args],
         cwd=str(dest),
