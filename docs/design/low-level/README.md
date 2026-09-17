@@ -39,6 +39,7 @@ Only a ticket labelled `stage: implementation-ready` by the owner may be impleme
 - [issue-42-aws-security-review.md](issue-42-aws-security-review.md) - E01-03, AWS account security review (DRAFT, 2026-09-15)
 - [issue-43-aws-budget-alert.md](issue-43-aws-budget-alert.md) - E01-04, AWS monthly budget alert (DRAFT, 2026-09-16)
 - [issue-44-retire-first-version-credentials.md](issue-44-retire-first-version-credentials.md) - E01-05, retire the first version's credentials (DRAFT, 2026-09-16)
+- [issue-45-business-details.md](issue-45-business-details.md) - E01-06, business details for the site, invoices and legal pages (DRAFT, 2026-09-17)
 
 ## See also (do not follow recursively)
 

@@ -32,6 +32,9 @@ India's Digital Personal Data Protection Act, 2023.
 **Financial year (FY)**
 India's tax year, 1 April to 31 March. Invoice numbering restarts each financial year.
 
+**Grievance officer**
+The person named on the store to handle customer complaints. Indian e-commerce rules expect this on the site.
+
 **GST (Goods and Services Tax)**
 India's tax on sales. PolluxKart's prices include GST.
 
