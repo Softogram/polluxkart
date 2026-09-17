@@ -59,6 +59,22 @@ class ChecksUnitTest(unittest.TestCase):
         self.assertEqual(results[0]["status"], "failed")
         self.assertIn("not installed; run make doctor", results[0]["detail"])
 
+    def test_u1_3_shellcheck_missing_with_actionlint_present(self) -> None:
+        selected = [c for c in checks.CHECKS if c[0] == "actionlint"]
+        runner = FakeRun()
+
+        def which(name):
+            if name == "actionlint":
+                return "/bin/actionlint"
+            return None
+
+        results, _ = checks.run_checks(
+            selected, str(ROOT), run=runner, which=which, clock=lambda: 0.0, python="/py"
+        )
+        self.assertEqual(runner.calls, [])
+        self.assertEqual(results[0]["status"], "failed")
+        self.assertEqual(results[0]["detail"], "shellcheck is not installed; run make doctor")
+
     def test_u1_4_exit_code_in_detail(self) -> None:
         selected = checks.CHECKS[:1]
         runner = FakeRun([3])

@@ -50,6 +50,7 @@ class InstallLintersTest(unittest.TestCase):
                 dest=str(dest),
                 environ={"GITHUB_PATH": str(github_path)},
                 platform="linux",
+                machine="x86_64",
             )
             self.assertEqual(code, 0)
             self.assertIn(str(dest), github_path.read_text())
@@ -79,19 +80,23 @@ class InstallLintersTest(unittest.TestCase):
                     dest=str(dest),
                     environ={"GITHUB_PATH": str(github_path)},
                     platform="linux",
+                    machine="x86_64",
                 )
             finally:
                 __import__("sys").stderr = old
             self.assertEqual(code, 1)
             self.assertIn("checksum", buf.getvalue())
             self.assertFalse((dest / linters[0]["binary"]).exists())
+            self.assertEqual(github_path.read_text(), "")
 
     def test_i1_3_macos_exits_1(self) -> None:
         buf = io.StringIO()
         old = __import__("sys").stderr
         __import__("sys").stderr = buf
         try:
-            code = install_linters.install(environ={"GITHUB_PATH": "/tmp/x"}, platform="darwin")
+            code = install_linters.install(
+                environ={"GITHUB_PATH": "/tmp/x"}, platform="darwin", machine="arm64"
+            )
         finally:
             __import__("sys").stderr = old
         self.assertEqual(code, 1)
@@ -102,7 +107,7 @@ class InstallLintersTest(unittest.TestCase):
         old = __import__("sys").stderr
         __import__("sys").stderr = buf
         try:
-            code = install_linters.install(environ={}, platform="linux")
+            code = install_linters.install(environ={}, platform="linux", machine="x86_64")
         finally:
             __import__("sys").stderr = old
         self.assertEqual(code, 1)
@@ -114,6 +119,19 @@ class InstallLintersTest(unittest.TestCase):
             self.assertRegex(item["sha256"], r"^[0-9a-f]{64}$")
             self.assertIn(item["archive"], ("tar.gz", "tar.xz"))
             self.assertTrue(item["binary"])
+
+    def test_i4_3_linux_arm64_exits_1(self) -> None:
+        buf = io.StringIO()
+        old = __import__("sys").stderr
+        __import__("sys").stderr = buf
+        try:
+            code = install_linters.install(
+                environ={"GITHUB_PATH": "/tmp/x"}, platform="linux", machine="aarch64"
+            )
+        finally:
+            __import__("sys").stderr = old
+        self.assertEqual(code, 1)
+        self.assertIn("Homebrew", buf.getvalue())
 
     def test_i1_5_download_error(self) -> None:
         buf = io.StringIO()
@@ -130,6 +148,7 @@ class InstallLintersTest(unittest.TestCase):
                 dest="/tmp",
                 environ={"GITHUB_PATH": "/tmp/github_path"},
                 platform="linux",
+                machine="x86_64",
             )
         finally:
             __import__("sys").stderr = old
