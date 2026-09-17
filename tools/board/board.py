@@ -38,6 +38,138 @@ def is_tracked(title: str) -> bool:
     return bool(_TICKET_TITLE.match(text) or _EPIC_TITLE.match(text))
 
 
+BOARD_NAME = "PolluxKart"
+TICKETS_VIEW = {
+    "name": "Tickets",
+    "layout": "BOARD_LAYOUT",
+    "filter": "is:issue -label:epic",
+    "group_by": ["Status"],
+    "fields": ["Title", "Parent issue", "Assignees", "Linked pull requests", "Labels"],
+}
+EPICS_VIEW = {
+    "name": "Epics",
+    "layout": "TABLE_LAYOUT",
+    "filter": "label:epic",
+    "sort_by": ["Title"],
+    "fields": ["Title", "Status", "Sub-issues progress"],
+}
+
+
+def fetch_project(gh):
+    return gh.project()
+
+
+def fetch_tracked_issues(gh):
+    return gh.list_tracked()
+
+
+def compare(project, issues):
+    """Return every mismatch between the live board and the stage labels."""
+    problems = []
+    title = project.get("title") or ""
+    if title != BOARD_NAME:
+        problems.append(Problem("board is named %r, expected %s" % (title, BOARD_NAME)))
+    if not project.get("public"):
+        problems.append(Problem("board is not public"))
+    expected_order = list(STAGES.values())
+    found_order = list(project.get("status_order") or [])
+    if found_order != expected_order:
+        problems.append(
+            Problem("Status options are %s, expected %s" % (found_order, expected_order))
+        )
+    problems.extend(_view_problems(project.get("views")))
+    entries = list(project.get("board_entries") or [])
+    counts = {}
+    for entry in entries:
+        number = entry.get("number")
+        counts[number] = counts.get(number, 0) + 1
+        item_title = entry.get("title") or ""
+        if not is_tracked(item_title):
+            problems.append(Problem("board item %r is not a tracked issue" % item_title))
+    for issue in issues:
+        count = counts.get(issue.number, 0)
+        if count == 0:
+            problems.append(Problem("#%s %s is not on the board" % (issue.number, issue.title)))
+        elif count > 1:
+            problems.append(
+                Problem("#%s %s is on the board %s times" % (issue.number, issue.title, count))
+            )
+        stage_labels = [label for label in issue.labels if label in STAGES]
+        if not stage_labels:
+            problems.append(Problem("#%s %s has no stage label" % (issue.number, issue.title)))
+        elif len(stage_labels) > 1:
+            problems.append(
+                Problem(
+                    "#%s %s has more than one stage label: %s"
+                    % (issue.number, issue.title, ", ".join(stage_labels))
+                )
+            )
+        else:
+            expected = STAGES[stage_labels[0]]
+            found_status = None
+            for entry in entries:
+                if entry.get("number") == issue.number:
+                    found_status = entry.get("status")
+                    break
+            if count == 1 and found_status != expected:
+                problems.append(
+                    Problem(
+                        "#%s %s Status is %r, label is %s (%s)"
+                        % (issue.number, issue.title, found_status, stage_labels[0], expected)
+                    )
+                )
+    return problems
+
+
+def _view_problems(views):
+    problems = []
+    if views is None:
+        problems.append(Problem("could not read view settings"))
+        return problems
+    by_name = {view.get("name"): view for view in views}
+    for expected in (TICKETS_VIEW, EPICS_VIEW):
+        found = by_name.get(expected["name"])
+        if found is None:
+            problems.append(Problem("view %s is missing" % expected["name"]))
+            continue
+        if found.get("layout") != expected["layout"]:
+            problems.append(
+                Problem(
+                    "view %s layout is %s, expected %s"
+                    % (expected["name"], found.get("layout"), expected["layout"])
+                )
+            )
+        if expected.get("filter") and expected["filter"] not in (found.get("filter") or ""):
+            problems.append(
+                Problem(
+                    "view %s filter is %r, expected %s"
+                    % (expected["name"], found.get("filter"), expected["filter"])
+                )
+            )
+        if expected.get("group_by"):
+            group_by = found.get("group_by") or []
+            if group_by != expected["group_by"]:
+                problems.append(
+                    Problem(
+                        "view %s group-by is %s, expected %s"
+                        % (expected["name"], group_by, expected["group_by"])
+                    )
+                )
+        if expected.get("sort_by"):
+            sort_by = found.get("sort_by") or []
+            if sort_by != expected["sort_by"]:
+                problems.append(
+                    Problem(
+                        "view %s sort-by is %s, expected %s"
+                        % (expected["name"], sort_by, expected["sort_by"])
+                    )
+                )
+        missing_fields = [name for name in expected["fields"] if name not in (found.get("fields") or [])]
+        for name in missing_fields:
+            problems.append(Problem("view %s is missing field %s" % (expected["name"], name)))
+    return problems
+
+
 @dataclass
 class Problem:
     message: str
@@ -169,9 +301,12 @@ class RealGh:
             return self._project
         cursor = None
         items: list[tuple[int, str, str | None]] = []
+        board_entries: list[dict] = []
         project_id = None
         field_id = None
         options: dict[str, str] = {}
+        status_order: list[str] = []
+        views: list[dict] | None = None
         title = ""
         public = False
         while True:
@@ -187,6 +322,36 @@ class RealGh:
                           options { id name }
                         }
                       }
+                      views(first: 20) {
+                        nodes {
+                          name
+                          layout
+                          filter
+                          groupByFields(first: 10) {
+                            nodes {
+                              ... on ProjectV2Field { name }
+                              ... on ProjectV2IterationField { name }
+                              ... on ProjectV2SingleSelectField { name }
+                            }
+                          }
+                          sortByFields(first: 10) {
+                            nodes {
+                              field {
+                                ... on ProjectV2Field { name }
+                                ... on ProjectV2IterationField { name }
+                                ... on ProjectV2SingleSelectField { name }
+                              }
+                            }
+                          }
+                          fields(first: 20) {
+                            nodes {
+                              ... on ProjectV2Field { name }
+                              ... on ProjectV2IterationField { name }
+                              ... on ProjectV2SingleSelectField { name }
+                            }
+                          }
+                        }
+                      }
                       items(first:100, after:$cursor) {
                         pageInfo { hasNextPage endCursor }
                         nodes {
@@ -194,7 +359,7 @@ class RealGh:
                           fieldValueByName(name:"Status") {
                             ... on ProjectV2ItemFieldSingleSelectValue { name }
                           }
-                          content { ... on Issue { number } }
+                          content { ... on Issue { number title } }
                         }
                       }
                     }
@@ -210,13 +375,19 @@ class RealGh:
             field = proj.get("field") or {}
             field_id = field.get("id")
             options = {opt["name"]: opt["id"] for opt in field.get("options") or []}
+            if not status_order:
+                status_order = [opt["name"] for opt in field.get("options") or []]
+            if views is None:
+                views = [_parse_view(node) for node in (proj.get("views") or {}).get("nodes") or []]
             conn = proj["items"]
             for node in conn["nodes"]:
                 content = node.get("content") or {}
                 number = content.get("number")
+                item_title = content.get("title") or ""
+                status = (node.get("fieldValueByName") or {}).get("name")
+                board_entries.append({"number": number, "title": item_title, "status": status})
                 if number is None:
                     continue
-                status = (node.get("fieldValueByName") or {}).get("name")
                 items.append((number, node["id"], status))
             if not conn["pageInfo"]["hasNextPage"]:
                 break
@@ -227,7 +398,10 @@ class RealGh:
             "public": public,
             "field_id": field_id,
             "options": options,
+            "status_order": status_order,
+            "views": views,
             "items": items,
+            "board_entries": board_entries,
         }
         return self._project
 
@@ -275,6 +449,7 @@ class RealGh:
             },
         )
         issue.board_status = status
+        self._project = None
 
     def add_label(self, number: int, label: str) -> None:
         if label == APPROVAL_LABEL:
@@ -297,6 +472,29 @@ class RealGh:
         )
         if result.returncode != 0:
             raise GhError((result.stderr or result.stdout or "remove-label failed").strip())
+
+
+def _field_name(node) -> str:
+    if not node:
+        return ""
+    if "name" in node:
+        return node.get("name") or ""
+    field = node.get("field") or {}
+    return field.get("name") or ""
+
+
+def _parse_view(node: dict) -> dict:
+    fields = [_field_name(item) for item in (node.get("fields") or {}).get("nodes") or []]
+    group_by = [_field_name(item) for item in (node.get("groupByFields") or {}).get("nodes") or []]
+    sort_by = [_field_name(item) for item in (node.get("sortByFields") or {}).get("nodes") or []]
+    return {
+        "name": node.get("name") or "",
+        "layout": node.get("layout") or "",
+        "filter": node.get("filter") or "",
+        "group_by": [name for name in group_by if name],
+        "sort_by": [name for name in sort_by if name],
+        "fields": [name for name in fields if name],
+    }
 
 
 def _events_from_timeline(timeline: dict) -> list[LabelEvent]:

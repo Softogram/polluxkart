@@ -21,6 +21,8 @@ Start every piece of work by reading `docs/README.md`.
 
 `stage: planning` -> `stage: awaiting-approval` -> `stage: implementation-ready` (owner only) -> `stage: in-progress` -> `stage: in-review` -> `stage: done`.
 
+The [PolluxKart project board](https://github.com/orgs/Softogram/projects/2) has one column per stage. Cards follow those labels.
+
 ## Stack (owner decisions and proposals are marked in docs/platform/decisions.md)
 
 - Backend: Java with Spring Boot, independent services in one codebase (`api/`, planned).

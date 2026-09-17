@@ -39,6 +39,11 @@ No product or design answer is ever assumed or invented: if it is not recorded a
    - open questions for the owner.
 4. Tickets that only the owner can complete (account sign-ups, sign-offs, business details) also carry the `owner-action` label.
 
+The [PolluxKart project board](https://github.com/orgs/Softogram/projects/2) is public.
+The **Tickets** view is a board with one column per stage, filtered to hide epics.
+The **Epics** view is a table of epic issues with their progress.
+Cards move with stage labels (`board-sync`); `make board-check` reports any mismatch.
+
 ## The six stages
 
 | Stage label | Meaning | Who moves it here | What must be true |
