@@ -139,6 +139,9 @@ class MakeEndToEndTest(unittest.TestCase):
     def test_e1_6_failing_checks_test(self) -> None:
         self._assert_only_one_failure("tools/checks/test_deliberate_fail.py", "checks-tests")
 
+    def test_e1_6_failing_board_test(self) -> None:
+        self._assert_only_one_failure("tools/board/test_deliberate_fail.py", "board-tests")
+
     def test_e1_7_unknown_github_field(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             dest = Path(tmp) / "repo"
