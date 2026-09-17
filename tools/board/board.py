@@ -111,7 +111,7 @@ def compare(project, issues):
                 if entry.get("number") == issue.number:
                     found_status = entry.get("status")
                     break
-            if found_status is not None and found_status != expected:
+            if count == 1 and found_status != expected:
                 problems.append(
                     Problem(
                         "#%s %s Status is %r, label is %s (%s)"
@@ -153,6 +153,15 @@ def _view_problems(views):
                     Problem(
                         "view %s group-by is %s, expected %s"
                         % (expected["name"], group_by, expected["group_by"])
+                    )
+                )
+        if expected.get("sort_by"):
+            sort_by = found.get("sort_by") or []
+            if sort_by != expected["sort_by"]:
+                problems.append(
+                    Problem(
+                        "view %s sort-by is %s, expected %s"
+                        % (expected["name"], sort_by, expected["sort_by"])
                     )
                 )
         missing_fields = [name for name in expected["fields"] if name not in (found.get("fields") or [])]
@@ -440,6 +449,7 @@ class RealGh:
             },
         )
         issue.board_status = status
+        self._project = None
 
     def add_label(self, number: int, label: str) -> None:
         if label == APPROVAL_LABEL:
