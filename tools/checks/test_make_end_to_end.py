@@ -23,6 +23,7 @@ CHECK_ORDER = [
     "approval-gate-tests",
     "agent-hook-tests",
     "board-tests",
+    "githooks-tests",
     "checks-tests",
     "actionlint",
 ]
@@ -184,7 +185,7 @@ class MakeEndToEndTest(unittest.TestCase):
             combined = result.stdout + result.stderr
             self.assertNotEqual(result.returncode, 0, combined)
             self.assertEqual(_failed_names(combined), ["docslint", "actionlint"])
-            self.assertIn("2 of 7 checks failed: docslint, actionlint", combined)
+            self.assertIn("2 of 8 checks failed: docslint, actionlint", combined)
 
     def test_e1_10_actionlint_missing_from_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -193,7 +194,11 @@ class MakeEndToEndTest(unittest.TestCase):
             _copy_repo(dest)
             bindir = Path(tmp) / "bin"
             bindir.mkdir()
-            for name, src in (("python3", sys.executable), ("make", shutil.which("make"))):
+            for name, src in (
+                ("python3", sys.executable),
+                ("make", shutil.which("make")),
+                ("git", shutil.which("git")),
+            ):
                 os.symlink(src, bindir / name)
             path = str(bindir) + os.pathsep + "/usr/bin" + os.pathsep + "/bin"
             which_actionlint = subprocess.run(
@@ -210,7 +215,7 @@ class MakeEndToEndTest(unittest.TestCase):
             self.assertIn("actionlint", failed)
             self.assertIn("checks-tests", failed)
             self.assertIn("not installed; run make doctor", combined)
-            for name in ("docslint-tests", "docslint", "approval-gate-tests", "agent-hook-tests", "board-tests"):
+            for name in ("docslint-tests", "docslint", "approval-gate-tests", "agent-hook-tests", "board-tests", "githooks-tests"):
                 self.assertIn(name, _summary_names(combined))
 
     def test_e2_1_ci_docs(self) -> None:
@@ -319,7 +324,9 @@ class MakeEndToEndTest(unittest.TestCase):
         scripts = {
             "python3": "#!/bin/sh\nexec %s \"$@\"\n" % sys.executable,
             "make": None,
-            "git": "#!/bin/sh\necho 'git version 2.52.0'\n",
+            "git": "#!/bin/sh\n"
+            "if [ \"$1\" = config ] && [ \"$2\" = --get ] && [ \"$3\" = core.hooksPath ]; then echo .githooks; exit 0; fi\n"
+            "echo 'git version 2.52.0'\n",
             "gh": "#!/bin/sh\necho 'gh version 2.96.0'\n",
             "actionlint": "#!/bin/sh\necho '1.7.12'\n",
             "shellcheck": "#!/bin/sh\necho 'version: 0.11.0'\n",
