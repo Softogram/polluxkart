@@ -38,6 +38,7 @@ Only a ticket labelled `stage: implementation-ready` by the owner may be impleme
 - [issue-40-41-46-legacy-teardown.md](issue-40-41-46-legacy-teardown.md) - E01-01, E01-02, E01-07, retiring the old server and publishing the maintenance page (DRAFT, 2026-09-14)
 - [issue-42-aws-security-review.md](issue-42-aws-security-review.md) - E01-03, AWS account security review (DRAFT, 2026-09-15)
 - [issue-43-aws-budget-alert.md](issue-43-aws-budget-alert.md) - E01-04, AWS monthly budget alert (DRAFT, 2026-09-16)
+- [issue-44-retire-first-version-credentials.md](issue-44-retire-first-version-credentials.md) - E01-05, retire the first version's credentials (DRAFT, 2026-09-16)
 
 ## See also (do not follow recursively)
 
