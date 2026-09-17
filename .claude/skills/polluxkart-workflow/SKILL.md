@@ -63,7 +63,7 @@ gh issue view <N> --repo Softogram/polluxkart --json title,labels,state,body
 4. Write the tests from the approved test plan in the same branch.
 5. Run `make ci` (and the checks listed in `CLAUDE.md`); fix anything red, including unrelated failures.
 6. Open one pull request: `Implements #N` and `Closes #N` on their own lines, the verified test run output pasted, the CI run linked. Set `stage: in-review`.
-7. After merge: set `stage: done` and remove the worktree.
+7. After merge: the ticket closes as completed and `stage: done` is set automatically. Remove the worktree.
 
 ## Creating tickets and epics
 
@@ -82,7 +82,7 @@ gh issue view <N> --repo Softogram/polluxkart --json title,labels,state,body
 | `stage: implementation-ready` | **The owner only** |
 | `stage: in-progress` | The implementer |
 | `stage: in-review` | The implementer, when the pull request opens |
-| `stage: done` | The implementer, after merge |
+| `stage: done` | Set automatically when a ticket is closed as completed |
 
 Keep exactly one stage label on a ticket.
 

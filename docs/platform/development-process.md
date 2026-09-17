@@ -48,9 +48,11 @@ No product or design answer is ever assumed or invented: if it is not recorded a
 | `stage: implementation-ready` | **Approved by the owner** | **The owner only, by hand** | The owner has reviewed the design and test plan |
 | `stage: in-progress` | Being implemented | The contributor who picks it up (and assigns themselves) | The ticket was implementation ready |
 | `stage: in-review` | The implementation pull request is open | The contributor | The pull request contains the feature and its tests |
-| `stage: done` | Merged with a verified test run | The contributor, when the pull request merges | The verified test run is recorded; the issue is closed |
+| `stage: done` | Merged with a verified test run | Set automatically when the ticket is closed as completed | The verified test run is recorded; the issue is closed |
 
 A ticket carries exactly one stage label.
+Cards on the [PolluxKart project board](https://github.com/orgs/Softogram/projects/2) follow that label automatically (`board-sync`).
+If someone other than the owner applies `stage: implementation-ready`, the label guard removes it and the sync puts back the last valid stage label.
 If the owner changes their mind after approval, they move the ticket back to `stage: planning`, and any implementation pull request stops passing the gate.
 
 ## One ticket owns all five parts
@@ -106,7 +108,7 @@ Exceptions:
 4. Read the ticket's design and test plan; if something is unclear or missing, ask on the ticket and wait for the owner's answer instead of guessing.
 5. Implement the feature and its tests together; run `make ci`.
 6. Open one pull request with `Implements #N` and `Closes #N`, and change the stage to `stage: in-review`.
-7. After merge, the ticket closes; set `stage: done`.
+7. After merge, the ticket closes as completed and `stage: done` is set automatically; confirm the card is in Done.
 
 ## See also (do not follow recursively)
 
