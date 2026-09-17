@@ -4,13 +4,14 @@
 PYTHON ?= python3
 
 .DEFAULT_GOAL := help
-.PHONY: help ci ci-docs ci-tooling doctor
+.PHONY: help ci ci-docs ci-tooling doctor board-check
 
 help:
 	@echo "make doctor      check this machine has the tools the checks need"
 	@echo "make ci          run every check a pull request must pass"
 	@echo "make ci-docs     run only the docs checks (the docs workflow)"
 	@echo "make ci-tooling  run only the tooling checks (the tooling-tests workflow)"
+	@echo "make board-check check the live PolluxKart project board against stage labels"
 
 ci:
 	@$(PYTHON) tools/checks/checks.py
@@ -23,3 +24,6 @@ ci-tooling:
 
 doctor:
 	@$(PYTHON) tools/checks/doctor.py
+
+board-check:
+	@$(PYTHON) tools/board/check.py

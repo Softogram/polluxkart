@@ -18,6 +18,7 @@ from board import (
     Issue,
     LabelEvent,
     RealGh,
+    compare,
     is_tracked,
 )
 
@@ -212,7 +213,7 @@ def main(env: dict[str, str] | None = None, gh=None, stream=None) -> int:
                 return 1
             apply(action, gh)
             return 0
-        failures = reconcile(gh)
+        failures = reconcile(gh, checker=compare)
         for line in failures:
             print(_redact(line, token), file=stream)
         return 1 if failures else 0
