@@ -221,15 +221,22 @@ The other traps:
 3. Add a narrower unit or integration test if it helps locate the fault.
 4. Fix the code so both tests pass without changing any other test's assertions.
 
-## Running the checks (planned `Makefile` targets)
+## Running the checks
 
 ```
-make doctor   # Java 25, Node 24, pnpm, Docker running, gh
-make up       # local compose stack
-make ci-api   # ./mvnw -B verify, Modulith verify, spec drift, osv-scanner
-make ci-web   # eslint, tsc, prettier, generated types, Vitest, next build, JS size budget
-make ci-e2e   # Playwright, axe, Lighthouse CI on the compose stack
-make ci       # everything; must pass locally before every pull request
+make doctor      # tools needed today: python3, make, git, gh, actionlint, ShellCheck
+make ci          # every check a pull request must pass
+make ci-docs     # docs checks only (the docs workflow)
+make ci-tooling  # tooling checks only (the tooling-tests workflow)
+```
+
+Later, once `api/` and `web/` exist:
+
+```
+make up          # local compose stack
+make ci-api      # ./mvnw -B verify, Modulith verify, spec drift, osv-scanner
+make ci-web      # eslint, tsc, prettier, generated types, Vitest, next build, JS size budget
+make ci-e2e      # Playwright, axe, Lighthouse CI on the compose stack
 ```
 
 The `.githooks/pre-push` hook runs `make ci` when the branch has an open pull request.

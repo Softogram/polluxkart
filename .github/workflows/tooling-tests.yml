@@ -1,7 +1,7 @@
 name: tooling-tests
 
-# Unit tests for the repository's own tooling: the approval gate, the
-# Claude Code approval-label guard hook, and the board sync. Standard library Python only.
+# Unit tests for the repository's own tooling, run through make ci-tooling.
+# Standard library Python only.
 #
 # Owner decision, 2026-09-16: never per PR into development. Runs on a push
 # to main (a release) and when someone starts the workflow by hand.
@@ -28,11 +28,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Test the approval gate
-        run: python3 -m unittest discover -s tools/approval_gate -v
+      - name: Install the pinned actionlint and ShellCheck
+        run: python3 tools/checks/install_linters.py
 
-      - name: Test the approval label guard hook
-        run: python3 -m unittest discover -s .claude/hooks -v
+      - name: Check this machine has the tools
+        run: make doctor
 
-      - name: Test the board sync
-        run: python3 -m unittest discover -s tools/board -v
+      - name: Run the tooling checks
+        run: make ci-tooling

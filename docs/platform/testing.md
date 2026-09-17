@@ -47,21 +47,21 @@ The bar a pull request has to clear, and the kinds of test that prove it.
 - Storefront first-load JavaScript at most 150 KB compressed.
 - API: p95 (the time 95% of requests finish within) under 500 ms for browse and checkout in the nightly load test.
 
-## What `make ci` runs (planned)
+## What `make ci` runs (today)
 
-- Repository checks: gitleaks, workflow lint, Dockerfile lint, docslint.
-- `ci-api`: `./mvnw -B verify` with formatting, all tests, boundary checks, spec drift and vulnerability scan.
-- `ci-web`: lint with accessibility rules, type check, formatting, generated type check, Vitest, production build, bundle budget.
-- `ci-e2e`: build the Docker Compose stack, then Playwright, axe and Lighthouse CI.
+- `docslint-tests` and `docslint` (`make ci-docs`, the `docs` workflow at release).
+- `approval-gate-tests`, `agent-hook-tests`, `board-tests`, `checks-tests` and `actionlint` (`make ci-tooling`, the `tooling-tests` workflow at release).
+- Later: `ci-api`, `ci-web` and `ci-e2e` once `api/` and `web/` exist; gitleaks in ticket #37.
 
-Docker must be running for integration and end-to-end tests.
+Docker must be running for integration and end-to-end tests, when those exist.
 
-## Today (2026-09-14)
+## Today (2026-09-17)
 
-Two sets of checks exist, and there is no `make ci` yet.
-`tools/docslint` and its unit tests run in `.github/workflows/docs.yml`.
-The unit tests for the approval gate (`tools/approval_gate`) and for the agent label guard hook (`.claude/hooks`) run in `.github/workflows/tooling-tests.yml`.
-`make ci` and `make doctor` are planned in ticket E00-04 (#34).
+`make doctor` checks the tools this machine has.
+`make ci` runs every check a pull request must pass.
+The `docs` workflow runs `make ci-docs`.
+The `tooling-tests` workflow installs the pinned actionlint and ShellCheck, runs `make doctor`, then `make ci-tooling`.
+Those workflows run on a push to `main` and on hand dispatch, not on every pull request.
 
 ## See also (do not follow recursively)
 
