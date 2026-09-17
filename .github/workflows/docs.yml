@@ -33,8 +33,5 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Test the docs checker
-        run: python3 -m unittest discover -s tools/docslint -v
-
-      - name: Check the docs tree
-        run: python3 tools/docslint/docslint.py
+      - name: Run the docs checks
+        run: make ci-docs

@@ -17,7 +17,7 @@ They exist so that finding an answer costs a couple of files rather than twenty,
 4. **Stop when the question is answered.** Most answers sit two files deep. If you are four files in and still reading, you are probably in the wrong branch; come back here and pick another.
 
 **These rules are checked automatically.**
-`tools/docslint/docslint.py` runs locally before every pull request (`make ci` once it exists, and the command in `CLAUDE.md` until then). GitHub Actions runs it at release, not on every pull request.
+`tools/docslint` runs locally before every pull request (`make ci`). GitHub Actions runs it at release, not on every pull request.
 A broken link, a "Read next" link pointing sideways or upward, a loop, a document nobody can reach from this page, or an em dash all fail the check.
 
 ## The branches

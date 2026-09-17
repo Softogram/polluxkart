@@ -46,11 +46,8 @@ Start every piece of work by reading `docs/README.md`.
 
 These are the gate. GitHub Actions does not re-run them on pull requests into `development` (owner decision, 2026-09-16). It runs them at release (push to `main`) and when someone starts the workflow by hand.
 
-- `python3 tools/docslint/docslint.py`
-- `python3 -m unittest discover -s tools/docslint`
-- `python3 -m unittest discover -s tools/approval_gate`
-- `python3 -m unittest discover -s .claude/hooks`
-- `make ci` once it exists (ticket E00-04).
+- `make doctor` once per machine, to check the tools the checks need
+- `make ci` before every pull request
 
 ## Skills
 
