@@ -24,11 +24,12 @@ def _basename(argv0: str) -> str:
 
 
 class RecordingRun:
-    def __init__(self, versions=None, info_code=0, timeouts=None, text=None):
+    def __init__(self, versions=None, info_code=0, timeouts=None, text=None, hooks_path=".githooks"):
         self.versions = dict(versions or {})
         self.info_code = info_code
         self.timeouts = set(timeouts or [])
         self.text = dict(text or {})
+        self.hooks_path = hooks_path
         self.calls = []
 
     def __call__(self, argv, capture_output=False, text=False, timeout=None):
@@ -36,6 +37,10 @@ class RecordingRun:
         name = _basename(argv[0])
         if name in self.timeouts:
             raise subprocess.TimeoutExpired(argv, timeout)
+        if argv[:3] == ["git", "config", "--get"] and argv[3:] == ["core.hooksPath"]:
+            if self.hooks_path is None:
+                return SimpleNamespace(returncode=1, stdout="", stderr="")
+            return SimpleNamespace(returncode=0, stdout=self.hooks_path + "\n", stderr="")
         if len(argv) >= 2 and argv[1] == "info":
             return SimpleNamespace(returncode=self.info_code, stdout="", stderr="Cannot connect")
         body = self.text.get(name, self.versions.get(name, "1.0.0"))
@@ -66,13 +71,13 @@ def _ok_versions():
     }
 
 
-def _run_main(which, run, version_info=None):
+def _run_main(which, run, version_info=None, environ=None):
     buf_out = io.StringIO()
     buf_err = io.StringIO()
     old_out, old_err = sys.stdout, sys.stderr
     sys.stdout, sys.stderr = buf_out, buf_err
     try:
-        code = doctor.main(version_info=version_info, run=run, which=which)
+        code = doctor.main(version_info=version_info, run=run, which=which, environ=environ)
     finally:
         sys.stdout, sys.stderr = old_out, old_err
     return code, buf_out.getvalue(), buf_err.getvalue()
@@ -196,6 +201,38 @@ class DoctorUnitTest(unittest.TestCase):
         for item in LINTERS:
             tool = [t for t in doctor.TOOLS if t["name"] == item["name"]][0]
             self.assertEqual(tool["minimum"], item["version"])
+
+    def test_hooks_enabled(self) -> None:
+        which = FakeWhich(NEEDED)
+        code, out, _err = _run_main(which, RecordingRun(_ok_versions(), hooks_path=".githooks"))
+        self.assertEqual(code, 0)
+        self.assertIn("git hooks", out)
+        self.assertIn("ok", out)
+
+    def test_hooks_not_enabled(self) -> None:
+        which = FakeWhich(NEEDED)
+        code, out, _err = _run_main(which, RecordingRun(_ok_versions(), hooks_path=None))
+        self.assertEqual(code, 1)
+        self.assertIn("not enabled", out)
+        self.assertIn("git config core.hooksPath .githooks", out)
+
+    def test_hooks_point_elsewhere(self) -> None:
+        which = FakeWhich(NEEDED)
+        code, out, _err = _run_main(which, RecordingRun(_ok_versions(), hooks_path="/somewhere/else"))
+        self.assertEqual(code, 1)
+        self.assertIn("points elsewhere", out)
+        self.assertIn("/somewhere/else", out)
+
+    def test_hooks_missing_on_github_is_information(self) -> None:
+        which = FakeWhich(NEEDED)
+        code, out, _err = _run_main(
+            which,
+            RecordingRun(_ok_versions(), hooks_path=None),
+            environ={"GITHUB_ACTIONS": "true"},
+        )
+        self.assertEqual(code, 0)
+        self.assertIn("not enabled", out)
+        self.assertIn("All tools needed today are ready", out)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,3 @@
+#!/bin/sh
+# Runs tools/githooks/pre_push.py. See tools/githooks/README.md.
+exec python3 "$(git rev-parse --show-toplevel)/tools/githooks/pre_push.py" "$@"

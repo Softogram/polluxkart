@@ -23,6 +23,7 @@ CHECK_ORDER = [
     "approval-gate-tests",
     "agent-hook-tests",
     "board-tests",
+    "githooks-tests",
     "checks-tests",
     "actionlint",
 ]
@@ -30,10 +31,20 @@ DOCS_CHECKS = CHECK_ORDER[:2]
 TOOLING_CHECKS = CHECK_ORDER[2:]
 
 
+def _host_env() -> dict:
+    env = os.environ.copy()
+    for key in list(env):
+        if key.startswith("GIT_"):
+            del env[key]
+    return env
+
+
 def _copy_repo(dest: Path) -> None:
+    host = _host_env()
     listed = subprocess.check_output(
         ["git", "ls-files", "--cached", "--others", "--exclude-standard"],
         cwd=str(ROOT),
+        env=host,
         text=True,
     ).splitlines()
     for rel in listed:
@@ -45,13 +56,17 @@ def _copy_repo(dest: Path) -> None:
         target = dest / rel
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, target)
-    subprocess.check_call(["git", "init", "-q"], cwd=str(dest))
+    subprocess.check_call(["git", "init", "-q"], cwd=str(dest), env=host)
+    subprocess.check_call(["git", "add", "-A"], cwd=str(dest), env=host)
 
 
 def _run_make(dest: Path, *args: str, env=None, timeout=180):
-    merged = os.environ.copy()
+    merged = _host_env()
     if env:
         merged.update(env)
+        for key in list(merged):
+            if key.startswith("GIT_"):
+                del merged[key]
     return subprocess.run(
         ["make", *args],
         cwd=str(dest),
@@ -187,7 +202,7 @@ class MakeEndToEndTest(unittest.TestCase):
             combined = result.stdout + result.stderr
             self.assertNotEqual(result.returncode, 0, combined)
             self.assertEqual(_failed_names(combined), ["docslint", "actionlint"])
-            self.assertIn("2 of 7 checks failed: docslint, actionlint", combined)
+            self.assertIn("2 of 8 checks failed: docslint, actionlint", combined)
 
     def test_e1_10_actionlint_missing_from_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -196,7 +211,11 @@ class MakeEndToEndTest(unittest.TestCase):
             _copy_repo(dest)
             bindir = Path(tmp) / "bin"
             bindir.mkdir()
-            for name, src in (("python3", sys.executable), ("make", shutil.which("make"))):
+            for name, src in (
+                ("python3", sys.executable),
+                ("make", shutil.which("make")),
+                ("git", shutil.which("git")),
+            ):
                 os.symlink(src, bindir / name)
             path = str(bindir) + os.pathsep + "/usr/bin" + os.pathsep + "/bin"
             which_actionlint = subprocess.run(
@@ -213,7 +232,7 @@ class MakeEndToEndTest(unittest.TestCase):
             self.assertIn("actionlint", failed)
             self.assertIn("checks-tests", failed)
             self.assertIn("not installed; run make doctor", combined)
-            for name in ("docslint-tests", "docslint", "approval-gate-tests", "agent-hook-tests", "board-tests"):
+            for name in ("docslint-tests", "docslint", "approval-gate-tests", "agent-hook-tests", "board-tests", "githooks-tests"):
                 self.assertIn(name, _summary_names(combined))
 
     def test_e2_1_ci_docs(self) -> None:
@@ -322,7 +341,9 @@ class MakeEndToEndTest(unittest.TestCase):
         scripts = {
             "python3": "#!/bin/sh\nexec %s \"$@\"\n" % sys.executable,
             "make": None,
-            "git": "#!/bin/sh\necho 'git version 2.52.0'\n",
+            "git": "#!/bin/sh\n"
+            "if [ \"$1\" = config ] && [ \"$2\" = --get ] && [ \"$3\" = core.hooksPath ]; then echo .githooks; exit 0; fi\n"
+            "echo 'git version 2.52.0'\n",
             "gh": "#!/bin/sh\necho 'gh version 2.96.0'\n",
             "actionlint": "#!/bin/sh\necho '1.7.12'\n",
             "shellcheck": "#!/bin/sh\necho 'version: 0.11.0'\n",
