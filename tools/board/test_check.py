@@ -125,6 +125,22 @@ class CompareTest(unittest.TestCase):
         messages = [p.message for p in compare(good_project(entries), [issue])]
         self.assertTrue(any("In progress" in m and "in-review" in m for m in messages))
 
+    def test_b1_7_empty_status_is_mismatch(self) -> None:
+        issue = ticket(5, "E00-05 Git hooks", "stage: in-review")
+        entries = [{"number": 5, "title": issue.title, "status": None}]
+        messages = [p.message for p in compare(good_project(entries), [issue])]
+        self.assertTrue(any("None" in m and "in-review" in m for m in messages))
+
+    def test_views_unreadable(self) -> None:
+        messages = [p.message for p in compare(good_project(entries_for(self.a), views=None), [self.a])]
+        self.assertTrue(any("could not read view settings" in m for m in messages))
+
+    def test_epics_sort_by_title(self) -> None:
+        views = good_views()
+        views[1]["sort_by"] = ["Status"]
+        messages = [p.message for p in compare(good_project(entries_for(self.a), views=views), [self.a])]
+        self.assertTrue(any("Epics" in m and "sort-by" in m and "Title" in m for m in messages))
+
     def test_b1_8_private_board(self) -> None:
         issues = [self.a]
         messages = [p.message for p in compare(good_project(entries_for(self.a), public=False), issues)]
@@ -247,8 +263,35 @@ class HelperTest(unittest.TestCase):
                         "field": {"id": "f", "options": [{"id": "o", "name": "Planning"}]},
                         "views": {"nodes": []},
                         "items": {
+                            "pageInfo": {"hasNextPage": True, "endCursor": "p1"},
+                            "nodes": [
+                                {
+                                    "id": "item-1",
+                                    "fieldValueByName": {"name": "Planning"},
+                                    "content": {"number": 1, "title": "E00-01 Approval gate"},
+                                }
+                            ],
+                        },
+                    }
+                }
+            },
+            {
+                "organization": {
+                    "projectV2": {
+                        "id": "p",
+                        "title": "PolluxKart",
+                        "public": True,
+                        "field": {"id": "f", "options": [{"id": "o", "name": "Planning"}]},
+                        "views": {"nodes": []},
+                        "items": {
                             "pageInfo": {"hasNextPage": False, "endCursor": None},
-                            "nodes": [],
+                            "nodes": [
+                                {
+                                    "id": "item-2",
+                                    "fieldValueByName": {"name": "Done"},
+                                    "content": {"number": 2, "title": "Epic E00: Engineering"},
+                                }
+                            ],
                         },
                     }
                 }
@@ -264,6 +307,8 @@ class HelperTest(unittest.TestCase):
         self.assertEqual([issue.number for issue in issues], [1, 2])
         self.assertTrue(is_tracked(issues[0].title))
         self.assertTrue(is_tracked(issues[1].title))
+        project = gh.project()
+        self.assertEqual([entry["number"] for entry in project["board_entries"]], [1, 2])
 
 
 if __name__ == "__main__":

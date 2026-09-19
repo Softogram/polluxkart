@@ -9,8 +9,6 @@ import subprocess
 import sys
 import tempfile
 
-ZERO = "0" * 40
-
 
 def repo_root(run=subprocess.run):
     result = run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)

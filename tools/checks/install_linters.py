@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import platform as platform_mod
 import stat
 import sys
 import tarfile
@@ -15,26 +16,32 @@ import urllib.request
 from linters import LINTERS
 
 MESSAGE = "meant for GitHub's Linux machines; install locally with Homebrew or your package manager"
+LINUX_MACHINES = ("x86_64", "amd64")
 
 
-def _is_github_linux():
-    return sys.platform.startswith("linux") and os.environ.get("GITHUB_PATH")
+def _is_github_linux(platform=None, machine=None, environ=None):
+    platform = sys.platform if platform is None else platform
+    machine = platform_mod.machine() if machine is None else machine
+    environ = os.environ if environ is None else environ
+    return (
+        str(platform).startswith("linux")
+        and str(machine).lower() in LINUX_MACHINES
+        and bool(environ.get("GITHUB_PATH"))
+    )
 
 
 def _sha256(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def install(linters=LINTERS, fetch=None, dest=None, environ=None, platform=None):
+def install(linters=LINTERS, fetch=None, dest=None, environ=None, platform=None, machine=None):
     environ = os.environ if environ is None else environ
     platform = sys.platform if platform is None else platform
-    if not str(platform).startswith("linux"):
+    machine = platform_mod.machine() if machine is None else machine
+    if not _is_github_linux(platform=platform, machine=machine, environ=environ):
         sys.stderr.write(MESSAGE + "\n")
         return 1
     github_path = environ.get("GITHUB_PATH")
-    if not github_path:
-        sys.stderr.write(MESSAGE + "\n")
-        return 1
     dest = dest or tempfile.mkdtemp(prefix="polluxkart-linters-")
     if fetch is None:
         def fetch(url):

@@ -6,7 +6,7 @@ import io
 import unittest
 from dataclasses import dataclass, field
 
-from board import APPROVAL_LABEL, STAGES, GhError, Issue, LabelEvent
+from board import APPROVAL_LABEL, EPICS_VIEW, STAGES, TICKETS_VIEW, GhError, Issue, LabelEvent, RealGh, compare
 from sync import Action, apply, decide, main, reconcile
 
 OWNER = "CosmicSaaurabh"
@@ -77,6 +77,37 @@ class FakeGh:
         labels = self.issues[number].labels
         if label in labels:
             labels.remove(label)
+
+
+@dataclass
+class CachingFakeGh(FakeGh):
+    """Same cache behaviour as RealGh: project() is stale until set_status clears it."""
+
+    _cached: dict | None = None
+
+    def project(self) -> dict:
+        if self._cached is not None:
+            return self._cached
+        entries = [
+            {"number": item.number, "title": item.title, "status": item.board_status}
+            for item in self.list_tracked()
+        ]
+        self._cached = {
+            "title": "PolluxKart",
+            "public": True,
+            "status_order": list(STAGES.values()),
+            "views": [dict(TICKETS_VIEW), dict(EPICS_VIEW)],
+            "board_entries": entries,
+        }
+        return self._cached
+
+    def set_status(self, issue: Issue, status: str) -> None:
+        super().set_status(issue, status)
+        self._cached = None
+
+    def add_to_board(self, issue: Issue) -> None:
+        super().add_to_board(issue)
+        self._cached = None
 
 
 def status_of(action: Action) -> str | None:
@@ -395,6 +426,30 @@ class ApplyReconcileTest(unittest.TestCase):
 
         failures = reconcile(gh, checker=checker)
         self.assertTrue(any("Tickets view" in f for f in failures))
+
+    def test_a3_4_compare_sees_status_after_move(self) -> None:
+        dragged = issue(
+            number=1,
+            title="E00-05 Git hooks",
+            board_status="Planning",
+            labels=["stage: in-review"],
+            events=[ev("stage: in-review", "added", HELPER)],
+        )
+        gh = CachingFakeGh({dragged.number: dragged})
+        failures = reconcile(gh, checker=compare)
+        self.assertEqual(failures, [])
+        self.assertEqual(dragged.board_status, "In review")
+        self.assertEqual(gh.project()["board_entries"][0]["status"], "In review")
+
+    def test_set_status_clears_project_cache(self) -> None:
+        def run(command, check=False, capture_output=False, text=False):
+            return type("R", (), {"returncode": 0, "stdout": '{"data": {"updateProjectV2ItemFieldValue": {"projectV2Item": {"id": "i"}}}}', "stderr": ""})()
+
+        gh = RealGh(run=run)
+        gh._project = {"id": "P", "options": {"In review": "opt"}, "field_id": "F"}
+        ticket = issue(item_id="ITEM", board_status="Planning")
+        gh.set_status(ticket, "In review")
+        self.assertIsNone(gh._project)
 
     def test_a3_5_status_failure_skips_later_label_change(self) -> None:
         ticket = issue(labels=[], board_status="Planning")
