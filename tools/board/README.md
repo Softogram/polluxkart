@@ -5,7 +5,7 @@ The rules are in `docs/platform/development-process.md`.
 
 - `board.py` - stage names, which issue titles are tracked, and GitHub calls used by the checker and the sync.
 - `sync.py` - move each card to the Status that matches its stage label. Never adds `stage: implementation-ready`.
-- `check.py` - live `make board-check` lands with ticket #32.
+- `check.py` - live checker. `make board-check` talks to GitHub and fails if the board and the labels disagree. It changes nothing.
 
 Run the tests:
 
