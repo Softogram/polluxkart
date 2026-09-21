@@ -60,6 +60,14 @@ TOOLS = (
         "install_hint": "brew install gh",
     },
     {
+        "name": "git hooks",
+        "kind": "hooks",
+        "needed_now": True,
+        "minimum": None,
+        "purpose": "Local pre-commit and pre-push hooks",
+        "install_hint": "git config core.hooksPath .githooks",
+    },
+    {
         "name": "actionlint",
         "version_command": ["actionlint", "-version"],
         "needed_now": True,
@@ -112,6 +120,33 @@ TOOLS = (
 )
 
 
+def probe_hooks(tool, run=subprocess.run, environ=None):
+    environ = os.environ if environ is None else environ
+    on_github = environ.get("GITHUB_ACTIONS") == "true"
+    needed = bool(tool.get("needed_now")) and not on_github
+    try:
+        completed = run(
+            ["git", "config", "--get", "core.hooksPath"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except subprocess.TimeoutExpired:
+        return {"name": tool["name"], "status": "no answer", "version": "", "needed": needed, "hint": tool["install_hint"]}
+    value = (completed.stdout or "").strip()
+    if completed.returncode != 0 or not value:
+        return {"name": tool["name"], "status": "not enabled", "version": "", "needed": needed, "hint": tool["install_hint"]}
+    if value == ".githooks":
+        return {"name": tool["name"], "status": "ok", "version": value, "needed": needed, "hint": ""}
+    return {
+        "name": tool["name"],
+        "status": "points elsewhere",
+        "version": value,
+        "needed": needed,
+        "hint": tool["install_hint"],
+    }
+
+
 def parse_version(text):
     match = VERSION_RE.search(text or "")
     if not match:
@@ -129,7 +164,10 @@ def version_tuple(text):
     return tuple(parts)
 
 
-def probe(tool, run=subprocess.run, which=shutil.which):
+def probe(tool, run=subprocess.run, which=shutil.which, environ=None):
+    environ = os.environ if environ is None else environ
+    if tool.get("kind") == "hooks":
+        return probe_hooks(tool, run=run, environ=environ)
     name = tool["name"]
     needed = tool["needed_now"]
     if which(tool["version_command"][0]) is None and name != "python3":
@@ -191,6 +229,10 @@ def format_report(findings):
             extra = "    need %s or newer" % _linter_version(item["name"])
         elif item["status"] == "missing":
             extra = "    install: %s" % item["hint"]
+        elif item["status"] == "not enabled":
+            extra = "    %s" % item["hint"]
+        elif item["status"] == "points elsewhere":
+            extra = "    found %s; want .githooks" % item["version"]
         elif item["status"] == "too old":
             extra = "    need %s or newer" % _linter_version(item["name"]) if item["name"] in ("actionlint", "shellcheck") else "    too old"
         lines.append("  %-12s %-12s %-10s%s" % (item["status"], item["name"], item["version"], extra))
@@ -215,13 +257,14 @@ def format_report(findings):
     return "\n".join(lines), problems
 
 
-def main(argv=None, version_info=None, run=subprocess.run, which=shutil.which):
+def main(argv=None, version_info=None, run=subprocess.run, which=shutil.which, environ=None):
     version_info = sys.version_info if version_info is None else version_info
+    environ = os.environ if environ is None else environ
     if version_info < MIN_PYTHON:
         found = "%s.%s.%s" % version_info[:3]
         sys.stderr.write("Python 3.10 or newer is needed, found %s\n" % found)
         return 1
-    findings = [probe(tool, run=run, which=which) for tool in TOOLS]
+    findings = [probe(tool, run=run, which=which, environ=environ) for tool in TOOLS]
     report, problems = format_report(findings)
     sys.stdout.write(report + "\n")
     return 1 if problems else 0

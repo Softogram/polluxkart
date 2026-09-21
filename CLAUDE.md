@@ -34,6 +34,8 @@ The [PolluxKart project board](https://github.com/orgs/Softogram/projects/2) has
 
 - `development` is the default branch and the base of every pull request; `main` is the release branch.
 - One git worktree per task, created from a freshly fetched `origin/development`, removed after merge.
+- Enable the committed hooks once per clone: `git config core.hooksPath .githooks`. The pre-commit hook checks staged docs. The pre-push hook refuses a direct push to `development` or `main`, and runs `make ci` when the branch has an open pull request.
+- `SKIP_LOCAL_CI=1 git push` skips `make ci` in an emergency; say so in the pull request. It never allows a direct push to `development` or `main`.
 - Stage explicit paths only. Never `git add -A`, `git add .`, `git commit -a`, `git stash`, `git reset --hard`, `git clean`, `git rebase`, or a force push.
 - Read `git status --short` and `git diff --cached --stat` before every commit.
 - No agent co-author lines in commit messages. No em dashes in any written text.

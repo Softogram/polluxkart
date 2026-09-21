@@ -107,7 +107,7 @@ Exceptions:
 
 ## For contributors: picking up a ticket
 
-1. Filter issues by `stage: implementation-ready` and pick one without an assignee.
+1. Filter issues by `stage: implementation-ready` and pick one without an assignee. Enable the hooks once per clone: `git config core.hooksPath .githooks`.
 2. Assign yourself and change the stage to `stage: in-progress`.
 3. Create a git worktree from a freshly fetched `origin/development`.
 4. Read the ticket's design and test plan; if something is unclear or missing, ask on the ticket and wait for the owner's answer instead of guessing.

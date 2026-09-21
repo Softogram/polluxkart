@@ -240,7 +240,8 @@ make ci-e2e      # Playwright, axe, Lighthouse CI on the compose stack
 ```
 
 The `.githooks/pre-push` hook runs `make ci` when the branch has an open pull request.
-`SKIP_LOCAL_CI=1 git push` exists for emergencies; use it deliberately, never by habit.
+It refuses a dirty folder so the checks match what is pushed, and it refuses a direct push to `development` or `main`.
+`SKIP_LOCAL_CI=1 git push` skips `make ci` for emergencies; use it deliberately, never by habit, and say so in the pull request.
 **If you see a lint error, a failing test or a flaky test your change did not cause, fix it anyway**, or file an issue with the output if the fix is large.
 
 ## What a test plan contains

@@ -23,6 +23,7 @@ CHECKS = (
     ("approval-gate-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/approval_gate"], ()),
     ("agent-hook-tests", "tooling", ["-m", "unittest", "discover", "-s", ".claude/hooks"], ()),
     ("board-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/board"], ()),
+    ("githooks-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/githooks"], ("git", "make")),
     ("checks-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/checks"], ("make", "actionlint", "shellcheck")),
     ("actionlint", "tooling", None, ("actionlint", "shellcheck")),
 )
