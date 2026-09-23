@@ -55,7 +55,8 @@ Never `git add -A`, `git add .`, `git commit -a`, `git stash`, `git reset --hard
 - Read `git status --short` and `git diff --cached --stat` before every commit.
 - No agent co-author lines in commit messages.
 No em dashes in any written text.
-- Dependabot pull requests pass the approval gate without a ticket, but **only the owner merges them**.
+- Dependabot pull requests pass the approval gate without a ticket.
+An agent may merge one once every required check is green (owner decision, 2026-09-23); a major version bump still goes to the owner.
 
 ## Commands
 
