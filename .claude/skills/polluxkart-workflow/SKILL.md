@@ -95,7 +95,7 @@ Keep exactly one stage label on a ticket.
 - Implementing more than one ticket, or closing a ticket other than its own.
 - A pull request into `main` that does not come from this repository's `development` branch.
 
-Dependabot pull requests pass the gate without a ticket, but **only the owner merges them** (owner decision, 2026-09-14). Never merge one on your own initiative.
+Dependabot pull requests pass the gate without a ticket. **You may merge one once every required check is green** (owner decision, 2026-09-23). Leave a major version bump to the owner.
 
 ## Checklist before you open a pull request
 

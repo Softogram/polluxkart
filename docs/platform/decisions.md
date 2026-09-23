@@ -272,7 +272,7 @@ Design: [../design/low-level/issue-32-project-board.md](../design/low-level/issu
 
 ## Dependabot and CodeQL (2026-09-14)
 **Status: Owner decision, 2026-09-14, answering seven questions while planning E00-08 (#38).**
-- **Only the owner merges Dependabot pull requests.** They still pass the approval gate without a ticket and must pass every required check. Also offered: any contributor once the checks pass.
+- **Only the owner merges Dependabot pull requests.** They still pass the approval gate without a ticket and must pass every required check. Also offered: any contributor once the checks pass. **Superseded 2026-09-23** by "Who merges a Dependabot pull request".
 - **Updates are grouped:** one weekly pull request per ecosystem for minor and patch updates; security fixes arrive on their own. Also offered: one pull request per library.
 - **Major updates are skipped for Maven, pnpm and Docker** and left to planned tickets; GitHub Actions majors are still proposed. Also offered: skip majors everywhere, or allow all majors.
 - **CodeQL uses advanced setup**, a workflow file reviewed in pull requests, with languages listed explicitly and `legacy/` skipped. Also offered: keep GitHub's default setup.
@@ -282,6 +282,32 @@ Design: [../design/low-level/issue-32-project-board.md](../design/low-level/issu
 Design: [../design/low-level/issue-38-dependabot-codeql.md](../design/low-level/issue-38-dependabot-codeql.md).
 
 **Revised 2026-09-16:** CodeQL does not run on every pull request, so it cannot block merges. Findings from weekly and `main` runs stay in the Security tab. See "Local `make ci` is the pull-request gate".
+
+**Revised 2026-09-23:** the merge clause only. See "Who merges a Dependabot pull request".
+
+## Who merges a Dependabot pull request (2026-09-23)
+
+**Status: Owner decision, 2026-09-23, revising the merge clause of "Dependabot and CodeQL" (2026-09-14).**
+
+- **An agent may merge a Dependabot pull request once every required check is green.**
+Also offered: keep the 2026-09-14 rule that only the owner merges, or leave it to the owner but let an agent ask each time.
+
+Everything else in the 2026-09-14 entry stands: updates stay grouped, major updates stay out of the weekly pull request for Maven, pnpm and Docker, and security updates stay on.
+
+**Why it changed.**
+The 2026-09-14 rule was written before the gate around a Dependabot pull request existed.
+Such a pull request now passes the approval gate, `make ci` on the branch, and the required `approval-gate` check once the `development` ruleset is applied.
+The owner judged that enough for a green update.
+
+**What this is not.**
+GitHub's auto-merge is not switched on.
+A person or an agent still looks at the pull request and presses merge; nothing merges itself.
+
+**Still open**, asked on #228 and to be recorded here when answered:
+whether this covers a major version bump of a GitHub Action or only minor and patch;
+whether a security update is merged the same way;
+and whether reading the bumped dependency's changelog is required before merging.
+Until those are answered, an agent merges minor and patch updates and leaves a major to the owner, which is the narrower reading.
 
 ## Secret scanning (2026-09-14)
 **Status: Owner decision, 2026-09-14, answering five questions while planning E00-07 (#37).**
