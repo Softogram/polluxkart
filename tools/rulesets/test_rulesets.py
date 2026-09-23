@@ -28,7 +28,19 @@ def workflow_texts() -> dict:
 
 
 def matching_repo(files=None) -> dict:
-    return copy.deepcopy((files or files_copy())["repository"])
+    """The repository as GitHub's API returns it when it matches the files.
+
+    Secret scanning settings come back nested under security_and_analysis,
+    not as the plain true/false the file uses (#37).
+    """
+    wanted = copy.deepcopy((files or files_copy())["repository"])
+    live = {key: value for key, value in wanted.items() if key not in rulesets.SECURITY_KEYS}
+    live["security_and_analysis"] = {
+        key: {"status": "enabled" if wanted[key] else "disabled"}
+        for key in rulesets.SECURITY_KEYS
+        if key in wanted
+    }
+    return live
 
 
 def live_rulesets(files=None, include_bypass=True, extra=None, tweak=None) -> list:

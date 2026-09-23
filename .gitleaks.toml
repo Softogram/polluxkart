@@ -1,0 +1,12 @@
+# gitleaks settings for PolluxKart. See tools/secrets/README.md.
+# Every [[allowlists]] entry needs a description starting with the date it
+# was added and the reason, for example "2026-09-20: example key in a test".
+# Narrow an entry by path, by regex or by rule, never by commit id: squash
+# merging gives every change a new commit id and the entry would stop matching.
+
+[extend]
+useDefault = true
+
+# [[allowlists]]
+# description = "YYYY-MM-DD: why this is not a secret"
+# paths = ['''^api/payment/src/test/resources/razorpay-docs-example\.json$''']

@@ -130,6 +130,8 @@ class _DocSandbox:
             ".githooks/pre-push",
             "tools/githooks/pre_commit.py",
             "tools/githooks/pre_push.py",
+            "tools/secrets/scan.py",
+            ".gitleaks.toml",
         ):
             src = ROOT / rel
             dest = self.repo / rel

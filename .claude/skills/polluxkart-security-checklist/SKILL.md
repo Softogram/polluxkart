@@ -215,8 +215,10 @@ public record AdminUserView(UUID id, String email, Role role, UserStatus status,
 - Production and staging secrets live only in SSM Parameter Store under `/polluxkart/<environment>/`, and each server's role reads only its own environment.
 - Locally, secrets live only in a gitignored `.env`; `.env.example` is committed with names and placeholder values only.
 - No AWS access keys exist anywhere: the server uses its instance role, and GitHub Actions deploys through OIDC (short-lived credentials GitHub requests per run).
-- `gitleaks`, a secret scanner, runs in the pre-commit hook (`gitleaks protect --staged`) and in `make ci`.
-- **Any secret that ever touches git is public, and is rotated the same day**, whether or not the commit was pushed; follow the rotation steps in `docs/platform/runbook.md`.
+- `gitleaks`, a secret scanner, runs in the pre-commit hook (`gitleaks git --pre-commit --staged`, the form that replaced the older `gitleaks protect`) and in `make ci`, through `tools/secrets/scan.py`.
+- A false alarm is allowed only by an entry in `.gitleaks.toml` with a description starting `YYYY-MM-DD:` and a reason. Inline `gitleaks:allow` comments are refused.
+- **Any secret that ever reaches a commit is public, and is rotated the same day**, whether or not the commit was pushed; follow the rotation steps in `docs/platform/runbook.md`.
+A key the pre-commit hook blocked before any commit existed only needs removing (owner decision, 2026-09-14).
 - A settings record holding a secret overrides `toString()`, because a Java record prints every field by default and one debug log would expose it.
 
 ## Dependencies

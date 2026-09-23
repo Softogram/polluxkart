@@ -88,6 +88,19 @@ GitHub pauses scheduled workflows on a public repository after 60 days without a
 - Server secrets go only in AWS SSM Parameter Store.
 - If a secret is ever pasted into git, a document, a chat, a ticket or a log, rotate it the same day, then record the rotation in the private operations reference.
 
+What to do when a scan finds something, by where it was caught:
+
+| Where it was caught | It is a real secret | It is a false alarm |
+|---|---|---|
+| Pre-commit hook | Remove it from the file and unstage it. No commit exists, so no rotation is needed | Add an allow-list entry to `.gitleaks.toml` with a dated reason, in the same pull request |
+| `make ci` | It is already in a commit, so rotate it the same day, record the rotation in the private operations reference, and remove it in a new commit | Allow-list entry with a dated reason |
+| GitHub push protection | Do not bypass; remove it. If it was bypassed, it reached GitHub, so rotate the same day | Bypass with "false positive", then add an allow-list entry so gitleaks agrees |
+| A GitHub secret scanning alert (the owner's email) | Rotate the same day, then close the alert as revoked | Close the alert as a false positive, with the reason |
+
+Removing a secret in a later commit does not undo the leak: the earlier commit stays readable on GitHub.
+Rewriting history to hide it is forbidden here and would not help, because forks and caches keep it.
+Full details: [tools/secrets/README.md](../../tools/secrets/README.md).
+
 ## When something breaks (to be completed as systems ship)
 
 Each entry will say how to notice it, how to confirm it, and what to do.

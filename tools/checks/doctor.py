@@ -84,6 +84,14 @@ TOOLS = (
         "install_hint": "brew install shellcheck",
     },
     {
+        "name": "gitleaks",
+        "version_command": ["gitleaks", "version"],
+        "needed_now": True,
+        "minimum": _linter_version("gitleaks"),
+        "purpose": "The secrets check and the pre-commit secret scan",
+        "install_hint": "brew install gitleaks",
+    },
+    {
         "name": "java",
         "version_command": ["java", "-version"],
         "needed_now": False,
@@ -225,7 +233,7 @@ def format_report(findings):
         extra = ""
         if item["status"] == "ok" and item["name"] in ("python3", "make"):
             extra = "    need %s or newer" % {"python3": "3.10", "make": "3.81"}[item["name"]]
-        elif item["status"] == "ok" and item["name"] in ("actionlint", "shellcheck"):
+        elif item["status"] == "ok" and item["name"] in ("actionlint", "shellcheck", "gitleaks"):
             extra = "    need %s or newer" % _linter_version(item["name"])
         elif item["status"] == "missing":
             extra = "    install: %s" % item["hint"]
@@ -234,7 +242,7 @@ def format_report(findings):
         elif item["status"] == "points elsewhere":
             extra = "    found %s; want .githooks" % item["version"]
         elif item["status"] == "too old":
-            extra = "    need %s or newer" % _linter_version(item["name"]) if item["name"] in ("actionlint", "shellcheck") else "    too old"
+            extra = "    need %s or newer" % _linter_version(item["name"]) if item["name"] in ("actionlint", "shellcheck", "gitleaks") else "    too old"
         lines.append("  %-12s %-12s %-10s%s" % (item["status"], item["name"], item["version"], extra))
         if item["status"] != "ok":
             problems.append(item["name"])

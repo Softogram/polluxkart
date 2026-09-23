@@ -9,3 +9,5 @@
 /docs/platform/decisions.md              @CosmicSaaurabh
 /docs/platform/development-process.md    @CosmicSaaurabh
 /docs/design/                            @CosmicSaaurabh
+/.gitleaks.toml                          @CosmicSaaurabh
+/tools/secrets/                          @CosmicSaaurabh
