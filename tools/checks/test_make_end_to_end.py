@@ -24,6 +24,7 @@ CHECK_ORDER = [
     "agent-hook-tests",
     "board-tests",
     "githooks-tests",
+    "rulesets-tests",
     "checks-tests",
     "actionlint",
 ]
@@ -202,7 +203,7 @@ class MakeEndToEndTest(unittest.TestCase):
             combined = result.stdout + result.stderr
             self.assertNotEqual(result.returncode, 0, combined)
             self.assertEqual(_failed_names(combined), ["docslint", "actionlint"])
-            self.assertIn("2 of 8 checks failed: docslint, actionlint", combined)
+            self.assertIn("2 of 9 checks failed: docslint, actionlint", combined)
 
     def test_e1_10_actionlint_missing_from_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -232,7 +233,7 @@ class MakeEndToEndTest(unittest.TestCase):
             self.assertIn("actionlint", failed)
             self.assertIn("checks-tests", failed)
             self.assertIn("not installed; run make doctor", combined)
-            for name in ("docslint-tests", "docslint", "approval-gate-tests", "agent-hook-tests", "board-tests", "githooks-tests"):
+            for name in ("docslint-tests", "docslint", "approval-gate-tests", "agent-hook-tests", "board-tests", "githooks-tests", "rulesets-tests"):
                 self.assertIn(name, _summary_names(combined))
 
     def test_e2_1_ci_docs(self) -> None:

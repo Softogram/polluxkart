@@ -47,6 +47,41 @@ Create a new private key on the App, put it in `BOARD_SYNC_PRIVATE_KEY`, then de
 
 Open the failed run. If the token step failed, the App is missing, uninstalled, or the key is wrong. If the script step failed, it names the ticket and the problem (no stage label, two stage labels, or "re-apply the approval by hand"). Fix that ticket's labels; the next event or the nightly run will retry. Installation tokens expire within an hour and are not stored.
 
+## Branch rulesets
+
+The files in `.github/rulesets/` are the source of truth.
+Apply them from a clone with an admin GitHub login.
+Do not apply `main` or `main-owner-merge` until `main` already contains the approval gate.
+
+First apply after the ruleset files merge into `development`:
+
+```
+make rulesets-apply RULESETS=development
+make rulesets-check
+```
+
+That also writes the four repository merge settings (squash on, merge commits on, rebase off, "Update branch" on).
+`main` rulesets are still missing then, which is expected.
+
+After the first release pull request from `development` into `main` has merged:
+
+```
+make rulesets-apply RULESETS="main main-owner-merge"
+make rulesets-check
+```
+
+Later rule changes: open a pull request, merge it, then apply the named rulesets that changed.
+`make rulesets-apply` with no `RULESETS` applies all three; do not use that until `main` is ready.
+`make rulesets-apply-dry-run` prints the planned writes and changes nothing.
+
+A red `rulesets-drift` workflow means GitHub no longer matches the files, except hidden bypass lists, which that job cannot see.
+Either someone edited a ruleset in the website, or a merged change has not been applied yet.
+Run `make rulesets-check` with an admin login to compare bypass lists too, then apply if the files are right.
+
+In a genuine emergency the owner can switch a ruleset's enforcement off in GitHub settings, merge, and switch it on again. The next drift run will show the gap if it is left off.
+
+GitHub pauses scheduled workflows on a public repository after 60 days without activity in it.
+
 ## Handling secrets
 
 - Development keys go only in a local `.env`, which git ignores.
