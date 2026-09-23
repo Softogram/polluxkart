@@ -36,7 +36,14 @@ SECURITY_KEYS = (
     "secret_scanning_push_protection",
     "secret_scanning_non_provider_patterns",
     "secret_scanning_validity_checks",
+    "dependabot_security_updates",
 )
+
+# CodeQL default setup is not part of security_and_analysis. It has its own
+# endpoint, and it must be off before the advanced workflow may upload
+# results (#38).
+DEFAULT_SETUP_KEY = "code_scanning_default_setup"
+DEFAULT_SETUP_PATH = "/repos/%s/%s/code-scanning/default-setup"
 MERGE_KEYS = (
     "allow_squash_merge",
     "allow_merge_commit",
@@ -62,7 +69,11 @@ def _security_status(analysis, key):
 
 def repository_payload(want: dict) -> dict:
     """Split the flat file into the shape GitHub's repository PATCH wants."""
-    body = {key: value for key, value in want.items() if key not in SECURITY_KEYS}
+    body = {
+        key: value
+        for key, value in want.items()
+        if key not in SECURITY_KEYS and key != DEFAULT_SETUP_KEY
+    }
     analysis = {}
     for key in SECURITY_KEYS:
         if key in want:
@@ -306,6 +317,10 @@ def validate(files, workflows=WORKFLOWS) -> list[str]:
     for key in SECURITY_KEYS:
         if repo.get(key) is not True:
             problems.append("repository must turn %s on" % key.replace("_", " "))
+    if repo.get(DEFAULT_SETUP_KEY) is not False:
+        problems.append(
+            "repository must turn CodeQL default setup off, because advanced setup uploads the results"
+        )
     return problems
 
 
@@ -373,9 +388,21 @@ def live_state(gh, owner_repo=REPO) -> dict:
         repository = {key: seen.get(key) for key in MERGE_KEYS}
         for key in SECURITY_KEYS:
             repository[key] = _security_status(analysis, key)
+        repository[DEFAULT_SETUP_KEY] = _default_setup_state(gh, owner, name)
     except GhError as error:
         repository = {"error": str(error)}
     return {"rulesets": rulesets, "repository": repository}
+
+
+def _default_setup_state(gh, owner, name):
+    """True when CodeQL default setup is on, None when this login cannot see it."""
+    try:
+        data = gh.api("GET", DEFAULT_SETUP_PATH % (owner, name))
+    except GhError:
+        return None
+    if not isinstance(data, dict) or "state" not in data:
+        return None
+    return data.get("state") == "configured"
 
 
 def _visible(container, key) -> bool:
@@ -701,6 +728,10 @@ def _repository_unchanged(want: dict, have: dict) -> bool:
     if have.get("error"):
         return False
     for key, value in want.items():
+        # CodeQL default setup has its own endpoint, so apply handles it
+        # separately; it must not drag the merge settings into a rewrite.
+        if key == DEFAULT_SETUP_KEY:
+            continue
         if have.get(key) != value:
             return False
     return True
@@ -783,6 +814,14 @@ def apply(files, gh, dry_run=False, owner_repo=REPO, names=None) -> list[str]:
             notes.append("update repository merge settings")
         else:
             _write(gh, "PATCH", "/repos/%s/%s" % (owner, repo_name), repository_payload(repo))
+    if repo and DEFAULT_SETUP_KEY in repo:
+        live_default_setup = (live.get("repository") or {}).get(DEFAULT_SETUP_KEY)
+        if live_default_setup is not None and live_default_setup != repo[DEFAULT_SETUP_KEY]:
+            state = "configured" if repo[DEFAULT_SETUP_KEY] else "not-configured"
+            if dry_run:
+                notes.append("set CodeQL default setup to %s" % state)
+            else:
+                _write(gh, "PATCH", DEFAULT_SETUP_PATH % (owner, repo_name), {"state": state})
     extra = [name for name in have if name not in {item["name"] for item in files.get("rulesets") or []}]
     for name_extra in extra:
         notes.append("warning: ruleset %s exists on GitHub but not in the files; left alone" % name_extra)

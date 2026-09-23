@@ -101,6 +101,25 @@ Removing a secret in a later commit does not undo the leak: the earlier commit s
 Rewriting history to hide it is forbidden here and would not help, because forks and caches keep it.
 Full details: [tools/secrets/README.md](../../tools/secrets/README.md).
 
+## Dependency updates and code scanning
+
+Dependabot opens one grouped pull request per ecosystem every Monday morning, and a separate one as soon as a vulnerability is published for a dependency in use.
+
+- **Only the owner merges a Dependabot pull request.** Check `make ci` passed, read what changed, then merge.
+- **A grouped pull request that breaks a check** is closed, or split by commenting `@dependabot ignore <dependency>` so the rest can go in. Do not merge it red.
+- **A security update needing a new major version** still arrives, because a known hole outweighs an upgrade surprise. It gets the same checks.
+- **A CodeQL alert** appears in the Security tab from the weekly or release run, not from a pull request. Fix it, or dismiss it with a reason starting with today's date.
+- **An alert under `legacy/`** is dismissed with reason "not used" (Dependabot) or "won't fix" (CodeQL) and the comment "YYYY-MM-DD: legacy/ is the first version, kept as reference and never deployed". `legacy/` is not scanned by CodeQL, so only older alerts and Dependabot alerts appear.
+
+Applying the settings, with an admin login, after the files merge:
+
+```
+make rulesets-apply RULESETS=development
+make rulesets-check
+```
+
+That turns CodeQL default setup off. It must be off before the `codeql` workflow can upload results, because GitHub refuses results from advanced setup while default setup is on.
+
 ## When something breaks (to be completed as systems ship)
 
 Each entry will say how to notice it, how to confirm it, and what to do.
