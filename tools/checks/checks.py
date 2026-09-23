@@ -25,6 +25,8 @@ CHECKS = (
     ("board-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/board"], ()),
     ("githooks-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/githooks"], ("git", "make")),
     ("rulesets-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/rulesets"], ()),
+    ("secrets-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/secrets"], ("git", "gitleaks")),
+    ("secrets", "tooling", ["tools/secrets/scan.py", "ci"], ("git", "gitleaks")),
     ("checks-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/checks"], ("make", "actionlint", "shellcheck")),
     ("actionlint", "tooling", None, ("actionlint", "shellcheck")),
 )

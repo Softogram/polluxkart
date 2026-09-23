@@ -2,5 +2,9 @@
   "allow_squash_merge": true,
   "allow_merge_commit": true,
   "allow_rebase_merge": false,
-  "allow_update_branch": true
+  "allow_update_branch": true,
+  "secret_scanning": true,
+  "secret_scanning_push_protection": true,
+  "secret_scanning_non_provider_patterns": true,
+  "secret_scanning_validity_checks": true
 }

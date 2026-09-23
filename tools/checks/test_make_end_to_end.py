@@ -25,6 +25,8 @@ CHECK_ORDER = [
     "board-tests",
     "githooks-tests",
     "rulesets-tests",
+    "secrets-tests",
+    "secrets",
     "checks-tests",
     "actionlint",
 ]
@@ -59,6 +61,17 @@ def _copy_repo(dest: Path) -> None:
         shutil.copy2(src, target)
     subprocess.check_call(["git", "init", "-q"], cwd=str(dest), env=host)
     subprocess.check_call(["git", "add", "-A"], cwd=str(dest), env=host)
+    # The secret scan needs a starting point for the commits it must cover.
+    # One commit, with origin/development pointing at it, is the state just
+    # after a merge: no commits in range, and the tracked files are scanned.
+    subprocess.check_call(["git", "config", "user.email", "test@example.com"], cwd=str(dest), env=host)
+    subprocess.check_call(["git", "config", "user.name", "test"], cwd=str(dest), env=host)
+    subprocess.check_call(
+        ["git", "commit", "-q", "-m", "copy", "--no-verify"], cwd=str(dest), env=host
+    )
+    subprocess.check_call(
+        ["git", "update-ref", "refs/remotes/origin/development", "HEAD"], cwd=str(dest), env=host
+    )
 
 
 def _run_make(dest: Path, *args: str, env=None, timeout=180):
@@ -203,7 +216,9 @@ class MakeEndToEndTest(unittest.TestCase):
             combined = result.stdout + result.stderr
             self.assertNotEqual(result.returncode, 0, combined)
             self.assertEqual(_failed_names(combined), ["docslint", "actionlint"])
-            self.assertIn("2 of 9 checks failed: docslint, actionlint", combined)
+            self.assertIn(
+                "2 of %s checks failed: docslint, actionlint" % len(CHECK_ORDER), combined
+            )
 
     def test_e1_10_actionlint_missing_from_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -348,6 +363,7 @@ class MakeEndToEndTest(unittest.TestCase):
             "gh": "#!/bin/sh\necho 'gh version 2.96.0'\n",
             "actionlint": "#!/bin/sh\necho '1.7.12'\n",
             "shellcheck": "#!/bin/sh\necho 'version: 0.11.0'\n",
+            "gitleaks": "#!/bin/sh\necho '8.30.1'\n",
         }
         real_make = shutil.which("make")
         for name, body in scripts.items():

@@ -29,11 +29,20 @@ Every rule here answers a real failure found in the first version, listed in [..
 
 ## Secrets
 
-- Secrets never enter git. `.env` files are git-ignored, and `gitleaks` scans staged changes in a pre-commit hook and the commits on the branch in `make ci`.
+- Secrets never enter git, in three layers.
+`.env` files are git-ignored.
+gitleaks, an open-source secret scanner, checks the staged changes in the pre-commit hook and, in `make ci`, the branch's own commits plus every tracked file as it is now.
+GitHub's own secret scanning and push protection watch the whole history and every push.
+Every run redacts what it finds, so no log ever repeats a secret.
+- A false alarm is allowed by one entry in `.gitleaks.toml`, added by anyone through a pull request, each with a description starting `YYYY-MM-DD:` and a reason (owner decision, 2026-09-14).
+A check enforces the dated reason. Inline `gitleaks:allow` comments are refused, and an entry narrowed by commit id is refused because squash merging changes commit ids.
+- The person pushing may bypass a GitHub push protection block by giving a reason; GitHub alerts the owner either way, and only the owner receives those alerts (owner decision, 2026-09-14).
+Owner-only approval of a bypass needs GitHub's paid Secret Protection add-on, which is not bought.
 - Development uses test-mode keys in a local `.env`.
 - Production secrets live in AWS SSM Parameter Store as encrypted values and reach the server at deploy time.
 - CI deploys through short-lived AWS credentials (GitHub OIDC), never stored access keys.
-- Any secret that ever touches git, a document, a chat or a log is treated as public and rotated the same day.
+- Any secret that ever reaches a commit (pushed or not), a pushed branch, a document, a chat, a ticket or a log is treated as public and rotated the same day (owner decision, 2026-09-14).
+A key the pre-commit hook blocked before any commit existed does not need rotating, only removing.
 - The repository is public: account ids, live resource ids and credential status belong in the private operations reference described in [runbook.md](runbook.md), never in this tree.
 
 ## Personal data

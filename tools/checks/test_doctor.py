@@ -13,7 +13,7 @@ import doctor
 from linters import LINTERS
 
 
-NEEDED = ("python3", "make", "git", "gh", "actionlint", "shellcheck")
+NEEDED = ("python3", "make", "git", "gh", "actionlint", "shellcheck", "gitleaks")
 
 
 def _basename(argv0: str) -> str:
@@ -68,6 +68,7 @@ def _ok_versions():
         "gh": "gh version 2.96.0",
         "actionlint": "1.7.12",
         "shellcheck": "version: 0.11.0",
+        "gitleaks": "8.30.1",
     }
 
 

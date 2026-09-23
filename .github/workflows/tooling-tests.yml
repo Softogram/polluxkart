@@ -27,8 +27,11 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          # All history, so the secret scan can walk the commits it must
+          # cover. The repository is small.
+          fetch-depth: 0
 
-      - name: Install the pinned actionlint and ShellCheck
+      - name: Install the pinned actionlint, ShellCheck and gitleaks
         run: python3 tools/checks/install_linters.py
 
       - name: Check this machine has the tools
@@ -36,3 +39,7 @@ jobs:
 
       - name: Run the tooling checks
         run: make ci-tooling
+        env:
+          # The pull request's base commit, so the secret scan covers exactly
+          # the commits in the pull request. Empty on a push.
+          SCAN_BASE: ${{ github.event.pull_request.base.sha }}

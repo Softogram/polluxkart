@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Pre-commit hook: check the staged docs tree with docslint."""
+"""Pre-commit hook: check the staged docs tree, then scan it for secrets.
+
+Both checks always run, so neither hides the other's problems. The secret
+scan is never skipped: SKIP_LOCAL_CI only affects the pre-push hook.
+"""
 
 from __future__ import annotations
 
@@ -26,10 +30,12 @@ def main(argv=None, run=subprocess.run, python=None):
         if checkout.returncode != 0:
             return checkout.returncode or 1
         script = os.path.join(root, "tools", "docslint", "docslint.py")
-        check = run([python, script, "--root", temp])
-        return check.returncode
+        docs = run([python, script, "--root", temp])
     finally:
         shutil.rmtree(temp, ignore_errors=True)
+    scan = os.path.join(root, "tools", "secrets", "scan.py")
+    secrets = run([python, scan, "staged"], cwd=root)
+    return docs.returncode or secrets.returncode
 
 
 if __name__ == "__main__":

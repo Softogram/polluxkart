@@ -29,6 +29,48 @@ BYPASS_NOT_VISIBLE = (
 MATCHES = "GitHub matches the rule files"
 NUMERIC_ID_KEYS = {"actor_id", "integration_id"}
 
+# Secret scanning settings live in repository.json as plain true/false, but
+# GitHub reads and writes them nested under security_and_analysis (#37).
+SECURITY_KEYS = (
+    "secret_scanning",
+    "secret_scanning_push_protection",
+    "secret_scanning_non_provider_patterns",
+    "secret_scanning_validity_checks",
+)
+MERGE_KEYS = (
+    "allow_squash_merge",
+    "allow_merge_commit",
+    "allow_rebase_merge",
+    "allow_update_branch",
+)
+
+
+def _security_status(analysis, key):
+    """True, False, or None when this login may not see the setting."""
+    if not isinstance(analysis, dict):
+        return None
+    entry = analysis.get(key)
+    if not isinstance(entry, dict):
+        return None
+    status = entry.get("status")
+    if status == "enabled":
+        return True
+    if status == "disabled":
+        return False
+    return None
+
+
+def repository_payload(want: dict) -> dict:
+    """Split the flat file into the shape GitHub's repository PATCH wants."""
+    body = {key: value for key, value in want.items() if key not in SECURITY_KEYS}
+    analysis = {}
+    for key in SECURITY_KEYS:
+        if key in want:
+            analysis[key] = {"status": "enabled" if want[key] else "disabled"}
+    if analysis:
+        body["security_and_analysis"] = analysis
+    return body
+
 
 class GhError(Exception):
     pass
@@ -261,6 +303,9 @@ def validate(files, workflows=WORKFLOWS) -> list[str]:
         problems.append("repository must turn rebase merging off")
     if repo.get("allow_update_branch") is not True:
         problems.append("repository must suggest updating pull request branches")
+    for key in SECURITY_KEYS:
+        if repo.get(key) is not True:
+            problems.append("repository must turn %s on" % key.replace("_", " "))
     return problems
 
 
@@ -323,12 +368,11 @@ def live_state(gh, owner_repo=REPO) -> dict:
         rulesets.append(detail)
     try:
         repo = gh.api("GET", "/repos/%s/%s" % (owner, name))
-        repository = {
-            "allow_squash_merge": repo.get("allow_squash_merge") if isinstance(repo, dict) else None,
-            "allow_merge_commit": repo.get("allow_merge_commit") if isinstance(repo, dict) else None,
-            "allow_rebase_merge": repo.get("allow_rebase_merge") if isinstance(repo, dict) else None,
-            "allow_update_branch": repo.get("allow_update_branch") if isinstance(repo, dict) else None,
-        }
+        seen = repo if isinstance(repo, dict) else {}
+        analysis = seen.get("security_and_analysis")
+        repository = {key: seen.get(key) for key in MERGE_KEYS}
+        for key in SECURITY_KEYS:
+            repository[key] = _security_status(analysis, key)
     except GhError as error:
         repository = {"error": str(error)}
     return {"rulesets": rulesets, "repository": repository}
@@ -738,7 +782,7 @@ def apply(files, gh, dry_run=False, owner_repo=REPO, names=None) -> list[str]:
         if dry_run:
             notes.append("update repository merge settings")
         else:
-            _write(gh, "PATCH", "/repos/%s/%s" % (owner, repo_name), repo)
+            _write(gh, "PATCH", "/repos/%s/%s" % (owner, repo_name), repository_payload(repo))
     extra = [name for name in have if name not in {item["name"] for item in files.get("rulesets") or []}]
     for name_extra in extra:
         notes.append("warning: ruleset %s exists on GitHub but not in the files; left alone" % name_extra)
