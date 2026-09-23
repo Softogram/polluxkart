@@ -226,7 +226,16 @@ def _run_gitleaks(root, subcommand, extra, run=subprocess.run, which=shutil.whic
         os.unlink(report_path)
 
 
-def format_findings(findings):
+def _relative(path, prefix):
+    """Report a file as the contributor knows it, not as the temporary copy."""
+    if not prefix:
+        return path
+    if path.startswith(prefix):
+        return path[len(prefix):].lstrip(os.sep)
+    return path
+
+
+def format_findings(findings, prefix=""):
     """One line per finding: rule, file and line, and the commit when there is one.
 
     Only these fields are printed. The matched value is never read from the
@@ -235,7 +244,7 @@ def format_findings(findings):
     lines = []
     for item in findings:
         rule = item.get("RuleID") or item.get("Description") or "unknown rule"
-        where = "%s:%s" % (item.get("File") or "?", item.get("StartLine") or "?")
+        where = "%s:%s" % (_relative(item.get("File") or "?", prefix), item.get("StartLine") or "?")
         commit = (item.get("Commit") or "").strip()
         if commit:
             lines.append("  %s  %s  in commit %s" % (rule, where, commit[:12]))
@@ -261,6 +270,12 @@ def resolve_base(root, environ, run=subprocess.run):
         return found.stdout.strip()
     known = _git(run, root, ["rev-parse", "--verify", "--quiet", DEFAULT_BASE_BRANCH + "^{commit}"])
     if known.returncode != 0:
+        # On GitHub a pull request always arrives with SCAN_BASE set. A push
+        # after a merge, and a run started by hand, have no range of their
+        # own, and the checkout may not carry origin/development at all. The
+        # tracked files are still scanned, and the log says so.
+        if environ.get("GITHUB_ACTIONS") == "true":
+            return None
         raise ScanError(FETCH_FIRST)
     merge_base = _git(run, root, ["merge-base", DEFAULT_BASE_BRANCH, "HEAD"])
     if merge_base.returncode != 0:
@@ -270,6 +285,8 @@ def resolve_base(root, environ, run=subprocess.run):
 
 def scan_range(root, base, run=subprocess.run, which=shutil.which):
     """Scan every commit after base up to HEAD, including ones later undone."""
+    if base is None:
+        return []
     head = _git(run, root, ["rev-parse", "--verify", "--quiet", "HEAD^{commit}"])
     if head.returncode != 0:
         return []
@@ -298,7 +315,10 @@ def scan_tracked_files(root, run=subprocess.run, which=shutil.which):
             target = os.path.join(temp, path)
             os.makedirs(os.path.dirname(target), exist_ok=True)
             shutil.copyfile(source, target)
-        return _run_gitleaks(root, "dir", [temp], run=run, which=which)
+        findings = _run_gitleaks(root, "dir", [temp], run=run, which=which)
+        for item in findings:
+            item["File"] = _relative(item.get("File") or "", temp)
+        return findings
     finally:
         shutil.rmtree(temp, ignore_errors=True)
 
@@ -332,6 +352,8 @@ def command_staged(root, stream, run=subprocess.run, which=shutil.which):
 def command_ci(root, environ, stream, run=subprocess.run, which=shutil.which):
     problems = allowlist_problems(root, run=run)
     base = resolve_base(root, environ, run=run)
+    if base is None:
+        stream.write("No commit range for this run; scanning the tracked files only\n")
     findings = scan_range(root, base, run=run, which=which)
     findings = findings + scan_tracked_files(root, run=run, which=which)
     return _report(stream, problems, findings)

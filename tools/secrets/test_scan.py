@@ -335,6 +335,35 @@ class CiScanTest(unittest.TestCase):
             self.assertEqual(result.returncode, 1, result.stdout)
             self.assertIn("fetch origin first", result.stdout)
 
+    def test_s2_8_on_github_a_run_without_a_base_scans_the_files(self):
+        """A release push may arrive without origin/development in the checkout.
+
+        The run must not fail for that: it has no commit range of its own,
+        the tracked files are still scanned, and the log says so.
+        """
+        with _Sandbox() as box:
+            box.write("one.txt", "one\n")
+            box.commit("one", ["one.txt"])
+            clean = box.scan_ci(env={"GITHUB_ACTIONS": "true"})
+            self.assertEqual(clean.returncode, 0, clean.stdout + clean.stderr)
+            self.assertIn("No commit range", clean.stdout)
+            value = fake_secret()
+            box.write("config.py", 'TOKEN = "%s"\n' % value)
+            box.commit("secret", ["config.py"])
+            dirty = box.scan_ci(env={"GITHUB_ACTIONS": "true"})
+            self.assertEqual(dirty.returncode, 1, dirty.stdout)
+            self.assertNotIn(value, dirty.stdout + dirty.stderr)
+
+    def test_s2_6_findings_name_the_file_not_the_temporary_copy(self):
+        with _Sandbox() as box:
+            box.set_origin_development()
+            box.write("app/config.py", 'TOKEN = "%s"\n' % fake_secret())
+            box.commit("secret", ["app/config.py"])
+            result = box.scan_ci()
+            self.assertEqual(result.returncode, 1, result.stdout)
+            self.assertIn("app/config.py:1", result.stdout)
+            self.assertNotIn("polluxkart-secrets-", result.stdout)
+
     def test_s2_9_temporary_folder_is_removed_either_way(self):
         with _Sandbox() as box:
             box.set_origin_development()

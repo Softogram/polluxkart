@@ -44,7 +44,8 @@ Exit code 0 means nothing was found. Exit code 1 means a finding or an allow-lis
 - On your machine: from where the branch left `origin/development` up to `HEAD`.
 - On GitHub: the workflow passes the pull request's base commit in `SCAN_BASE`, so the range is exactly the pull request's commits, including ones a later commit undid.
 - After a merge, the range is empty and only the tracked files are scanned.
-- If the starting point cannot be found, the scan fails with "fetch origin first" rather than silently scanning nothing.
+- If the starting point cannot be found on your machine, the scan fails with "fetch origin first" rather than silently scanning nothing.
+- On GitHub a run with no starting point, such as a release push, has no commit range of its own. It scans the tracked files and says so in the log.
 
 It scans tracked files only.
 `gitleaks dir` would also read files git ignores, which would flag your own local `.env`, so the tracked files are copied into a temporary folder, scanned there, and the folder is deleted whatever happens.
