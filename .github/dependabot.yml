@@ -1,0 +1,23 @@
+# Dependency updates. Rules: docs/platform/security.md, "Dependencies and scanning".
+# Only the owner merges Dependabot pull requests (owner decision, 2026-09-14).
+#
+# Only GitHub Actions has dependencies today. Dependabot reports a
+# configuration error for an ecosystem whose folder holds no dependency
+# files, so Maven, pnpm and Docker entries are added by the tickets that
+# create those folders. The template is in tools/checks/README.md, and a
+# test refuses an entry that leaves out its group or its major-version
+# ignore rule.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: development
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Kolkata
+    groups:
+      github-actions:
+        patterns: ["*"]
+        update-types: [major, minor, patch]

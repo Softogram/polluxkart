@@ -1,0 +1,6 @@
+# CodeQL settings. Rules: docs/platform/security.md, "Dependencies and scanning".
+# legacy/ is the first version, kept only as reference and never deployed
+# (owner decision, 2026-09-14), so its findings would bury real ones.
+name: polluxkart
+paths-ignore:
+  - legacy/**

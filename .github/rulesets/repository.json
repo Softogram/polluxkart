@@ -6,5 +6,7 @@
   "secret_scanning": true,
   "secret_scanning_push_protection": true,
   "secret_scanning_non_provider_patterns": true,
-  "secret_scanning_validity_checks": true
+  "secret_scanning_validity_checks": true,
+  "dependabot_security_updates": true,
+  "code_scanning_default_setup": false
 }

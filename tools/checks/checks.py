@@ -27,6 +27,7 @@ CHECKS = (
     ("rulesets-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/rulesets"], ()),
     ("secrets-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/secrets"], ("git", "gitleaks")),
     ("secrets", "tooling", ["tools/secrets/scan.py", "ci"], ("git", "gitleaks")),
+    ("workflow-pins", "tooling", ["tools/checks/workflow_pins.py"], ()),
     ("checks-tests", "tooling", ["-m", "unittest", "discover", "-s", "tools/checks"], ("make", "actionlint", "shellcheck")),
     ("actionlint", "tooling", None, ("actionlint", "shellcheck")),
 )

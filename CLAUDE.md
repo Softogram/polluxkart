@@ -40,6 +40,7 @@ The [PolluxKart project board](https://github.com/orgs/Softogram/projects/2) has
 - Stage explicit paths only. Never `git add -A`, `git add .`, `git commit -a`, `git stash`, `git reset --hard`, `git clean`, `git rebase`, or a force push.
 - Read `git status --short` and `git diff --cached --stat` before every commit.
 - No agent co-author lines in commit messages. No em dashes in any written text.
+- Dependabot pull requests pass the approval gate without a ticket, but **only the owner merges them**.
 
 ## Writing
 

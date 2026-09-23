@@ -55,10 +55,16 @@ A key the pre-commit hook blocked before any commit existed does not need rotati
 
 ## Dependencies and scanning
 
-- Dependabot pull requests weekly for Maven, pnpm, Docker and GitHub Actions.
+- Dependabot, GitHub's dependency update bot, opens one grouped pull request per ecosystem per week (owner decision, 2026-09-14).
+GitHub Actions is configured today; Maven, pnpm and Docker entries arrive with the folders that need them, using the template in [tools/checks/README.md](../../tools/checks/README.md).
+- Major version updates are skipped for Maven, pnpm and Docker and go through a planned ticket instead. GitHub Actions majors are still proposed.
+- Dependabot security updates are on, so a published vulnerability gets its own pull request straight away. The major-version rule does not hold those back.
+- **Only the owner merges a Dependabot pull request.** GitHub's branch rules cannot single Dependabot out, so this is a written rule; agents never merge one on their own initiative.
 - `osv-scanner` for known vulnerabilities in CI.
-- CodeQL analysis on the public repository.
-- GitHub Actions pinned to full commit SHAs with read-only default permissions.
+- CodeQL, GitHub's code scanner, runs in advanced setup: `.github/workflows/codeql.yml` and `.github/codeql/codeql-config.yml`, reviewed like any other change.
+It runs at release, weekly and by hand, not on every pull request, so it cannot block a merge (owner decision, revised 2026-09-16). Findings go to the Security tab.
+- `legacy/` is not scanned. It is the first version, kept as reference and never deployed, and its alerts are dismissed with a dated reason.
+- GitHub Actions pinned to full commit SHAs with read-only default permissions, checked by the `workflow-pins` check in `make ci`.
 - An OWASP ZAP baseline scan runs nightly against staging.
 
 ## Infrastructure
