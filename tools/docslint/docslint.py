@@ -33,7 +33,7 @@ from pathlib import Path
 EM_DASH = "—"
 
 # Markdown files outside docs/ whose links and em dashes are also checked.
-EXTRA_FILES = ("README.md", "legacy/README.md")
+EXTRA_FILES = ("README.md", "legacy/README.md", "CLAUDE.md")
 EXTRA_GLOBS = ("ops/**/*.md", "tools/**/*.md", ".claude/skills/README.md")
 
 LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
