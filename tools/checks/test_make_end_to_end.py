@@ -27,6 +27,7 @@ CHECK_ORDER = [
     "rulesets-tests",
     "secrets-tests",
     "secrets",
+    "workflow-pins",
     "checks-tests",
     "actionlint",
 ]

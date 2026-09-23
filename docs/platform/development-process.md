@@ -87,6 +87,7 @@ Part 5 is evidence in that same implementation pull request.
 
 Exceptions:
 - Pull requests opened by Dependabot (automated dependency updates) pass the gate without a ticket, except a Dependabot pull request into `main`.
+**Only the owner merges a Dependabot pull request** (owner decision, 2026-09-14). They still have to pass every check. Agents never merge one on their own initiative.
 - Only this repository's `development` branch may open a pull request into `main`, and that release passes the gate without a ticket line.
 - The pull request that introduces this process (ticket E00-01) cannot be checked by a gate that does not exist yet; it waits for the owner's approval label and is merged at the owner's request.
 

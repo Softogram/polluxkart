@@ -34,13 +34,27 @@ def matching_repo(files=None) -> dict:
     not as the plain true/false the file uses (#37).
     """
     wanted = copy.deepcopy((files or files_copy())["repository"])
-    live = {key: value for key, value in wanted.items() if key not in rulesets.SECURITY_KEYS}
+    live = {
+        key: value
+        for key, value in wanted.items()
+        if key not in rulesets.SECURITY_KEYS and key != rulesets.DEFAULT_SETUP_KEY
+    }
     live["security_and_analysis"] = {
         key: {"status": "enabled" if wanted[key] else "disabled"}
         for key in rulesets.SECURITY_KEYS
         if key in wanted
     }
     return live
+
+
+def matching_default_setup(files=None) -> dict:
+    """What GitHub's code scanning default setup endpoint returns.
+
+    Default setup has its own endpoint rather than a field on the
+    repository, so the fake answers it separately (#38).
+    """
+    wanted = (files or files_copy())["repository"]
+    return {"state": "configured" if wanted.get(rulesets.DEFAULT_SETUP_KEY) else "not-configured"}
 
 
 def live_rulesets(files=None, include_bypass=True, extra=None, tweak=None) -> list:
@@ -65,6 +79,7 @@ class FakeGh:
         *,
         rulesets=None,
         repository=None,
+        default_setup=None,
         list_error=None,
         write_error=None,
         missing_users=None,
@@ -73,6 +88,9 @@ class FakeGh:
         self.calls = []
         self.rulesets = [] if rulesets is None else list(rulesets)
         self.repository = repository if repository is not None else matching_repo()
+        self.default_setup = (
+            default_setup if default_setup is not None else matching_default_setup()
+        )
         self.list_error = list_error
         self.write_error = write_error
         self.missing_users = set(missing_users or [])
@@ -110,6 +128,8 @@ class FakeGh:
                 if item["id"] == rid:
                     return copy.deepcopy(item)
             return {}
+        if path.endswith("/code-scanning/default-setup"):
+            return copy.deepcopy(self.default_setup)
         return copy.deepcopy(self.repository)
 
     def writes(self):
@@ -382,6 +402,52 @@ class CheckTest(unittest.TestCase):
         self.assertIn("CosmicSaaurabh", output)
         self.assertNotIn("matches", output.lower())
         self.assertFalse(any("/rulesets" in call[1] for call in fake.calls))
+
+
+class DefaultSetupTest(unittest.TestCase):
+    """CodeQL default setup must be turned off through its own endpoint (#38)."""
+
+    def _apply(self, state):
+        fake = FakeGh(
+            rulesets=live_rulesets(include_bypass=True),
+            repository=matching_repo(),
+            default_setup={"state": state},
+        )
+        code, output = run_main(["apply"], fake)
+        return fake, code, output
+
+    def test_default_setup_is_switched_off_when_github_has_it_on(self) -> None:
+        fake, code, _output = self._apply("configured")
+        self.assertEqual(code, 0)
+        writes = [call for call in fake.writes() if "default-setup" in call[1]]
+        self.assertEqual(len(writes), 1)
+        self.assertEqual(writes[0][0], "PATCH")
+        self.assertEqual(writes[0][2], {"state": "not-configured"})
+
+    def test_nothing_is_written_when_it_is_already_off(self) -> None:
+        fake, code, _output = self._apply("not-configured")
+        self.assertEqual(code, 0)
+        self.assertEqual([call for call in fake.writes() if "default-setup" in call[1]], [])
+
+    def test_check_reports_default_setup_left_on(self) -> None:
+        fake = FakeGh(
+            rulesets=live_rulesets(include_bypass=True),
+            repository=matching_repo(),
+            default_setup={"state": "configured"},
+        )
+        code, output = run_main(["check"], fake)
+        self.assertEqual(code, 1, output)
+        self.assertIn("code_scanning_default_setup", output)
+
+    def test_not_visible_without_an_admin_login(self) -> None:
+        fake = FakeGh(
+            rulesets=live_rulesets(include_bypass=True),
+            repository=matching_repo(),
+            default_setup={},
+        )
+        code, output = run_main(["check"], fake)
+        self.assertIn("not visible with this login", output)
+        self.assertEqual(code, 0, output)
 
 
 class ApplyTest(unittest.TestCase):

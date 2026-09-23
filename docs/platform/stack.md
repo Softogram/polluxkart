@@ -69,6 +69,7 @@ The confirmed versions get recorded here and in [decisions.md](decisions.md).
 - Patch releases of Spring Boot, PostgreSQL minor versions and Next.js are applied within a month, through Dependabot pull requests.
 - A new Spring Boot minor line (such as 4.2) is adopted once its first patch release is out.
 - Java moves only between LTS releases.
+- Major version updates for Maven, pnpm and Docker are not proposed by Dependabot; each goes through its own planned ticket (owner decision, 2026-09-14).
 - PostgreSQL moves a major version once RDS supports it and a restore drill passes on staging.
 
 ## Sources for the version checks (2026-09-13)
