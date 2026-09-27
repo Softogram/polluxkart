@@ -29,7 +29,7 @@ Depends on: #34 (`make ci`) and #36 (the ruleset and settings files, and the scr
 - **Contributors merge into `development`; no required review; no bypass; rules as files applied by script** (owner decision, 2026-09-14, "Branch rules for `development` and `main`").
 - **`make ci` and its checks; pinned linters** (owner decision, 2026-09-14, "`make ci` and `make doctor`").
 - **Dependencies and code scanning** (owner decision, 2026-09-14, "Dependabot and CodeQL", answered while planning this ticket):
-  - only the owner merges Dependabot pull requests;
+  - only the owner merges Dependabot pull requests (revised 2026-09-23: an agent may merge one once every required check is green, and a major version bump still goes to the owner);
   - updates are grouped, one weekly pull request per ecosystem for minor and patch updates;
   - major updates are skipped for Maven, pnpm and Docker and left to planned tickets, but still proposed for GitHub Actions;
   - CodeQL moves to advanced setup, a workflow file in the repository;
@@ -208,7 +208,7 @@ Dependabot keeps the pins current and updates the version comments with them.
 ### Documents updated in the implementation pull request
 
 - `docs/platform/security.md`, "Dependencies and scanning": grouped weekly updates, majors policy, security updates, advanced CodeQL, the merge-blocking threshold, `legacy/` excluded, pins checked.
-- `docs/platform/development-process.md`: Dependabot pull requests pass the gate, and only the owner merges them.
+- `docs/platform/development-process.md`: Dependabot pull requests pass the gate, and only the owner merges them (revised 2026-09-23: an agent may merge a green one).
 - `docs/platform/stack.md`, "Upgrade policy": majors for Maven, pnpm and Docker go through a planned ticket.
 - `docs/platform/runbook.md`: handling a Dependabot pull request, a security update and a CodeQL alert; dismissing a `legacy/` alert.
 - `CLAUDE.md` and the `polluxkart-workflow` skill: the Dependabot merge rule.
@@ -235,7 +235,7 @@ Dependabot keeps the pins current and updates the version comments with them.
 - **Secret scanning:** #37.
 - **Maven, pnpm and Docker Dependabot entries, and Java and TypeScript CodeQL:** added by E03-02, E04-01 and E06-04, which create those folders.
 - **Deleting `legacy/` or its dependency files:** the owner chose dismissal; the reference copy stays whole.
-- **Auto-merging Dependabot pull requests:** only the owner merges them.
+- **Auto-merging Dependabot pull requests:** GitHub's auto-merge stays off, so nothing merges itself. Who presses merge was revised on 2026-09-23; see decisions.md, "Who merges a Dependabot pull request".
 
 ## Open questions for the owner
 
