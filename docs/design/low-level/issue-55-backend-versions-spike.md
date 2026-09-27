@@ -79,9 +79,10 @@ This is ticket E03-11's problem, but it is cheaper to settle it here: the spike 
 Question 5 below asks the owner to confirm that.
 
 **Three coordinate traps**, which would look like version problems but are not.
-Each of these names in stack.md now points at an abandoned artifact, and the spike must use the replacement:
+stack.md names these libraries in words, not as Maven coordinates, so the trap is waiting for whoever writes the build file.
+The obvious coordinate is the abandoned one in each case, and the spike must use the replacement:
 
-| Named in stack.md | What it actually gets | Use instead |
+| The obvious coordinate | What it actually gets | Use instead |
 |---|---|---|
 | `com.openhtmltopdf` | Version 1.0.10, last released 2021 | `io.github.openhtmltopdf` |
 | `com.bucket4j:bucket4j-core` | Version 8.10.1, last released 2024 | `com.bucket4j:bucket4j_jdk17-core` |

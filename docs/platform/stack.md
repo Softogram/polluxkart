@@ -2,9 +2,11 @@
 
 Parent: [platform/](README.md) | Index: [docs/](../README.md)
 
-**Status: PROPOSED (2026-09-13).** Written from the plan the owner approved on 2026-09-13. Owner decisions are marked in [decisions.md](decisions.md); everything else here is confirmed or changed in its GitHub ticket before anything is built on it.
-Versions were checked against official release information on 2026-09-13.
-The owner decided on Spring Boot, Next.js with TypeScript, AWS Mumbai and the latest versions; the database and the exact versions below are proposals.
+**Status: PROPOSED (2026-09-13), with the backend platform versions confirmed on 2026-09-27.** Written from the plan the owner approved on 2026-09-13. Owner decisions are marked in [decisions.md](decisions.md); everything else here is confirmed or changed in its GitHub ticket before anything is built on it.
+Versions were checked against official release information on 2026-09-13 and again on 2026-09-27.
+The owner decided on Spring Boot, Next.js with TypeScript, AWS Mumbai and the latest versions.
+**PostgreSQL as the database, Java 25 LTS, Spring Boot 4.1.x and PostgreSQL 18 are owner decisions as of 2026-09-27** (decisions.md, "Database: PostgreSQL" and "Which \"latest\"").
+The individual library versions below are still proposals until the E03-01 spike (#55) confirms them.
 
 ## Backend
 
@@ -25,6 +27,9 @@ The owner decided on Spring Boot, Next.js with TypeScript, AWS Mumbai and the la
 
 **Phase 2 starts with a one-day spike** to confirm the exact versions of springdoc, Spring Modulith, ShedLock, Bucket4j, OpenHTMLtoPDF and Testcontainers that work with Spring Boot 4.1 and Jackson 3.
 The confirmed versions get recorded here and in [decisions.md](decisions.md).
+A desk check on 2026-09-27 found eight of the nine ready and one not: the third-party Bucket4j Spring Boot starter has no Spring Boot 4.1 release, so **rate limiting uses Bucket4j's core library behind a filter this project writes** (owner decision, 2026-09-27).
+That check also found three Maven coordinates that have moved house and would otherwise pull a jar last released in 2021 or 2024.
+Both are written up in [the E03-01 design](../design/low-level/issue-55-backend-versions-spike.md), which the spike follows.
 
 ## Database
 
