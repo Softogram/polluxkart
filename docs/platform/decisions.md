@@ -64,9 +64,11 @@ Start with a clean database and enter the real catalog through admin.
 
 ## Database: PostgreSQL (2026-09-13)
 
-**Status: Proposed.** The owner chose Spring Boot but did not separately choose the database.
+**Status: Owner decision, confirmed 2026-09-27** while planning E03-01 (#55). Was Proposed from 2026-09-13.
+The owner chose Spring Boot on 2026-09-13 but did not separately choose the database.
 PostgreSQL was proposed because transactions and database constraints (unique emails, stock that cannot go negative, exact integer money) prevent the classes of bugs the first version had.
-**Open question for the owner:** confirm PostgreSQL. Tracked in the backend foundation epic.
+Also offered: choosing a different database.
+Nothing is carried over from the old database, so there was no migration constraint on the choice.
 
 ---
 
@@ -76,13 +78,16 @@ PostgreSQL was proposed because transactions and database constraints (unique em
 
 ## Which "latest": Java 25 LTS, Spring Boot 4.1.x, PostgreSQL 18 (2026-09-13)
 
-**Status: Proposed.**
-- **Java 25 LTS** was proposed over Java 26 or 27, which are six-month releases that stop getting fixes after six months. The owner was told this but did not explicitly confirm it.
-- **Spring Boot 4.1.x** is the newest release line (4.1.1, 21 August 2026).
-- **PostgreSQL 18** is the newest stable version on RDS; 19 is in beta.
+**Status: Owner decision, confirmed 2026-09-27** while planning E03-01 (#55). Was Proposed from 2026-09-13.
 
-**Open question for the owner:** confirm Java 25 LTS, or choose the newest short-term release with an upgrade every six months.
+The versions were checked again on 2026-09-27 before the owner confirmed them, because "the latest" had moved since 2026-09-13:
+
+- **Java 25 LTS**, not the newer Java 27. Java 27 was released on 15 September 2026, but it is a six-month release that stops getting security fixes after six months, so choosing it would mean a forced upgrade twice a year. The next long-term support release is Java 29, expected September 2027. Also offered: always take the newest release and upgrade every six months.
+- **Spring Boot 4.1.x**, moving to 4.2 once its first patch release is out. 4.1.1 was released on 20 August 2026 and 4.2 is not released.
+- **PostgreSQL 18**, moving to 19 only once it is released, available on AWS RDS, and a restore drill has passed on staging. PostgreSQL 19 was still at Beta 4 on 24 September 2026.
+
 Version sources and upgrade policy: [stack.md](stack.md).
+Design: [../design/low-level/issue-55-backend-versions-spike.md](../design/low-level/issue-55-backend-versions-spike.md).
 
 ---
 
@@ -428,6 +433,23 @@ The owner runs every step that needs account access, as already decided on 2026-
 Claude prepares the steps and verifies with read-only checks. No secret value, key id or live-or-dead status is written in this repository.
 
 Design: [../design/low-level/issue-44-retire-first-version-credentials.md](../design/low-level/issue-44-retire-first-version-credentials.md).
+
+## Backend libraries on Spring Boot 4.1 (2026-09-27)
+
+**Status: Owner decision, 2026-09-27, answering the remaining questions while planning E03-01 (#55).**
+
+- **Rate limiting uses Bucket4j's core library behind a filter this project writes**, roughly sixty lines, rather than the third-party Bucket4j Spring Boot starter.
+The starter's newest release is built against Spring Boot 4.0.3, not 4.1, and it carries an untriaged bug reported against Boot 4.0 saying rate limiting does not work; a fix sits unreleased on its main branch with no date.
+Also offered: waiting for the starter, pinning it anyway, or using Resilience4j, whose rate limiter only counts within one process and so would stop being enough as soon as a second server is added (E20-10).
+- **When a library does not work with Spring Boot 4.1, the order of preference is: replace it, then use a pre-release, then wait for it.**
+Dropping back to Spring Boot 3 is a last resort that needs a fresh conversation rather than a spike decision.
+Also offered: any other ranking of those four.
+- **The upgrade policy in [stack.md](stack.md) stands unchanged**: patch releases within a month, a new Spring Boot minor line once its first patch is out, Java only between long-term support releases, and PostgreSQL major versions only after RDS support and a passing restore drill.
+Also offered: a different rhythm.
+
+The spike confirms each library actually starts and works before any of this is built on.
+Design: [../design/low-level/issue-55-backend-versions-spike.md](../design/low-level/issue-55-backend-versions-spike.md).
+Test plan: [../design/test/issue-55-backend-versions-spike.md](../design/test/issue-55-backend-versions-spike.md).
 
 ## Business details for the site, invoices and legal pages (2026-09-17)
 
