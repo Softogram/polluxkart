@@ -49,7 +49,7 @@ Terms such as Dependabot, ecosystem, CodeQL, advanced setup and pinned are expla
 | D2.5 | Any entry targeting `main` | Fails: updates go to `development` |
 | D2.6 | A `github-actions` entry that ignores majors | Fails: Actions majors are proposed, per the owner's answer |
 | D2.7 | An entry for a folder that does not exist in the repository | Fails, because GitHub would report a configuration error |
-| D2.8 | An `open-pull-requests-limit: 0` or an auto-merge setting | Fails: updates must be proposed, and only the owner merges |
+| D2.8 | An `open-pull-requests-limit: 0` or an auto-merge setting | Fails: updates must be proposed, and nothing merges itself |
 
 ## Flow 3: CodeQL configuration (unit tests)
 
@@ -86,7 +86,7 @@ L4.3 is a hand dispatch and a release push, because CodeQL does not run on pull 
 | AC2: a Dependabot pull request for a GitHub Action passes the gate without a ticket and runs every required check | L4.7 |
 | AC3: CodeQL runs on `main`, weekly, and by hand for every language present, with results in the Security tab | Q3.1, Q3.4, Q3.5, L4.3 |
 | AC4: every `uses:` line is pinned to a full commit | P1.1 to P1.12 |
-| AC5: only the owner merges Dependabot pull requests | Written rule reviewed in the implementation pull request; L4.7 merged by the owner; D2.8 |
+| AC5: only the owner merges Dependabot pull requests (revised 2026-09-23: an agent may merge a green one) | Written rule reviewed in the implementation pull request; L4.7; D2.8 |
 | Grouped weekly updates; majors skipped except Actions | D2.1 to D2.6 |
 | High or critical findings are reported in the Security tab; they do not block pull-request merges | L4.3 |
 | `legacy/` is not scanned and its alerts are dismissed with a dated reason | Q3.3, L4.4, L4.5, L4.6 |

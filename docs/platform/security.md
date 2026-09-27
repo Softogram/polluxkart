@@ -59,7 +59,9 @@ A key the pre-commit hook blocked before any commit existed does not need rotati
 GitHub Actions is configured today; Maven, pnpm and Docker entries arrive with the folders that need them, using the template in [tools/checks/README.md](../../tools/checks/README.md).
 - Major version updates are skipped for Maven, pnpm and Docker and go through a planned ticket instead. GitHub Actions majors are still proposed.
 - Dependabot security updates are on, so a published vulnerability gets its own pull request straight away. The major-version rule does not hold those back.
-- **Only the owner merges a Dependabot pull request.** GitHub's branch rules cannot single Dependabot out, so this is a written rule; agents never merge one on their own initiative.
+- **A Dependabot pull request is merged once every required check is green** (owner decision, 2026-09-23, superseding the 2026-09-14 rule that only the owner merged).
+An agent may do that merge; a major version bump still goes to the owner.
+GitHub's auto-merge is not switched on, so nothing merges itself.
 - `osv-scanner` for known vulnerabilities in CI.
 - CodeQL, GitHub's code scanner, runs in advanced setup: `.github/workflows/codeql.yml` and `.github/codeql/codeql-config.yml`, reviewed like any other change.
 It runs at release, weekly and by hand, not on every pull request, so it cannot block a merge (owner decision, revised 2026-09-16). Findings go to the Security tab.

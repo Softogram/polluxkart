@@ -26,6 +26,14 @@ Pinned versions live in `tools/checks/linters.py`.
 | 2 | Wrong usage, such as an unknown group name |
 | 130 | Stopped with Ctrl+C; checks not reached are listed as not run |
 
+## How to add a make target
+
+Give it a `## ` help comment on the same line, because `make help` is generated from those comments and is the full list of commands (owner decision, 2026-09-14).
+A target with no help comment fails `test_claude_md.py`.
+A second `## ` line below adds a second line of help, which is how a target explains an option it takes.
+
+If the target is an everyday command, add a line for it to the "Commands" section of `CLAUDE.md` in the same pull request.
+Only commands that exist are listed there, and a `make <target>` in `CLAUDE.md` that the Makefile does not define fails the checks.
 ## Adding a Dependabot entry when a new folder arrives
 
 `.github/dependabot.yml` lists only GitHub Actions today, because Dependabot reports a configuration error for an ecosystem whose folder holds no dependency files.
