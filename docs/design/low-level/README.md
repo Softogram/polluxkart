@@ -41,6 +41,7 @@ Only a ticket labelled `stage: implementation-ready` by the owner may be impleme
 - [issue-44-retire-first-version-credentials.md](issue-44-retire-first-version-credentials.md) - E01-05, retire the first version's credentials (DRAFT, 2026-09-16)
 - [issue-45-business-details.md](issue-45-business-details.md) - E01-06, business details for the site, invoices and legal pages (DRAFT, 2026-09-17)
 - [issue-55-backend-versions-spike.md](issue-55-backend-versions-spike.md) - E03-01, confirming the database and versions and spiking library compatibility with Spring Boot 4.1 (DRAFT, 2026-09-27)
+- [issue-56-maven-module-skeleton.md](issue-56-maven-module-skeleton.md) - E03-02, the Maven multi-module skeleton with shared kernel and app modules (DRAFT, 2026-09-29)
 
 ## See also (do not follow recursively)
 
