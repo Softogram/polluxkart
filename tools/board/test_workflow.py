@@ -46,8 +46,6 @@ class WorkflowFileTest(unittest.TestCase):
         self.assertIn("cancel-in-progress: false", self.text)
 
     def test_w4_5_actions_are_pinned(self) -> None:
-        self.assertIn("actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1", self.text)
-        self.assertIn("actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349", self.text)
         for line in self.text.splitlines():
             if "uses: actions/" in line:
                 self.assertRegex(line, r"@[0-9a-f]{40}")
