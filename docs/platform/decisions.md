@@ -290,6 +290,8 @@ Design: [../design/low-level/issue-38-dependabot-codeql.md](../design/low-level/
 
 **Revised 2026-09-23:** the merge clause only. See "Who merges a Dependabot pull request".
 
+**Revised 2026-10-01:** the `legacy/` alerts clause only. See "Dependabot alerts from `legacy/` are stopped at the source".
+
 ## Who merges a Dependabot pull request (2026-09-23)
 
 **Status: Owner decision, 2026-09-23, revising the merge clause of "Dependabot and CodeQL" (2026-09-14).**
@@ -444,6 +446,46 @@ What is worth asserting is that an action is pinned at all, not which commit it 
 Two checks already do that generically, and neither needs editing when a version moves:
 the `workflow-pins` check requires a 40 character commit id plus a version comment on every `uses:` line in every workflow,
 and `tools/board/test_workflow.py` asserts that every `uses: actions/` line matches `@[0-9a-f]{40}`.
+
+## The Dependabot CI check is required on `development` (2026-10-01)
+
+**Status: Owner decision, 2026-10-01, answering the one open question while planning E00-13 (#245).** It completes "A Dependabot pull request runs `make ci` before merge" (2026-09-29).
+
+- **The new `dependabot-ci` check is a required check in the `development` ruleset**, so a red Dependabot pull request cannot be merged. Also offered: ship it advisory and make it required in a follow-up ticket once it had passed on real pull requests, or leave it advisory for good and have whoever merges read it.
+
+**Why "required" was safe to choose straight away.**
+The worry about a required check here is that it would freeze every pull request a person opens.
+The job is skipped on those, and a required check that never reports leaves the merge button blocked forever.
+GitHub treats the two kinds of "did not run" differently.
+A job skipped by its own `if:` condition is reported as finished, and that counts as satisfying a required check.
+Only a whole workflow filtered out by `on.paths` or `on.branches` reports nothing at all and stays pending.
+So the gate is written as a job-level `if:`, and this repository's own `tools/rulesets/rulesets.py` already refuses the shapes that would hang pull requests: a required check whose name is not a job in any workflow, one whose workflow does not run on pull requests, one whose workflow carries a path filter, and one whose triggers have lost `synchronize`.
+
+**What it costs.**
+One manual step that only the owner can do: `make rulesets-apply RULESETS='development'` with an admin login, after the implementation pull request merges and never before.
+Applying it first would name a job GitHub has never seen, and every pull request would sit pending.
+Between the merge and the apply, the file and the live ruleset disagree, and the nightly `rulesets-drift` run reports that as the reminder.
+
+Design: [../design/low-level/issue-245-dependabot-ci.md](../design/low-level/issue-245-dependabot-ci.md).
+
+## Dependabot alerts from `legacy/` are stopped at the source (2026-10-01)
+
+**Status: Owner decision, 2026-10-01, asked while planning E00-13 (#245).** It revises the `legacy/` alerts clause of "Dependabot and CodeQL" (2026-09-14).
+
+- **Dependabot is configured so `legacy/` stops producing alerts and update pull requests**, instead of each alert being dismissed by hand. Also offered: keep dismissing them with a dated reason as they arrive, or delete `legacy/` now.
+
+**Why.**
+On 2026-10-01 there were 13 open Dependabot alerts, one critical, four high and eight medium, and every one of them was in `legacy/backend/requirements.txt`.
+Forty nine had already been dismissed once with a dated reason.
+None are in code that will ship: `legacy/` is the first version, kept as reading material and never deployed.
+Dismissing the same class of alert every week is recurring work that teaches nobody anything.
+The 2026-09-14 entry already pointed this way when it said future `legacy/` alerts are auto-dismissed "where GitHub allows".
+
+**Deleting `legacy/` was not chosen now**, because the rebuild still reads from it. It stays available for when it no longer does, alongside the first-version retirement tickets.
+
+**Which GitHub setting actually does it is not decided here, and must be confirmed on GitHub rather than assumed.**
+An `ignore` rule in `.github/dependabot.yml` governs update pull requests, while the alerts themselves come from the dependency graph and may need an auto-triage rule in the repository's security settings.
+That belongs to its own ticket, which does not exist yet.
 
 ## AWS monthly budget alert (2026-09-16)
 
