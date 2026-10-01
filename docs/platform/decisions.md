@@ -320,6 +320,36 @@ whether a security update is merged the same way;
 and whether reading the bumped dependency's changelog is required before merging.
 Until those are answered, an agent merges minor and patch updates and leaves a major to the owner, which is the narrower reading.
 
+## How the `legacy/` alerts are actually stopped (2026-10-01)
+
+**Status: Owner decision, 2026-10-01, answering three questions while planning E00-14 (#247).** It completes "Dependabot alerts from `legacy/` are stopped at the source" (2026-10-01), which said which GitHub setting does the job had to be confirmed on GitHub rather than assumed.
+
+- **A rule that closes each alert automatically is accepted as "stopped at the source".** Also offered: bring the deletion of `legacy/` forward instead, or keep dismissing each alert by hand.
+- **The update pull requests are watched for a fortnight before any file is changed.** If they stop on their own, `.github/dependabot.yml` is never touched. If they do not, the test rule is relaxed so one entry may leave `target-branch` out. Also offered: relax that test rule now, or switch the repository-wide Dependabot security updates setting off.
+- **Dependabot pull requests #243 and #244 are closed, not merged**, each with a comment naming #247. Also offered: run `make ci` on both branches and merge them first.
+
+**What was confirmed on GitHub, since the earlier entry said it must be.**
+Nothing in any file in this repository can stop an alert being raised. Alerts come from GitHub's dependency graph; `.github/dependabot.yml` only shapes pull requests.
+The one mechanism that reaches alerts by path is a repository-level Dependabot auto-triage rule, a setting that closes matching alerts automatically.
+It has no API at all, so only the owner can create it, by hand, in the repository's settings.
+**The manifest path in such a rule must be written out in full. A wildcard does not match**: on the live repository `manifest:legacy/backend/requirements.txt` matched all 13 open alerts and `manifest:legacy/*` matched none.
+That is the opposite of CodeQL, whose config file does accept `legacy/**`, which makes it the easiest thing here to get wrong, and a rule that never fires looks exactly like no rule at all.
+
+**Why the alerts are closed rather than prevented.**
+A rule does not stop an alert being created. The alert arrives and GitHub closes it within minutes, recording the resolution `auto-dismissed`, which is hidden from the default Open list and listed by the filter `resolution:auto-dismissed`.
+Nobody touches an alert again and the Open count stays at zero, which is the whole point, but the alerts are not literally never produced. The owner accepted that reading.
+
+**Why the pull requests are watched rather than configured away.**
+An `ignore` rule in `.github/dependabot.yml` does reach security update pull requests, but only in an entry that does not set `target-branch`: GitHub's documentation says that when `target-branch` is used, the settings for that package manager no longer affect any pull request raised for a security update.
+`tools/checks/test_workflow_pins.py` currently fails any entry without `target-branch`, so the repository's own test forbids the only shape that would work.
+Relaxing a test rule permanently, to solve a problem that may already be solved, was the wrong order. GitHub's own rule form says Dependabot opens pull requests "to resolve open alerts", and an auto-dismissed alert is not open, so a fortnight of watching turns that reading into a measurement.
+
+**CodeQL needs nothing.** `.github/codeql/codeql-config.yml` already excludes `legacy/**`, so findings from the first version are never produced.
+
+**Deleting `legacy/` stays on the table** for when the rebuild no longer reads from it, and it is still the only thing that ends this completely. The 44 alerts recorded against the old path `backend/requirements.txt` all went to state `fixed` when that folder moved, which is what deletion would do to the rest.
+
+Design: [../design/low-level/issue-247-legacy-dependabot-alerts.md](../design/low-level/issue-247-legacy-dependabot-alerts.md).
+
 ## Secret scanning (2026-09-14)
 **Status: Owner decision, 2026-09-14, answering five questions while planning E00-07 (#37).**
 - **The CI secret scan checks every commit in a pull request**, not the whole history each run. GitHub's own secret scanning watches the whole history and alerts the owner privately, so nothing about earlier history is written into this public repository. Also offered: the whole history on every run.
