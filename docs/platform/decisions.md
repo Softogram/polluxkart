@@ -304,6 +304,12 @@ The 2026-09-14 rule was written before the gate around a Dependabot pull request
 Such a pull request now passes the approval gate, `make ci` on the branch, and the required `approval-gate` check once the `development` ruleset is applied.
 The owner judged that enough for a green update.
 
+**Corrected 2026-09-29:** the sentence above was wrong about `make ci`.
+Nothing ran `make ci` on a Dependabot pull request, because Dependabot pushes from GitHub's servers, where the pre-push hook that gates everyone else cannot run.
+So "green" on such a pull request meant only that `approval-gate` had passed.
+Until the Dependabot-only CI workflow exists, whoever merges runs `make ci` on the branch by hand first.
+See "A Dependabot pull request runs `make ci` before merge" (2026-09-29).
+
 **What this is not.**
 GitHub's auto-merge is not switched on.
 A person or an agent still looks at the pull request and presses merge; nothing merges itself.
@@ -405,6 +411,39 @@ Design: [../design/low-level/issue-42-aws-security-review.md](../design/low-leve
 This revises "`make ci` and `make doctor`" (2026-09-14), "Branch rules for `development` and `main`" (2026-09-14), and "Dependabot and CodeQL" (2026-09-14).
 
 Design updates: [../design/low-level/issue-34-makefile-ci-doctor.md](../design/low-level/issue-34-makefile-ci-doctor.md), [../design/low-level/issue-35-git-hooks.md](../design/low-level/issue-35-git-hooks.md), [../design/low-level/issue-36-branch-rulesets.md](../design/low-level/issue-36-branch-rulesets.md), [../design/low-level/issue-37-secret-scanning.md](../design/low-level/issue-37-secret-scanning.md), [../design/low-level/issue-38-dependabot-codeql.md](../design/low-level/issue-38-dependabot-codeql.md).
+
+## A Dependabot pull request runs `make ci` before merge (2026-09-29)
+
+**Status: Owner decision, 2026-09-29, answering the first open question on #237.** It narrows "Local `make ci` is the pull-request gate" (2026-09-16) for Dependabot pull requests only.
+
+- **A workflow runs `make ci` on `pull_request`, but only when the author is Dependabot.** Also offered: leave it as it is and have whoever merges run `make ci` on the branch by hand, or run the checks on every pull request into `development`.
+
+The 2026-09-16 decision keeps holding for every pull request a person or an agent opens.
+Those are already gated by the pre-push hook on the developer's machine, so running the same checks again on GitHub would spend metered minutes on work that is already done.
+
+**Why Dependabot needs the carve-out.**
+Dependabot is GitHub's bot that opens pull requests to upgrade dependencies.
+It pushes from GitHub's servers, so the pre-push hook that gates everyone else cannot run for it.
+Actions does not run the checks on pull requests into `development`.
+So nothing ran `make ci` on a Dependabot pull request at all, and "green" on one meant only that `approval-gate` had passed.
+
+**This is not a theory. It is how the build broke.**
+Merging #225, which bumped `actions/create-github-app-token` from v2.2.2 to v3.2.0, turned `development` red, because a test asserted that action's exact commit id.
+Eleven tests failed and every push with an open pull request was blocked until #237 fixed it.
+
+**The workflow is a separate ticket**, not #237. #237 only removes the hard-coded commit id.
+
+## No test names an exact dependency version or commit id (2026-09-29)
+
+**Status: Owner decision, 2026-09-29, answering the second open question on #237.**
+
+- **A test never asserts a specific dependency version or commit id.** Also offered: allow it when the test carries a dated reason saying why that exact version matters, or decide case by case.
+
+A test that hard-codes a version turns every routine upgrade into a build break, which is what happened on #225.
+What is worth asserting is that an action is pinned at all, not which commit it is pinned to.
+Two checks already do that generically, and neither needs editing when a version moves:
+the `workflow-pins` check requires a 40 character commit id plus a version comment on every `uses:` line in every workflow,
+and `tools/board/test_workflow.py` asserts that every `uses: actions/` line matches `@[0-9a-f]{40}`.
 
 ## AWS monthly budget alert (2026-09-16)
 
